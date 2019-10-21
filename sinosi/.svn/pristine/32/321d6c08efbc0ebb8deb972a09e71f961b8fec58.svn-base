@@ -1,0 +1,30 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import java.util.List;
+
+import javax.faces.model.SelectItem;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.com.ambientinformatica.util.IEnum;
+
+public enum EnumUnidadeConservacaoTipoDocumento implements IEnum {
+
+    PENDENCIA("PENDENCIA"),
+    CANCELAMENTO("CANCELAMENTO"),
+    APROVACAO("APROVACAO");
+
+    private final String descricao;
+
+    private EnumUnidadeConservacaoTipoDocumento(String descricao) {
+        this.descricao = descricao;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public List<SelectItem> getList(){
+        return UtilFaces.getListEnum(EnumUnidadeConservacaoTipoDocumento.values());
+    }
+}

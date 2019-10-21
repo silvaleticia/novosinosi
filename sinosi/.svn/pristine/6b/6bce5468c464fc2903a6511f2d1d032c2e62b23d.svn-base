@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="/templateExterna.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:a="http://www.ambientinformatica.com.br/jsf2" xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de usuário" id="panelUsuario">
+			<a:field label="CPF">
+				<p:inputMask styleClass="obrigatorio" mask="999.999.999-99" value="#{UsuarioNovoControl.usuario.cpf}" style="width:200px;" />
+			</a:field>
+
+			<a:field label="RG(C.I)" spaceLeft="10px">
+				<p:inputText styleClass="obrigatorio" value="#{UsuarioNovoControl.usuario.rg}" style="width:200px;" />
+			</a:field>
+
+			<a:field label="Data de nascimento" spaceLeft="10px">
+				<p:inputMask styleClass="obrigatorio" value="#{UsuarioNovoControl.usuario.dataNascimento }" style="width:200px;" mask="99/99/9999">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputMask>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Nome">
+				<p:inputText styleClass="obrigatorio" value="#{UsuarioNovoControl.usuario.nome}" style="width:620px;" />
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="E-mail">
+				<p:inputText styleClass="obrigatorio" value="#{UsuarioNovoControl.usuario.email}" style="width:340px;" />
+			</a:field>
+
+			<a:field label="Telefone" spaceLeft="10px">
+				<p:inputText styleClass="obrigatorio" onkeydown="mascaraTelefone(this);" value="#{UsuarioNovoControl.usuario.telefone}" style="width:130px;" />
+			</a:field>
+
+			<a:field label="Celular" spaceLeft="10px">
+				<p:inputText styleClass="obrigatorio" onkeydown="mascaraTelefone(this);" value="#{UsuarioNovoControl.usuario.celular}" style="width:130px;" />
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Endereço">
+				<p:inputText styleClass="obrigatorio" value="#{UsuarioNovoControl.usuario.endereco}" style="width:480px;" />
+			</a:field>
+
+			<a:field label="CEP" spaceLeft="10px;">
+				<p:inputMask styleClass="obrigatorio" mask="99.999-999" value="#{UsuarioNovoControl.usuario.cep }" style="width:130px;" />
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Estado">
+				<p:selectOneMenu id="estado" styleClass="obrigatorio" value="#{UsuarioNovoControl.uf}" style="width:200px;">
+					<f:selectItems value="#{UsuarioNovoControl.ufs }" />
+					<p:ajax event="change" listener="#{UsuarioNovoControl.listaMunicipiosPorUfs}" update="estado municipio" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field label="Município" spaceLeft="10px">
+				<p:selectOneMenu id="municipio" styleClass="obrigatorio" converter="objectConverter" value="#{UsuarioNovoControl.usuario.municipio}" style="width:410px" filter="true" filterMatchMode="contains">
+					<f:selectItem itemLabel="Selecione o município" noSelectionOption="true" />
+					<f:selectItems value="#{UsuarioNovoControl.municipios}" var="municipio" itemLabel="#{municipio.descricao}" itemValue="#{municipio}" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Senha">
+				<p:password style="width:305px" styleClass="obrigatorio" id="senhaEmpreendedor" value="#{UsuarioNovoControl.usuario.senha}" feedback="true" inline="true" promptLabel="Digite uma senha segura" goodLabel="Boa"
+					weakLabel="Razoável" strongLabel="Excelente" />
+			</a:field>
+
+			<a:field label="Confirmar senha" spaceLeft="10px">
+				<p:password  style="width:305px" styleClass="obrigatorio" id="confirmarSenhaEmpreendedor" value="#{UsuarioNovoControl.confirmarSenha}" />
+			</a:field>
+
+			<a:newLine />
+
+			<h3 style="color: red">Observações:</h3>
+			<ul style="width: 600px; text-align: justify;">
+				<li>A senha do Unidade de Conservação é individual e intransferível e configura a assinatura eletrônica da pessoa física que a cadastrou, podendo ser alterada a qualquer momento pelo seu detentor.</li>
+				<li>Alertamos que caberá exclusivamente ao usuário toda responsabilidade decorrente do uso indevido da senha, que deverá ser guardada em total segurança.</li>
+				<li>Será enviado um e-mail para confirmação desta solicitação.</li>
+				<li>É necessário acessar o link disponível no e-mail de confirmação para que você possa confirmar o seu cadastro.</li>
+				<li><b>CÓDIGO PENAL BRASILEIRO</b> - Crime de Falsidade Ideológica: Art. 299 - Omitir, em documento público ou particular, declaração que dele devia constar, ou nele inserir ou fazer inserir
+					declaração falsa ou diversa da que devia ser escrita, com o fim de prejudicar direito, criar obrigação ou alterar a verdade sobre fato juridicamente relevante.</li>
+			</ul>
+
+			<a:field>
+				<p:commandButton id="btnSalvarEmpreendedor" actionListener="#{UsuarioNovoControl.confirmarNovoUsuario}" value="Salvar" icon="ui-icon-disk" update="panelUsuario" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton id="btnLimparEmpreendedor" actionListener="#{UsuarioNovoControl.limpar}" update="panelUsuario" value="Limpar" icon="ui-icon-trash" ajax="false" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Pagina inicial" onclick="document.location.href='sair.jsp'" immediate="true" icon="ui-icon-home" />
+			</a:field>
+			<a:newLine />
+		</p:panel>
+
+		<p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+			<p:graphicImage url="/resources/imagens/ajax.gif" />
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

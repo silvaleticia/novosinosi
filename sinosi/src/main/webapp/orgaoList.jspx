@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+	
+	
+		<p:panel widgetVar="panelOrgao" id="horizontal"
+			header="Cadastro de Órgãos ou Empresas que estão atuando no local">
+
+			<a:field label="Tipo de Órgaos/Empresas">
+				<p:inputText styleClass="obrigatorio" id="chave"
+					value="#{OrgaoAtuandoNoLocalControl.orgaoAtuandoNoLocal.descricao}" style="width:200px;" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton id="btnPesquisar"
+					actionListener="#{OrgaoAtuandoNoLocalControl.listar }"
+					icon="ui-icon-search" value="Pesquisar" ajax="false" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton id="btnNovo" action="orgao?faces-redirect=true"
+					icon="ui-icon-plus" value="Cadastrar" />
+			</a:field>
+			<a:newLine />
+		</p:panel>
+
+		<p:dataTable id="tblOrgao" value="#{OrgaoAtuandoNoLocalControl.orgaos}"
+			var="orgao" emptyMessage="Sem registros">
+			<f:facet name="header">
+				<h:outputText value="òrgãos cadastrados" />
+			</f:facet>
+			<p:column headerText="Tipo de Órgão"
+				sortBy="#{orgao.descricao }">
+				<p:outputLabel value="#{orgao.descricao }" />
+			</p:column>
+			
+			<p:column headerText="Editar" style="width:70px;">
+				<p:commandButton id="alterOrgao" icon="ui-icon-pencil"
+					action="orgao?faces-redirect=true" update="orgao tblOrgao"
+					title="Editar"
+					actionListener="#{OrgaoAtuandoNoLocalControl.editarOrgao }">
+					<f:param name="orgao" value="#{orgao}" id="orgao" />
+				</p:commandButton>
+			</p:column>
+			<p:column headerText="Excluir" style="width:70px;">
+				<p:commandButton id="btnConfirmarExclusao"
+					onclick="PF('confirmacaoExclusao').show();" icon="ui-icon-trash"
+					update="tblOrgao">
+					<f:setPropertyActionListener value="#{orgao}"
+						target="#{OrgaoAtuandoNoLocalControl.orgaoExcluir }" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+
+		<p:confirmDialog message="Confirma a exclusão deste registro?"
+			header="Confirmação de exclusão" severity="alert"
+			widgetVar="confirmacaoExclusao">
+			<p:commandButton id="btnSim" value="Sim"
+				oncomplete="PF('confirmacaoExclusao').hide();"
+				actionListener="#{OrgaoAtuandoNoLocalControl.excluir }" update="tblOrgao" />
+			<p:commandButton id="btnNao" value="Não"
+				onclick="PF('confirmacaoExclusao').hide();" type="button" />
+		</p:confirmDialog>
+
+		
+	</ui:define>
+</ui:composition>

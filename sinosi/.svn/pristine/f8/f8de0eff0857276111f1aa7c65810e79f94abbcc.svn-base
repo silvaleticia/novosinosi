@@ -1,0 +1,27 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import br.com.ambientinformatica.util.IEnum;
+
+public enum EnumTipoLei implements IEnum {
+
+    LEI_FEDERAL_ESTADUAL("Lei Federal nº 9985/2000 e Lei Estadual nº 14247/2002",0),
+    LEI_COMPLEMENTAR("Lei Complementar nº 90/2011",1);
+
+    private final String descricao;
+    private final int grupoLei;
+
+    private EnumTipoLei(String descricao, int grupoLei) {
+        this.descricao = descricao;
+        this.grupoLei = grupoLei;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public int getGrupoLei() {
+        return grupoLei;
+    }
+
+}

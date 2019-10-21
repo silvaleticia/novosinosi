@@ -1,0 +1,49 @@
+--SQL já executados em produção, sem pendência para a proxima versao.
+ALTER TABLE unidadeconservacao ADD COLUMN "dataatocriacao" date;
+COMMENT ON COLUMN unidadeconservacao."dataatocriacao"
+  IS 'Data do ato de criacao';
+
+ALTER TABLE unidadeconservacao ALTER COLUMN docconsultapublica_id SET NOT NULL;
+ALTER TABLE unidadeconservacao ALTER COLUMN docconsultapublica_id DROP NOT NULL;
+ALTER TABLE unidadeconservacao ALTER COLUMN docconvocacaoconsultapublica_id DROP NOT NULL;
+ALTER TABLE unidadeconservacao ALTER COLUMN docestudocriacao_id DROP NOT NULL;
+ 
+
+CREATE TABLE unidadeconservacao
+(
+  id integer NOT NULL,
+  codigosolicitacao character varying(255) NOT NULL,
+  dataregistro timestamp without time zone,
+  esferaadministrativa character varying(255),
+  geometria geometry,
+  isconfirmado boolean,
+  municipioibge character varying(255),
+  nomeunidade character varying(255),
+  atoslegais character varying(255),
+  CONSTRAINT unidadeconservacao_pkey PRIMARY KEY (id),
+  CONSTRAINT unidadeconservacao_codigosolicitacao_key UNIQUE (codigosolicitacao)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE unidadeconservacao
+  OWNER TO postgres;
+  
+--BEGIN UnidadeConservacao_UPDATE
+ALTER TABLE unidadeconservacaodocumento ADD COLUMN unidadeconservacao_id integer;
+BEGIN TRANSACTION;
+
+ UPDATE unidadeconservacaodocumento set
+  Unidadeconservacao_id = S.unidadeconservacao_id
+   FROM
+  (
+   SELECT ucud.unidadeconservacao_id, ucud.docpareceres_id  FROM unidadeconservacao_unidadeconservacaodocumento ucud
+    LEFT JOIN unidadeconservacaodocumento ucd on ucd.unidadeconservacao_id = ucud.unidadeconservacao_id 
+  ) AS S(unidadeconservacao_id)
+  WHERE S.docpareceres_id =  id;
+
+COMMIT;
+
+ALTER TABLE unidadeconservacaodocumento ADD CONSTRAINT fk1a564eda775d85e4 FOREIGN KEY (unidadeconservacao_id) REFERENCES unidadeconservacao (id) MATCH FULL;
+ALTER TABLE unidadeconservacaodocumento ALTER COLUMN unidadeconservacao_id SET NOT NULL;
+--END UnidadeConservacao_UPDATE

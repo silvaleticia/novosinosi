@@ -1,0 +1,210 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.com.ambientinformatica.ambientjsf.util.UtilFacesRelatorio;
+import br.gov.go.secima.unidadeconservacao.entidade.Documento;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumCategoriaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumEsferaAdministrativa;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumGrupoClassificacao;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumPapelUsuario;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumStatusUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoLei;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacao;
+import br.gov.go.secima.unidadeconservacao.persistencia.UnidadeConservacaoDao;
+
+@Controller("UnidadeConservacaoListControl")
+@Scope("conversation")
+public class UnidadeConservacaoListControl {
+
+    @Autowired
+    private UsuarioLogadoControl usuarioLogadoControl;
+
+    @Autowired
+    private UnidadeConservacaoDao unidadeConservacaoDao;
+
+    private EnumEsferaAdministrativa esferaAdministrativa;
+    private EnumCategoriaUnidade categoriaUnidade;
+    private EnumGrupoClassificacao grupoClassificacao;
+    private EnumTipoLei lei;
+    private String cpfCnpj;
+    private String status = "TODAS";
+    private String nome;
+    private StreamedContent pdfDocumento;
+    private List<UnidadeConservacao> unidadeConservacoes = new ArrayList<>();
+    private List<SelectItem> gruposClassificao = new ArrayList<>();
+    private List<SelectItem> categoriasUnidade = new ArrayList<>();
+
+    public void mostrarDocParecer(ActionEvent evt) {
+        try {
+            Documento documentoVisualizacao = (Documento) UtilFaces.getValorParametro(evt, "docVisualizarParecer");
+            if (documentoVisualizacao != null){
+                InputStream dbStream = new ByteArrayInputStream(documentoVisualizacao.getConteudo());
+                pdfDocumento = new DefaultStreamedContent(dbStream, "application/pdf", documentoVisualizacao.getNome());
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void listarUnidade() {
+        try {
+            EnumStatusUnidade enumStatus = null;
+            if(!"TODAS".equals(status)){
+                enumStatus = EnumStatusUnidade.valueOf(status);
+            }
+            unidadeConservacoes = unidadeConservacaoDao.listar(nome, enumStatus, cpfCnpj, usuarioLogadoControl.getUsuario(),
+                    esferaAdministrativa,categoriaUnidade,grupoClassificacao,lei);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void atualizarGrupoClassificacao() {
+        try {
+            this.gruposClassificao = new ArrayList<>();
+            if(this.lei != null){
+                for (EnumGrupoClassificacao valor : EnumGrupoClassificacao.values()) {
+                    if (valor.getGrupoLei() == this.lei.getGrupoLei()) {
+                        gruposClassificao.add(new SelectItem(valor, valor.getDescricao()));
+                    }
+                }
+                if(this.lei == EnumTipoLei.LEI_COMPLEMENTAR){
+                    setGrupoClassificacao(EnumGrupoClassificacao.NAO_SE_APLICA);
+                }
+            }
+            atualizarCategoriaUnidade();
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void atualizarCategoriaUnidade() {
+        try {
+            categoriasUnidade.clear();
+            if(this.grupoClassificacao != null){
+                for (EnumCategoriaUnidade valor : EnumCategoriaUnidade.values()) {
+                    if (valor.getGrupo() == this.grupoClassificacao.getGrupo()) {
+                        categoriasUnidade.add(new SelectItem(valor, valor.getDescricao()));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+    
+    public void imprimirRelatorio() {
+        try {
+            if(this.unidadeConservacoes.isEmpty()){
+                listarUnidade();
+            }
+            UtilFacesRelatorio.gerarRelatorioFaces("jasper/unidades.jasper", this.unidadeConservacoes, new HashMap<String, Object>());
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public boolean isUsuarioAdminUnidade() {
+        return usuarioLogadoControl.getUsuario().getPapeis().contains(EnumPapelUsuario.ADMIN_UNIDADE) ? true : false;
+    }
+
+    public List<SelectItem> getEsferas() {
+        return UtilFaces.getListEnum(EnumEsferaAdministrativa.values());
+    }
+
+    public List<SelectItem> getLeis() {
+        return UtilFaces.getListEnum(EnumTipoLei.values());
+    }
+
+    public List<UnidadeConservacao> getUnidadeConservacoes() {
+        return unidadeConservacoes;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public StreamedContent getPdfDocumento() {
+        return pdfDocumento;
+    }
+
+    public void setPdfDocumento(StreamedContent pdfDocumento) {
+        this.pdfDocumento = pdfDocumento;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCpfCnpj() {
+        return cpfCnpj;
+    }
+
+    public void setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
+    }
+
+    public EnumEsferaAdministrativa getEsferaAdministrativa() {
+        return esferaAdministrativa;
+    }
+
+    public void setEsferaAdministrativa(EnumEsferaAdministrativa esferaAdministrativa) {
+        this.esferaAdministrativa = esferaAdministrativa;
+    }
+
+    public EnumCategoriaUnidade getCategoriaUnidade() {
+        return categoriaUnidade;
+    }
+
+    public void setCategoriaUnidade(EnumCategoriaUnidade categoriaUnidade) {
+        this.categoriaUnidade = categoriaUnidade;
+    }
+
+    public EnumGrupoClassificacao getGrupoClassificacao() {
+        return grupoClassificacao;
+    }
+
+    public void setGrupoClassificacao(EnumGrupoClassificacao grupoClassificacao) {
+        this.grupoClassificacao = grupoClassificacao;
+    }
+
+    public EnumTipoLei getLei() {
+        return lei;
+    }
+
+    public void setLei(EnumTipoLei lei) {
+        this.lei = lei;
+    }
+
+    public List<SelectItem> getGruposClassificao() {
+        return gruposClassificao;
+    }
+
+    public List<SelectItem> getCategoriasUnidade() {
+        return categoriasUnidade;
+    }
+
+}

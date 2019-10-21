@@ -1,0 +1,895 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<ui:define name="corpo">
+		<ui:insert name="cabecalho">
+			<script type="text/javascript">
+				function selecionaTabId(tabId) {
+					$(function() {
+						$(
+								"#formCorpo\\:tabCadastroUc ul li a[href=\"#formCorpo\\:tabCadastroUc\\:"
+										+ tabId + "\"]").click();
+					});
+				}
+			</script>
+		</ui:insert>
+
+		<p:panel widgetVar="panel" id="horizontal"
+			header="Cadastro de Unidade de Conservação">
+			<p:tabView id="tabCadastroUc" widgetVar="tabUC"
+				styleClass="fullscreen">
+				<p:ajax event="tabChange"
+					listener="#{UnidadeConservacaoControl.onTabChange}"
+					update=":formCorpo:tabCadastroUc:panelMapa" />
+				<p:tab id="tab1" title="Identificação">
+					<p:panel header="I - Identificação" id="painelIden">
+
+						<a:field label="Nome da Unidade de Conservação">
+							<p:inputText styleClass="obrigatorio"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.nomeUnidade }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;' : 'width:635px;color:black;background:white;'}"
+								 />
+						</a:field>
+
+						<a:newLine />
+						<a:field label="Atos Legais">
+							<p:inputText styleClass="obrigatorio" id="atosLegais"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.atosLegais }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;' : 'width:635px;color:black;background:white;'}" />
+							<p:watermark for="atosLegais"
+								value="Exemplo: Decreto nº 23/N, de 19/02/1998" />
+						</a:field>
+
+						<a:newLine />
+
+						<a:field label="Data criação (ATO)">
+							<p:inputMask styleClass="obrigatorio"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacao }"
+								style="width:210px;" mask="99/99/9999"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								id="dataDoAto">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>
+						</a:field>
+
+						<a:field label="Situação Fundiaria" spaceLeft="10px">
+							<p:inputText styleClass="obrigatorio" id="situacaoFun"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.situacaoFundiaria }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:415px;background:#F0F0F0;' : 'width:415px;color:black;background:white;'}"
+								maxlength="255" />
+							<p:watermark for="situacaoFun" value="Exemplo: 100%" />
+						</a:field>
+
+						<a:newLine />
+
+						<a:field label="Esfera Administrativa">
+							<p:selectOneMenu styleClass="obrigatorio" id="esfera"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.esferaAdministrativa }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:210px;background:#F0F0F0;' : 'width:210px;color:black;background:white;'}">
+								<f:selectItem itemLabel="Selecione" />
+								<f:selectItems value="#{UnidadeConservacaoControl.esferas}" />
+							</p:selectOneMenu>
+						</a:field>
+
+						<a:field label="Bioma" spaceLeft="10px">
+							<p:selectOneMenu styleClass="obrigatorio" id="bioma"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.bioma }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="width:210px;">
+								<f:selectItem itemLabel="Selecione" />
+								<f:selectItems value="#{UnidadeConservacaoControl.biomas }" />
+							</p:selectOneMenu>
+						</a:field>
+
+						<a:field label="Área (hectares)" spaceLeft="10px;">
+							<p:inputText id="Area" styleClass="obrigatorio"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.areaHectares }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								maxlength="12"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:200px;background:#F0F0F0;resize:none;text-align: right;' : 'width:200px;color:black;background:white;resize:none;text-align: right;'}"
+								onkeypress="mascara(this, moeda);">
+								<f:convertNumber maxFractionDigits="2" minIntegerDigits="1"
+									locale="pt_br" />
+							</p:inputText>
+						</a:field>
+
+						<a:newLine />
+
+						<a:field label="Enquadramento">
+							<p:selectOneMenu styleClass="obrigatorio" id="soLei"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.lei }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="width:640px;">
+								<f:selectItem itemLabel="Selecione" />
+								<f:selectItems value="#{UnidadeConservacaoControl.leis}" />
+								<p:ajax update="grupoclass categoria"
+									listener="#{UnidadeConservacaoControl.atualizarGrupoClassificacao }" />
+							</p:selectOneMenu>
+						</a:field>
+
+						<a:newLine />
+
+						<a:field label="Grupo Classificação">
+							<p:selectOneMenu styleClass="obrigatorio" id="grupoclass"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.grupoClassificacao }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="width:210px;">
+								<f:selectItem itemLabel="Selecione" />
+								<f:selectItems
+									value="#{UnidadeConservacaoControl.gruposClassificao}" />
+								<p:ajax update="categoria"
+									listener="#{UnidadeConservacaoControl.atualizarCategoriaUnidade }" />
+							</p:selectOneMenu>
+						</a:field>
+
+						<a:field label="Categoria" spaceLeft="10px;">
+							<p:selectOneMenu styleClass="obrigatorio"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.categoriaUnidade }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								id="categoria" style="width:420px;" immediate="true">
+								<f:selectItem itemLabel="Selecione" />
+								<f:selectItems
+									value="#{UnidadeConservacaoControl.categoriasUnidade }" />
+								<p:ajax event="change" immediate="false"
+									update="@this pnlOrgaoProprietario"
+									listener="#{UnidadeConservacaoControl.atualizarPanelProprietario}" />
+							</p:selectOneMenu>
+						</a:field>
+
+						<a:newLine />
+						<a:newLine />
+
+						<p:panel id="pnlOrgaoProprietario" header="Orgão/Proprietário">
+
+							<p:commandButton id="btnAbrirDialogPessoa" icon="ui-icon-plus"
+								onclick="PF('dlgPessoa').show();"
+								value="Selecionar Orgão/Proprietário"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								title="Clique aqui para adicionar um Orgão/Proprietário" />
+
+							<a:newLine />
+							<a:newLine />
+
+							<p:panelGrid columns="2"
+								rendered="#{UnidadeConservacaoControl.unidadeConservacao.orgaoOuProprietario != null}"
+								style="width:630px;">
+								<b> CPF/CNPJ:</b>
+								<p:outputLabel
+									value="#{UnidadeConservacaoControl.unidadeConservacao.orgaoOuProprietario.cpfCnpj}" />
+								<b> Nome / Razão social:</b>
+								<p:outputLabel
+									value="#{UnidadeConservacaoControl.unidadeConservacao.orgaoOuProprietario.nome}" />
+							</p:panelGrid>
+
+							<a:newLine />
+
+							<p:outputPanel
+								rendered="#{UnidadeConservacaoControl.liberaCadastroImovel}"
+								id="opImovel">
+
+								<a:field label="Tipo de imóvel">
+									<p:selectOneRadio
+										value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.tipoImovel}"
+										disabled="#{UnidadeConservacaoControl.bloqVisualizacao}">
+										<f:selectItem itemLabel="Imóvel Urbano" itemValue="URBANO" />
+										<f:selectItem itemLabel="Imóvel Rural" itemValue="RURAL" />
+										<f:ajax event="change" immediate="true" render="opImovel" />
+									</p:selectOneRadio>
+								</a:field>
+
+								<a:newLine />
+								<a:newLine />
+
+								<a:field label="Número de inscrição/IPTU">
+									<p:inputText style="width:190px" id="numeroInscricaoUrbano"
+										value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.numeroInscricaoIncra}"
+										disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+								</a:field>
+
+								<a:field label="Nome / Descrição da propriedade"
+									spaceLeft="10px;">
+									<p:inputText styleClass="obrigatorio"
+										value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.nome}"
+										style="width:430px"
+										disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+								</a:field>
+
+								<a:newLine />
+
+								<a:field label="Endereço">
+									<p:inputText styleClass="obrigatorio"
+										value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.endereco }"
+										style="width:630px;"
+										disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+								</a:field>
+
+								<a:newLine />
+
+								<a:field label="Município">
+									<p:selectOneMenu styleClass="obrigatorio"
+										id="municipioImovelUrbano" converter="objectConverter"
+										value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.municipio}"
+										style="width:520px" filter="true" filterMatchMode="contains"
+										disabled="#{UnidadeConservacaoControl.bloqVisualizacao}">
+										<f:selectItem itemLabel="Selecione o município"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems value="#{UnidadeConservacaoControl.municipios}"
+											var="municipioImovel"
+											itemLabel="#{municipioImovel.descricao}"
+											itemValue="#{municipioImovel}" />
+									</p:selectOneMenu>
+								</a:field>
+
+								<a:field label="CEP" spaceLeft="10px;">
+									<p:inputMask mask="99.999-999"
+										value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.cep}"
+										style="width:100px;"
+										disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+								</a:field>
+
+								<a:newLine />
+
+								<h:panelGroup id="panelRural"
+									rendered="#{UnidadeConservacaoControl.unidadeConservacao.imovel.tipoImovel eq 'RURAL' }">
+									<a:field label="Matrícula">
+										<p:inputText
+											value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.matricula}"
+											style="width:130px"
+											disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+									</a:field>
+									<a:field label="Livro" spaceLeft="10px">
+										<p:inputText
+											value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.livro}"
+											style="width:60px"
+											disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+									</a:field>
+									<a:field label="Folha" spaceLeft="10px">
+										<p:inputText
+											value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.folha}"
+											style="width:50px"
+											disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+									</a:field>
+									<a:field label="Data registro" spaceLeft="10px">
+										<p:inputMask
+											value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.dataRegistro }"
+											style="width:110px;" mask="99/99/9999"
+											disabled="#{UnidadeConservacaoControl.bloqVisualizacao}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</p:inputMask>
+									</a:field>
+									<a:field label="Comarca" spaceLeft="10px">
+										<p:inputText
+											value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.comarca}"
+											style="width:240px"
+											disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+									</a:field>
+
+									<a:newLine />
+
+									<a:field label="Área total propriedade(ha)">
+										<p:inputText
+											value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.areaTotalHA}"
+											style="width:190px"
+											disabled="#{UnidadeConservacaoControl.bloqVisualizacao}">
+											<f:convertNumber pattern="#,##0.00" />
+										</p:inputText>
+									</a:field>
+
+									<a:field label="Área reserva legal(ha)" spaceLeft="10px">
+										<p:inputText
+											value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.areaReservaLegalHA}"
+											style="width:150px"
+											disabled="#{UnidadeConservacaoControl.bloqVisualizacao}">
+											<f:convertNumber pattern="#,##0.00" />
+										</p:inputText>
+									</a:field>
+
+									<a:field label="Nº de Recibo do CAR" spaceLeft="10px">
+										<p:inputText
+											value="#{UnidadeConservacaoControl.unidadeConservacao.imovel.numeroCAR }"
+											style="width:260px;"
+											disabled="#{UnidadeConservacaoControl.bloqVisualizacao}" />
+									</a:field>
+								</h:panelGroup>
+
+							</p:outputPanel>
+
+							<a:newLine />
+						</p:panel>
+
+						<a:newLine />
+					</p:panel>
+
+					<p:dialog id="dlgPessoa"
+						header="Consultar Orgãos e Proprietários Habilitados"
+						widgetVar="dlgPessoa" modal="true" minHeight="200" width="620">
+						<a:field label="CPF/CNPJ">
+							<p:inputText id="cpfCnpjOrgaoProprietario"
+								onkeypress="MascaraCPF_CNPJ(this , event);"
+								value="#{UnidadeConservacaoControl.cpfCnpj}" style="width:200px" />
+						</a:field>
+
+						<a:field spaceLeft="10px">
+							<p:commandButton
+								actionListener="#{UnidadeConservacaoControl.consultarPessoaCpfCnpj}"
+								icon="ui-icon-search" title="Pesquisar orgãos/proprietários"
+								update="tblListaPessoas" />
+						</a:field>
+						<a:newLine />
+						<a:newLine />
+
+						<p:dataTable id="tblListaPessoas" widgetVar="tblListaPessoas"
+							var="pessoa" style="width: 600px"
+							value="#{UnidadeConservacaoControl.pessoas}"
+							paginatorAlwaysVisible="false" emptyMessage="Sem registros"
+							rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							paginatorPosition="top">
+							<p:column headerText="CPF/CNPJ" style="width: 170px">
+								<p:outputLabel value="#{pessoa.cpfCnpj}" />
+							</p:column>s
+							<p:column headerText="Razão Social">
+								<p:outputLabel value="#{pessoa.nome}" />
+							</p:column>
+							<p:column style="text-align: center; width: 140px">
+								<p:commandButton value="Selecionar"
+									actionListener="#{UnidadeConservacaoControl.adicionarPessoa(pessoa)}"
+									oncomplete="PF('dlgPessoa').hide();"
+									update=":formCorpo:tabCadastroUc:pnlOrgaoProprietario" />
+							</p:column>
+						</p:dataTable>
+					</p:dialog>
+				</p:tab>
+
+				<p:tab id="tab2" title="Documentos">
+					<p:panel header="II - Documentos (obrigatórios)" id="painelDocs">
+						<p:panelGrid columns="2" style="width: 100%">
+							<p:panelGrid id="pnlDocumentosObrigatorios"
+								styleClass="documentoGrid" columns="3">
+
+								<p:fileUpload id="docEstudoCriaco" mode="advanced"
+									dragDropSupport="true" auto="true"
+									disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+									fileUploadListener="#{UnidadeConservacaoControl.anexarDocEstudoCriacao}"
+									update="lbEstudoCriacao, btnEstudoCriacao"
+									invalidSizeMessage="Tamanho do arquivo ultrapassou os 70MB"
+									sizeLimit="73400320" multiple="true"
+									label="Adicionar Estudo de Criação"
+									allowTypes="/(\.|\/)(pdf)$/"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}" />
+
+								<p:outputLabel id="lbEstudoCriacao"
+									value="#{ ( UnidadeConservacaoControl.unidadeConservacao.docEstudoCriacao != null and UnidadeConservacaoControl.unidadeConservacao.docEstudoCriacao.conteudo != null  ) ? UnidadeConservacaoControl.unidadeConservacao.docEstudoCriacao.nome : 'Pendente' }"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}" />
+
+								<p:commandButton id="btnEstudoCriacao" value="Visualizar"
+									disabled="#{UnidadeConservacaoControl.unidadeConservacao.docEstudoCriacao.conteudo == null }"
+									actionListener="#{UnidadeConservacaoControl.mostrarDocumento('docEstudoCriacao') }"
+									ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}">
+									<p:fileDownload
+										value="#{UnidadeConservacaoControl.pdfDocumento}" />
+								</p:commandButton>
+
+
+								<p:fileUpload id="docConvocacaoPublica" mode="advanced"
+									dragDropSupport="true" auto="true"
+									disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+									fileUploadListener="#{UnidadeConservacaoControl.anexarDocConvocacaoConsultaPublica }"
+									invalidFileMessage="Formato de arquivo inválido."
+									invalidSizeMessage="Tamanho do arquivo ultrapassou os 15MB"
+									sizeLimit="15728640" multiple="true"
+									label="Adicionar convocação de consulta pública"
+									update="lbConvocacaoPublica, btnConvocacaoPublica"
+									allowTypes="/(\.|\/)(pdf)$/"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}" />
+
+								<p:outputLabel id="lbConvocacaoPublica"
+									value="#{UnidadeConservacaoControl.unidadeConservacao.docConvocacaoConsultaPublica.conteudo != null ? UnidadeConservacaoControl.unidadeConservacao.docConvocacaoConsultaPublica.nome : 'Pendente' }"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}" />
+
+								<p:commandButton id="btnConvocacaoPublica" value="Visualizar"
+									disabled="#{UnidadeConservacaoControl.unidadeConservacao.docConvocacaoConsultaPublica.conteudo == null }"
+									actionListener="#{UnidadeConservacaoControl.mostrarDocumento('docConvocacaoConsultaPublica') }"
+									ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}">
+									<p:fileDownload
+										value="#{UnidadeConservacaoControl.pdfDocumento}" />
+								</p:commandButton>
+
+
+								<p:fileUpload id="docConsultaPublica" mode="advanced"
+									dragDropSupport="true" auto="true"
+									disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+									fileUploadListener="#{UnidadeConservacaoControl.anexarDocConsultaPublica }"
+									update="lbConsultaPublica, btnConsultaPublica"
+									invalidSizeMessage="Tamanho do arquivo ultrapassou os 15MB"
+									sizeLimit="15728640" multiple="true"
+									label="Adicionar Consulta Pública" allowTypes="/(\.|\/)(pdf)$/"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}" />
+
+								<p:outputLabel id="lbConsultaPublica"
+									value="#{UnidadeConservacaoControl.unidadeConservacao.docConsultaPublica.conteudo != null ? UnidadeConservacaoControl.unidadeConservacao.docConsultaPublica.nome : 'Pendente' }"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}" />
+
+								<p:commandButton id="btnConsultaPublica" value="Visualizar"
+									disabled="#{UnidadeConservacaoControl.unidadeConservacao.docConsultaPublica.conteudo == null }"
+									actionListener="#{UnidadeConservacaoControl.mostrarDocumento('docConsultaPublica') }"
+									ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s"
+									rendered="#{not UnidadeConservacaoControl.unidadeConservacao.dataAtoCriacaoAnterior17072000}">
+									<p:fileDownload
+										value="#{UnidadeConservacaoControl.pdfDocumento}" />
+								</p:commandButton>
+
+
+								<p:fileUpload id="docLeiCriacao" mode="advanced"
+									dragDropSupport="true" auto="true"
+									disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+									fileUploadListener="#{UnidadeConservacaoControl.anexarDocLeiCriacao }"
+									update="lbLeiCriacao, btnLeiCriacao"
+									invalidSizeMessage="Tamanho do arquivo ultrapassou os 15MB"
+									sizeLimit="15728640" multiple="true"
+									label="Adicionar Decreto ou Lei de Criação"
+									allowTypes="/(\.|\/)(pdf)$/" />
+
+								<p:outputLabel id="lbLeiCriacao"
+									value="#{UnidadeConservacaoControl.unidadeConservacao.docLeiCriacao.conteudo != null ? UnidadeConservacaoControl.unidadeConservacao.docLeiCriacao.nome : 'Pendente' }" />
+
+								<p:commandButton id="btnLeiCriacao" value="Visualizar"
+									disabled="#{UnidadeConservacaoControl.unidadeConservacao.docLeiCriacao.conteudo == null }"
+									actionListener="#{UnidadeConservacaoControl.mostrarDocumento('docLeiCriacao') }"
+									ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+									icon="ui-icon-arrowthick-1-s">
+									<p:fileDownload
+										value="#{UnidadeConservacaoControl.pdfDocumento}" />
+								</p:commandButton>
+
+							</p:panelGrid>
+							<p:outputPanel>
+								<h3 style="margin-left: 20px">
+									<font color="red">Orientação referente a tamanho dos
+										arquivos:</font>
+								</h3>
+								<p style="margin-left: 20px">
+									1º Anexe somente arquivos do tipo PDF; <br />2º As folhas do
+									documento devem ser preferencialmente do tamanho A4; <br />3º
+									O arquivo "ESTUDO DE CRIAÇÃO" não poderá ultrapassar o limite
+									de 70MB; <br />3º Os demais arquivos o limite máximo é de
+									15MB; <br />4º Adicione somente um arquivo por vez. <br /> <a
+										href="doc/manual_docume_cadastro.pdf" target="blank"><font
+										color="blue">Clique aqui para ver o Guia de Instrução</font></a>
+								</p>
+							</p:outputPanel>
+						</p:panelGrid>
+					</p:panel>
+				</p:tab>
+				<p:tab id="tab3" title="Localização e Contato">
+					<p:panel header="Contato" id="painelLoc" style="width:100%;">
+
+						<a:field label="Endereço">
+							<p:inputText
+								value="#{UnidadeConservacaoControl.unidadeConservacao.endereco }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								maxlength="254"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;' : 'width:635px;color:black;background:white;'}" />
+						</a:field>
+
+						<a:newLine />
+
+						<a:field label="Cep:">
+							<p:inputMask mask="99.999-999"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.cep }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="width:150px" />
+						</a:field>
+
+						<a:field label="Município sede" spaceLeft="10px;">
+							<p:selectOneMenu filter="true" filterMatchMode="startsWith"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.municipio }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="width:480px;" id="municipios1"
+								converter="objectConverter">
+								<f:selectItem itemLabel="Selecione" />
+								<f:selectItems value="#{UnidadeConservacaoControl.municipios }" />
+							</p:selectOneMenu>
+						</a:field>
+
+						<a:newLine />
+
+						<a:field label="Telefone da Unidade">
+							<p:inputMask mask="(99) 9999-9999"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.telefone }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="width:150px"></p:inputMask>
+						</a:field>
+
+						<a:field label="E-mail da Unidade de Conservação:"
+							spaceLeft="10px">
+							<p:inputText
+								value="#{UnidadeConservacaoControl.unidadeConservacao.email }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:480px;background:#F0F0F0;' : 'width:480px;color:black;background:white;'}" />
+						</a:field>
+						<a:newLine />
+					</p:panel>
+					<p:panel id="muniAbran"
+						header="Localização/Municipio(s) Abrangido(s)">
+
+						<a:field label="Município">
+							<p:selectOneMenu filter="true" filterMatchMode="startsWith"
+								value="#{UnidadeConservacaoControl.municipio }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="width:400px;" id="municipios" converter="objectConverter">
+								<f:selectItem itemLabel="Selecione" />
+								<f:selectItems value="#{UnidadeConservacaoControl.municipios}" />
+							</p:selectOneMenu>
+						</a:field>
+
+						<a:field spaceLeft="10px;">
+							<p:commandButton id="adicionar" value="Adicionar"
+								icon="ui-icon-plus"
+								actionListener="#{UnidadeConservacaoControl.addMunicipio }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								update="tbmunicipios" />
+						</a:field>
+
+						<a:newLine />
+						<a:newLine />
+
+						<p:dataTable styleClass="borderless"
+							value="#{UnidadeConservacaoControl.unidadeConservacao.municipios }"
+							var="muni" emptyMessage="Sem registros" id="tbmunicipios">
+							<p:column headerText="Municipio(s)">
+								<h:outputText value="#{muni.descricao} - #{muni.uf}" />
+							</p:column>
+							<p:column
+								rendered="#{!UnidadeConservacaoControl.bloqVisualizacao}"
+								style="width:50px;text-align: center;">
+								<p:commandButton icon="ui-icon-trash"
+									oncomplete="confirmCampo.show()">
+									<f:setPropertyActionListener
+										target="#{UnidadeConservacaoControl.municipioExcluir }"
+										value="#{muni }" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<a:newLine />
+					</p:panel>
+
+					<p:confirmDialog message="Confirma a exclusão deste Campo?"
+						header="Confirmação" severity="alert" widgetVar="confirmCampo">
+						<p:commandButton value="Confirmar"
+							action="#{UnidadeConservacaoControl.excluirMunicipio}"
+							oncomplete="confirmCampo.hide()"
+							update=":formCorpo:tabCadastroUc:tbmunicipios" />
+						<p:commandButton value="Cancelar" onclick="confirmCampo.hide()" />
+					</p:confirmDialog>
+				</p:tab>
+				<p:tab id="tab4" title="Características e Objetivo">
+					<p:panel header="IV - Características/Objetivo" id="painelCarac"
+						style="width:100%;">
+
+						<a:field label="Características Físicas:">
+							<p:inputTextarea styleClass="obrigatorio" rows="2" cols="77"
+								counter="counterCaracFisicas"
+								counterTemplate="{0} caracteres restantes." maxlength="2048"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.caracteristicaFisica}"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;resize:none;' : 'width:635px;color:black;background:white;resize:none;'}" />
+						</a:field>
+						<a:newLine />
+						<h:outputText styleClass="text-input" id="counterCaracFisicas" />
+
+						<a:newLine />
+						<a:newLine />
+
+						<a:field label="Características Biológicas:">
+							<p:inputTextarea styleClass="obrigatorio" rows="2" cols="77"
+								counter="counterCaracBiologicas"
+								counterTemplate="{0} caracteres restantes." maxlength="2048"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.caracteristicaBiologica}"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;resize:none;' : 'width:635px;color:black;background:white;resize:none;'}" />
+						</a:field>
+						<a:newLine />
+						<h:outputText styleClass="text-input" id="counterCaracBiologicas" />
+
+						<a:newLine />
+						<a:newLine />
+
+						<a:field label="Características Turísticas:">
+							<p:inputTextarea styleClass="obrigatorio" rows="2" cols="77"
+								counter="counterCaracTuristicas"
+								counterTemplate="{0} caracteres restantes." maxlength="2048"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.caracteristicaTuristica}"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;resize:none;' : 'width:635px;color:black;background:white;resize:none;'}" />
+						</a:field>
+						<a:newLine />
+						<h:outputText styleClass="text-input" id="counterCaracTuristicas" />
+
+						<a:newLine />
+						<a:newLine />
+
+						<a:field label="Características Gerenciais:">
+							<p:inputTextarea styleClass="obrigatorio" rows="2" cols="77"
+								counter="counterCaracGerenciais"
+								counterTemplate="{0} caracteres restantes." maxlength="2048"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.caracteristicaGerencial}"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;resize:none;' : 'width:635px;color:black;background:white;resize:none;'}" />
+						</a:field>
+						<a:newLine />
+						<h:outputText styleClass="text-input" id="counterCaracGerenciais" />
+
+						<a:newLine />
+						<a:newLine />
+
+						<a:field label="Objetivos:">
+							<p:inputTextarea styleClass="obrigatorio" rows="2" cols="77"
+								counter="counterObjetivos"
+								counterTemplate="{0} caracteres restantes." maxlength="2048"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.objetivos}"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;resize:none;' : 'width:635px;color:black;background:white;resize:none;'}" />
+						</a:field>
+						<a:newLine />
+						<h:outputText styleClass="text-input" id="counterObjetivos" />
+
+						<a:newLine />
+						<a:newLine />
+
+						<a:field label="Observações(Opcional):">
+							<p:inputTextarea rows="2" cols="77" counter="counterObservacoes"
+								counterTemplate="{0} caracteres restantes." maxlength="2048"
+								value="#{UnidadeConservacaoControl.unidadeConservacao.observacoes}"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								style="#{UnidadeConservacaoControl.bloqVisualizacao ? 'width:635px;background:#F0F0F0;resize:none;' : 'width:635px;color:black;background:white;resize:none;'}" />
+						</a:field>
+						<a:newLine />
+						<h:outputText styleClass="text-input" id="counterObservacoes" />
+						<a:newLine />
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tab5" title="Mapa (Geometria)">
+					<p:panel id="panelMapa"
+						header="Geometria da Unidade de Conservação">
+						<ul style="text-align: justify;">
+							<li>Para importar um arquivo do tipo <b>Shapefile</b>,
+								clique no botão <i class="fa fa-file-zip-o fa-lg"></i> presente
+								na barra de ferramentas à esquerda ou arraste e solte o
+								shapefile para à área do mapa. O arquivo precisa conter o
+								conjunto de arquivos <b>SHP, SHX, DBF e PRJ</b> devidamente
+								compactados dentro de um arquivo ZIP e utilizar sistema de
+								coordenadas geográficas e datum SIRGAS 2000 (EPSG:4674);
+							</li>
+							<li>Para importar arquivos nos formatos <b>*.csv</b> ou <b>*.txt</b>
+								clique no botão <i class="fa fa-file-text fa-lg"></i> presente
+								na barra de ferramentas à esquerda;
+							</li>
+							<li>Para inserir os <b>vertices manualmente</b> clique no
+								botão <i class="fa fa-plus fa-lg"></i> presente na barra de
+								ferramentas à esquerda;
+							</li>
+						</ul>
+
+						<a:field>
+							<p:commandButton id="salvarEdicao" value="Salvar Cadastro"
+								icon="ui-icon-disk"
+								actionListener="#{UnidadeConservacaoControl.salvarUnidadePendente }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								rendered="#{(UnidadeConservacaoControl.unidadeConservacao.status == 'PENDENTE')}"
+								ajax="false" update=":formCorpo:panel" />
+						</a:field>
+						
+						<a:field>
+							<p:commandButton id="salvarAdmin" value="Salvar Sem Análise"
+								icon="ui-icon-disk"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								action="#{UnidadeConservacaoControl.salvarUnidadeSemAnalise }"
+								rendered="#{UnidadeConservacaoListControl.usuarioAdminUnidade}"
+								ajax="false" update=":formCorpo:panel" />
+						</a:field>
+
+						<a:field spaceLeft="15px">
+							<p:commandButton id="salvarAnalise"
+								value="Concluir Cadastro e Enviar Para Análise"
+								icon="ui-icon-disk"
+								action="#{UnidadeConservacaoControl.salvarUnidadeEnviarParaAnalise }"
+								disabled="#{UnidadeConservacaoControl.bloqVisualizacao}"
+								rendered="#{UnidadeConservacaoControl.unidadeConservacao.status == 'PENDENTE'}"
+								ajax="false" />
+						</a:field>
+
+						<a:field spaceLeft="15px">
+							<p:splitButton value="Download" icon="ui-icon-arrowthickstop-1-s">
+								<p:menuitem value="Shapefile"
+									action="#{UnidadeConservacaoControl.baixarShapeFile}"
+									icon=" ui-icon-suitcase" />
+								<p:menuitem value="KML"
+									action="#{UnidadeConservacaoControl.baixarKml}"
+									icon="ui-icon-document" />
+							</p:splitButton>
+						</a:field>
+
+						<a:newLine />
+						<a:newLine />
+
+						<h:panelGroup layout="block"
+							rendered="#{UnidadeConservacaoControl.urlIframe != null }"
+							style="height:500px;">
+							<iframe id="frameCarcara"
+								src="#{UnidadeConservacaoControl.urlIframe}" frameBorder="0"
+								style="margin-left: 5px; border: 1px solid #33cc99; overflow: hidden;"
+								height="100%" width="100%" />
+						</h:panelGroup>
+						<a:newLine />
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tab6" title="Pareceres">
+					<p:panel id="panelParecer"
+						rendered="#{(securityScope.userInRole['ADMIN,ADMIN_UNIDADE'])}"
+						header="Analise da Unidade de Conservação">
+
+						<a:field label="Tipo de Parecer">
+							<p:selectOneMenu style="width:300px;" id="docParecerTipo"
+								value="#{UnidadeConservacaoControl.docParecerTipo}">
+								<f:selectItems
+									value="#{UnidadeConservacaoControl.docParecerTipo.list}" />
+								<f:ajax update="panelParecer" />
+							</p:selectOneMenu>
+						</a:field>
+
+						<a:field spaceLeft="20px;">
+							<p:fileUpload id="uploadParecer" mode="advanced" auto="true"
+								label="Anexar"
+								fileUploadListener="#{UnidadeConservacaoControl.anexarDocParecer}"
+								process="docParecerTipo" immediate="true" sizeLimit="5242880"
+								invalidSizeMessage="Arquivo com tamanho superior a 5MB. Converta em um arquivo menor."
+								update="panelParecer" />
+						</a:field>
+
+						<a:field label="Anexo" spaceLeft="20px;"
+							rendered="#{not empty UnidadeConservacaoControl.docParecer and not empty UnidadeConservacaoControl.docParecer.nome}">
+							<h:outputText
+								value="#{UnidadeConservacaoControl.docParecer.nome}"
+								style="font-weight:bold;"></h:outputText>
+						</a:field>
+
+						<a:field label="Ação" spaceLeft="20px;">
+							<p:commandButton id="permitir" value="Permitir Unidade"
+								action="#{UnidadeConservacaoControl.permitirUnidade}"
+								update="panelParecer panelPareceres" immediate="true"
+								rendered="#{UnidadeConservacaoControl.docParecerTipo eq 'APROVACAO' and (not empty UnidadeConservacaoControl.docParecer and not empty UnidadeConservacaoControl.docParecer.nome)}" />
+							<p:commandButton id="devolver" value="Devolver como pendente"
+								action="#{UnidadeConservacaoControl.devolverUnidade}"
+								update="panelParecer panelPareceres" immediate="true"
+								oncomplete="devolveUnidadeDialog.show()"
+								rendered="#{UnidadeConservacaoControl.docParecerTipo eq 'PENDENCIA' and (not empty UnidadeConservacaoControl.docParecer and not empty UnidadeConservacaoControl.docParecer.nome)}" />
+							<p:commandButton id="cancelar" value="Cancelar Unidade"
+								action="#{UnidadeConservacaoControl.cancelarUnidade}"
+								update="panelParecer panelPareceres" immediate="true"
+								rendered="#{UnidadeConservacaoControl.docParecerTipo eq 'CANCELAMENTO' and (not empty UnidadeConservacaoControl.docParecer and not empty UnidadeConservacaoControl.docParecer.nome)}" />
+
+							<p:spacer width="10px;" />
+							<p:commandButton id="cancelarAcao" value="DESFAZER"
+								update="panelParecer"
+								action="#{UnidadeConservacaoControl.cancelarAnexarDocParecer}"
+								rendered="#{not empty UnidadeConservacaoControl.docParecer and not empty UnidadeConservacaoControl.docParecer.nome}" />
+						</a:field>
+
+						<a:newLine />
+
+					</p:panel>
+
+					<p:panel id="panelPareceres" header="Histórico de Analise">
+						<p:dataTable id="dtPareceres"
+							value="#{UnidadeConservacaoControl.unidadeConservacao.docParecerList}"
+							var="parecer" emptyMessage="Não há pareceres cadastrados.">
+							<p:column headerText="Parecer">
+								<h:outputText value="#{parecer.nome}"></h:outputText>
+							</p:column>
+							<p:column headerText="Data Anexo">
+								<h:outputText value="#{parecer.dataDocumento}">
+									<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"></f:convertDateTime>
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Tipo" style="width:200px;">
+								<h:outputText value="#{parecer.status}" />
+							</p:column>
+							<p:column style="width:60px;">
+								<p:commandButton id="btnVisualizarDocumento"
+									icon="ui-icon-arrowthick-1-s" title="Visualizar documento"
+									ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+									actionListener="#{UnidadeConservacaoControl.mostrarDocParecer}">
+									<f:param name="visualizarParecer" value="#{parecer}"
+										id="visualizarParecer" />
+									<p:fileDownload
+										value="#{UnidadeConservacaoControl.pdfDocumento}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<a:newLine />
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="tab7" title="Usuário Responsável"
+					rendered="#{securityScope.userInRole['ADMIN,ADMIN_UNIDADE']}">
+					<p:panel header="USUÁRIO RESPONSÁVEL PELO CADASTRO">
+						<p:panelGrid id="pgUsuario" columns="5" style="width:800px;">
+							<b> CPF:</b>
+							<p:outputLabel
+								value="#{UnidadeConservacaoControl.unidadeConservacao.usuario.cpf}" />
+							<b> Nome:</b>
+							<p:outputLabel
+								value="#{UnidadeConservacaoControl.unidadeConservacao.usuario.nome}" />
+							<p:commandButton id="btnAbrirDialogUsuario"
+								icon="ui-icon-shuffle" value="Alterar Usuário"
+								onclick="PF('dlgUsuario').show();"
+								title="Alterar usuário responsável pelo Receptor" />
+						</p:panelGrid>
+					</p:panel>
+
+				</p:tab>
+			</p:tabView>
+
+		</p:panel>
+
+		<p:dialog id="dlgUsuario" header="Pesquisar Usuário"
+			widgetVar="dlgUsuario" modal="true" minHeight="200" width="700">
+			
+			<p:panel id="pnDialogUsuario">
+				<a:field label="CPF">
+					<p:inputMask mask="999.999.999-99"
+						value="#{UnidadeConservacaoControl.cpfUsuario}"
+						style="width:150px;" />
+				</a:field>
+
+				<a:field spaceLeft="10px">
+					<p:commandButton
+						actionListener="#{UnidadeConservacaoControl.consultarUsuarioPorCPF}"
+						icon="ui-icon-search" title="Pesquisar usuários"
+						update=":formCorpo:pnDialogUsuario" />
+				</a:field>
+
+				<a:newLine />
+				<a:newLine />
+
+				<p:panelGrid id="pgUsuarioDialog" columns="5"
+					rendered="#{not empty UnidadeConservacaoControl.usuarioAlterar.cpf}">
+					<b> CPF:</b>
+					<p:outputLabel
+						value="#{UnidadeConservacaoControl.usuarioAlterar.cpf}" />
+					<b> Razão social:</b>
+					<p:outputLabel
+						value="#{UnidadeConservacaoControl.usuarioAlterar.nome}" />
+					<p:commandButton value="Alterar"
+						actionListener="#{UnidadeConservacaoControl.alterarUsuario}"
+						update=":formCorpo:tabCadastroUc:tab7 :formCorpo:pnDialogUsuario"
+						oncomplete="PF('dlgUsuario').hide();" />
+				</p:panelGrid>
+			</p:panel>
+		</p:dialog>
+
+		<f:verbatim rendered="#{not empty UnidadeConservacaoControl.tabAtiva}">
+			<script type="text/javascript">
+				selecionaTabId("#{UnidadeConservacaoControl.tabAtiva}");
+			</script>
+		</f:verbatim>
+	</ui:define>
+</ui:composition>

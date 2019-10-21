@@ -1,0 +1,766 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.TabChangeEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.com.ambientinformatica.jpa.exception.ValidacaoException;
+import br.com.ambientinformatica.util.UtilLog;
+import br.gov.go.secima.unidadeconservacao.entidade.Documento;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumBiomaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumCategoriaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumEsferaAdministrativa;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumGrupoClassificacao;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumStatusUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoLei;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUf;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUnidadeConservacaoTipoDocumento;
+import br.gov.go.secima.unidadeconservacao.entidade.Imovel;
+import br.gov.go.secima.unidadeconservacao.entidade.Municipio;
+import br.gov.go.secima.unidadeconservacao.entidade.Pessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacao;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacaoDocumento;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.persistencia.MunicipioDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.ParametroDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.PessoaDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.UnidadeConservacaoDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.UsuarioDao;
+import br.gov.go.secima.unidadeconservacao.util.UtilMapa;
+import br.gov.go.semarh.carcara.api.AlterarParametroGeo;
+import br.gov.go.semarh.carcara.api.Campo;
+import br.gov.go.semarh.carcara.api.RetornarGeo;
+import br.gov.go.semarh.carcara.api.SolicitarGeo;
+import br.gov.go.semarh.carcara.api.UtilArquivoXml;
+
+@Controller("UnidadeConservacaoControl")
+@Scope("conversation")
+public class UnidadeConservacaoControl {
+
+    @Autowired
+    private UsuarioLogadoControl usuarioLogadoControl;
+
+    @Autowired
+    private UnidadeConservacaoDao unidadeConservacaoDao;
+
+    @Autowired
+    private MunicipioDao municipioDao;
+
+    @Autowired
+    private ParametroDao parametroDao;
+
+    @Autowired
+    private PessoaDao pessoaDao;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
+
+    private Municipio municipio;
+    private Municipio municipioExcluir;
+    private String urlIframe;
+    private Documento documentoVisualizacao;
+    private StreamedContent pdfDocumento;
+    private boolean bloqVisualizacao;
+    private String tabAtiva;
+    private String nome;
+    private String cpfCnpj;
+    private String cpfUsuario;
+    private Usuario usuarioAlterar;
+    private UnidadeConservacaoDocumento docParecer;
+    private EnumUnidadeConservacaoTipoDocumento docParecerTipo = EnumUnidadeConservacaoTipoDocumento.PENDENCIA;
+    private UnidadeConservacao unidadeConservacao = new UnidadeConservacao();
+    private List<UnidadeConservacao> unidadeConservacoes = new ArrayList<>();
+    private List<SelectItem> gruposClassificao = new ArrayList<>();
+    private List<SelectItem> categoriasUnidade = new ArrayList<>();
+    private List<Municipio> municipios = new ArrayList<>();
+    private List<Pessoa> pessoas = new ArrayList<>();
+    private List<UnidadeConservacaoDocumento> docPareceres = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        try {
+            this.municipios = municipioDao.listarPorUfNome(EnumUf.GO, null);
+            atualizarGrupoClassificacao();
+            atualizarCategoriaUnidade();
+            this.setTabAtiva("tab1");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public String novaUnidadeConservacao() {
+        try {
+            unidadeConservacao = new UnidadeConservacao();
+            this.unidadeConservacao.setUsuario(usuarioLogadoControl.getUsuario());
+            unidadeConservacao.setStatus(EnumStatusUnidade.PENDENTE);
+            bloqVisualizacao = false;
+            solicitarGeo();
+            return "unidadeConservacao?faces-redirect=true";
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return "";
+    }
+
+    public String visualizarUnidadeConservacao() {
+        try {
+            bloqVisualizacao = bloquearVizualizacao();
+            solicitarGeo();
+            atualizarGrupoClassificacao();
+            atualizarCategoriaUnidade();
+            tabAtiva = "tab1";
+            return "unidadeConservacao?faces-redirect=true";
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return "";
+    }
+
+    private boolean bloquearVizualizacao() {
+        boolean bloquea = unidadeConservacao.getStatus().equals(EnumStatusUnidade.PENDENTE) ? false : true;
+        if (!unidadeConservacao.getUsuario().getCpf().equals(usuarioLogadoControl.getUsuario().getCpf())) {
+            bloquea = true;
+        }
+        return bloquea;
+    }
+
+    public void permitirUnidade() {
+        try {
+            if (unidadeConservacao.getDocPareceres() == null) {
+                UtilFaces.addMensagemFaces("Informe o parecer!", FacesMessage.SEVERITY_ERROR);
+            } else {
+                if (this.confirmarAnexoDocParecer()) {
+                    unidadeConservacao.setUsuarioAprovacao(usuarioLogadoControl.getUsuario());
+                    unidadeConservacao.setDataAutorizacao(new Date());
+                    unidadeConservacao.setStatus(EnumStatusUnidade.APROVADA);
+                    this.unidadeConservacao = unidadeConservacaoDao.alterar(unidadeConservacao);
+                    alterarParametrosGeo(unidadeConservacao);
+                    UtilFaces.addMensagemFaces("Unidade de Conservação autorizada!");
+                }
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void devolverUnidade() {
+        try {
+            if (unidadeConservacao.getDocPareceres() == null) {
+                UtilFaces.addMensagemFaces("Informe o parecer!", FacesMessage.SEVERITY_ERROR);
+            } else {
+                if (this.confirmarAnexoDocParecer()) {
+                    unidadeConservacao.setStatus(EnumStatusUnidade.PENDENTE);
+                    this.unidadeConservacao = unidadeConservacaoDao.alterar(unidadeConservacao);
+                    alterarParametrosGeo(unidadeConservacao);
+                    UtilFaces.addMensagemFaces("Unidade de Conservação devolvida para o usuário!");
+                }
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void cancelarUnidade() {
+        try {
+            if (unidadeConservacao.getDocPareceres() == null) {
+                UtilFaces.addMensagemFaces("Informe o parecer!", FacesMessage.SEVERITY_ERROR);
+            } else {
+                if (this.confirmarAnexoDocParecer()) {
+                    unidadeConservacao.setStatus(EnumStatusUnidade.CANCELADA);
+                    unidadeConservacao.setUsuarioAprovacao(usuarioLogadoControl.getUsuario());
+                    this.unidadeConservacao = unidadeConservacaoDao.alterar(unidadeConservacao);
+                    alterarParametrosGeo(unidadeConservacao);
+                    UtilFaces.addMensagemFaces("Unidade de Conservação cancelada!");
+                }
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void mostrarDocumento(String documentoParametro) {
+        try {
+
+            this.documentoVisualizacao = null;
+
+            if ("docLeiCriacao".equals(documentoParametro)) {
+                documentoVisualizacao = unidadeConservacao.getDocLeiCriacao();
+            } else if ("docEstudoCriacao".equals(documentoParametro)) {
+                documentoVisualizacao = unidadeConservacao.getDocEstudoCriacao();
+            } else if ("docConvocacaoConsultaPublica".equals(documentoParametro)) {
+                documentoVisualizacao = unidadeConservacao.getDocConvocacaoConsultaPublica();
+            } else if ("docConsultaPublica".equals(documentoParametro)) {
+                documentoVisualizacao = unidadeConservacao.getDocConsultaPublica();
+            }
+
+            if (documentoParametro != null) {
+                InputStream dbStream = new ByteArrayInputStream(documentoVisualizacao.getConteudo());
+                setPdfDocumento(
+                        new DefaultStreamedContent(dbStream, "application/pdf", documentoVisualizacao.getNome()));
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public String visualizarPareceres() {
+        try {
+            if (this.unidadeConservacao != null) {
+                this.docPareceres = this.unidadeConservacao.getDocPareceres();
+            }
+            bloqVisualizacao = bloquearVizualizacao();
+            solicitarGeo();
+            atualizarGrupoClassificacao();
+            atualizarCategoriaUnidade();
+            this.setTabAtiva("tab6");
+            return "unidadeConservacao.jspx";
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return "";
+    }
+
+    public void mostrarDocParecer(ActionEvent evt) {
+        try {
+            UnidadeConservacaoDocumento unidadeConservacaoDocumento = (UnidadeConservacaoDocumento) UtilFaces
+                    .getValorParametro(evt, "visualizarParecer");
+            if (unidadeConservacaoDocumento != null) {
+                InputStream dbStream = new ByteArrayInputStream(unidadeConservacaoDocumento.getConteudo());
+                pdfDocumento = new DefaultStreamedContent(dbStream, "application/pdf",
+                        unidadeConservacaoDocumento.getNome());
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void anexarDocEstudoCriacao(FileUploadEvent evt) {
+        try {
+            Documento documento = new Documento();
+            documento.setConteudo(evt.getFile().getContents());
+            documento.setNome(evt.getFile().getFileName());
+            unidadeConservacao.setDocEstudoCriacao(documento);
+            UtilFaces.addMensagemFaces("Documento adicionado com sucesso.");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void anexarDocConvocacaoConsultaPublica(FileUploadEvent evt) {
+        try {
+            Documento documento = new Documento();
+            documento.setConteudo(evt.getFile().getContents());
+            documento.setNome(evt.getFile().getFileName());
+            unidadeConservacao.setDocConvocacaoConsultaPublica(documento);
+            UtilFaces.addMensagemFaces("Documento adicionado com sucesso.");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void anexarDocConsultaPublica(FileUploadEvent evt) {
+        try {
+            Documento documento = new Documento();
+            documento.setConteudo(evt.getFile().getContents());
+            documento.setNome(evt.getFile().getFileName());
+            unidadeConservacao.setDocConsultaPublica(documento);
+            UtilFaces.addMensagemFaces("Documento adicionado com sucesso.");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void anexarDocLeiCriacao(FileUploadEvent evt) {
+        try {
+            Documento documento = new Documento();
+            documento.setConteudo(evt.getFile().getContents());
+            documento.setNome(evt.getFile().getFileName());
+            unidadeConservacao.setDocLeiCriacao(documento);
+            UtilFaces.addMensagemFaces("Documento adicionado com sucesso.");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void anexarDocParecer(FileUploadEvent evt) {
+        try {
+            UnidadeConservacaoDocumento documento = new UnidadeConservacaoDocumento();
+            documento.setConteudo(evt.getFile().getContents());
+            documento.setNome(evt.getFile().getFileName());
+            documento.setStatus(this.docParecerTipo);
+            documento.setUnidadeConservacao(this.unidadeConservacao);
+            this.docParecer = documento;
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public boolean confirmarAnexoDocParecer() {
+        try {
+            if (this.docParecer != null && this.docParecer.getNome() != null && !this.docParecer.getNome().isEmpty()) {
+                this.docParecer.setStatus(this.docParecerTipo);
+                this.unidadeConservacao.addDocParecer(this.docParecer);
+                unidadeConservacao = unidadeConservacaoDao.alterar(this.unidadeConservacao);
+                unidadeConservacaoDao.enviarEmail(this.unidadeConservacao, this.docParecer);
+                this.docParecer = new UnidadeConservacaoDocumento();
+                return true;
+            } else {
+                UtilFaces.addMensagemFaces("Anexe o parecer primeiro.");
+                return false;
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return false;
+    }
+
+    public void cancelarAnexarDocParecer() {
+        this.docParecer = new UnidadeConservacaoDocumento();
+        UtilFaces.addMensagemFaces("Envio do parecer foi cancelado.");
+    }
+
+    private void solicitarGeo() throws ValidacaoException {
+        try {
+            urlIframe = parametroDao.consultarValorPorChave("URL_CARCARA") + "/visualizarMapa.jsp";
+
+            if (unidadeConservacao.getCodigoGeometria() != null && bloqVisualizacao) {
+                urlIframe = parametroDao.consultarValorPorChave("URL_CARCARA") + "/visualizarMapa.jsp" + "?codgeo="
+                        + unidadeConservacao.getCodigoGeometria();
+                return;
+            }
+            if (unidadeConservacao.getCodigoGeometria() != null && bloqVisualizacao == false) {
+                urlIframe = parametroDao.consultarValorPorChave("URL_CARCARA") + "/mostrarMapa.jsp" + "?codgeo="
+                        + unidadeConservacao.getCodigoGeometria();
+                return;
+            }
+            if (unidadeConservacao.getCodigoGeometria() == null && bloqVisualizacao == false) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                SolicitarGeo solicitarGeo = new SolicitarGeo();
+                solicitarGeo.setTabela("unidadeConservacao");
+                solicitarGeo.adicionarCampo(
+                        new Campo("dataRegistro", simpleDateFormat.format(unidadeConservacao.getDataRegistro())));
+                solicitarGeo.adicionarCampo(new Campo("confirmado", "false"));
+                solicitarGeo.adicionarCampo(new Campo("nomeunidade",
+                        unidadeConservacao.getNomeUnidade() != null ? unidadeConservacao.getNomeUnidade() : ""));
+                solicitarGeo.adicionarCampo(new Campo("municipioibge", unidadeConservacao.getMunicipio() != null
+                        ? unidadeConservacao.getMunicipio().getCodigoIbge().toString() : ""));
+                solicitarGeo.adicionarCampo(
+                        new Campo("esferaadministrativa", unidadeConservacao.getEsferaAdministrativa() != null
+                                ? unidadeConservacao.getEsferaAdministrativa().getDescricao() : ""));
+
+                String urlCarcara = UtilFaces.getRequest().getScheme() + "://"
+                        + UtilFaces.getRequest().getHeader("Host") + parametroDao.consultarValorPorChave("URL_CARCARA");
+
+                RetornarGeo retornarGeo = UtilMapa.montarTabela(UtilArquivoXml.toXml(solicitarGeo), urlCarcara);
+
+                if (retornarGeo.getErroGeo() == null) {
+                    unidadeConservacao.setCodigoGeometria(retornarGeo.getCodigoSolicitacao());
+                    urlIframe = parametroDao.consultarValorPorChave("URL_CARCARA") + "/mostrarMapa.jsp" + "?codgeo="
+                            + unidadeConservacao.getCodigoGeometria();
+                }
+                if (retornarGeo.getErroGeo() != null) {
+                    UtilLog.getLog().info(retornarGeo.getErroGeo().getMensagem());
+                    throw new ValidacaoException("Erro ao solicitar geometria!");
+                }
+            }
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new ValidacaoException(e.getMessage());
+        }
+    }
+
+    public void removerParecer() {
+        try {
+            unidadeConservacao.getDocPareceres().remove(this.docParecer);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void salvarUnidadePendente() {
+        try {
+            this.unidadeConservacao = unidadeConservacaoDao.salvarUnidadePendente(this.unidadeConservacao);
+            alterarParametrosGeo(this.unidadeConservacao);
+            UtilFaces.addMensagemFaces("Operação realizada com sucesso");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public String salvarUnidadeEnviarParaAnalise() {
+        try {
+            this.unidadeConservacao = unidadeConservacaoDao.salvarUnidadeEnviarParaAnalise(this.unidadeConservacao);
+            alterarParametrosGeo(this.unidadeConservacao);
+            UtilFaces.addMensagemFaces("Operação realizada com sucesso");
+            this.unidadeConservacao = new UnidadeConservacao();
+            MenuControl menuControlador = (MenuControl) UtilFaces.getManagedBean("MenuControl");
+            menuControlador.gerenciarSessao(null);
+            return "unidadeConservacaoList?faces-redirect=true";
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return "";
+    }
+
+    private void alterarParametrosGeo(UnidadeConservacao unidadeConservacaoGeo) {
+        try {
+            if (unidadeConservacaoGeo.getCodigoGeometria() != null) {
+                String urlCarcaraServico = UtilFaces.getRequest().getScheme() + "://"
+                        + UtilFaces.getRequest().getHeader("Host") + parametroDao.consultarValorPorChave("URL_CARCARA");
+                AlterarParametroGeo alterarParametroGeo = new AlterarParametroGeo();
+                alterarParametroGeo.setCodigo(unidadeConservacaoGeo.getCodigoGeometria());
+                alterarParametroGeo.adicionarCampo(new Campo("nomeUnidade", unidadeConservacaoGeo.getNomeUnidade()));
+                alterarParametroGeo.adicionarCampo(new Campo("esferaAdministrativa",
+                        unidadeConservacaoGeo.getEsferaAdministrativa().getDescricao()));
+
+                String municipioIbge = "0";
+                if (unidadeConservacaoGeo.getCategoriaUnidade() == EnumCategoriaUnidade.RPPN
+                        && unidadeConservacaoGeo.getImovel() != null) {
+                    municipioIbge = unidadeConservacaoGeo.getImovel().getMunicipio().getCodigoIbge().toString();
+                } else if (unidadeConservacaoGeo.getMunicipio() != null) {
+                    municipioIbge = unidadeConservacaoGeo.getMunicipio().getCodigoIbge().toString();
+                }
+                alterarParametroGeo.adicionarCampo(new Campo("municipioibge", municipioIbge));
+
+                if (unidadeConservacaoGeo.getStatus().equals(EnumStatusUnidade.APROVADA)) {
+                    alterarParametroGeo.adicionarCampo(new Campo("confirmado", "true"));
+                    alterarParametroGeo.adicionarCampo(new Campo("aprovado", "true"));
+                } else if (unidadeConservacaoGeo.getStatus().equals(EnumStatusUnidade.ANALISE)
+                        || unidadeConservacaoGeo.getStatus().equals(EnumStatusUnidade.CANCELADA)) {
+                    alterarParametroGeo.adicionarCampo(new Campo("confirmado", "true"));
+                    alterarParametroGeo.adicionarCampo(new Campo("aprovado", "false"));
+                } else {
+                    alterarParametroGeo.adicionarCampo(new Campo("confirmado", "false"));
+                    alterarParametroGeo.adicionarCampo(new Campo("aprovado", "false"));
+                }
+                UtilMapa.alterarTabela(UtilArquivoXml.toXml(alterarParametroGeo), urlCarcaraServico);
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void addMunicipio() {
+        if (municipio == null) {
+            UtilFaces.addMensagemFaces("Selecione o município antes de clicar no botão Adicionar");
+        }
+        if (municipio != null && unidadeConservacao.getMunicipios().contains(municipio)) {
+            UtilFaces.addMensagemFaces("Este município já foi adicionado.");
+        }
+        unidadeConservacao.getMunicipios().add(municipio);
+        municipio = null;
+    }
+
+    public String excluirMunicipio() {
+        unidadeConservacao.getMunicipios().remove(municipioExcluir);
+        municipioExcluir = new Municipio();
+        return "";
+    }
+
+    public void atualizarGrupoClassificacao() {
+        try {
+            this.gruposClassificao = new ArrayList<>();
+            if (unidadeConservacao.getLei() != null) {
+                for (EnumGrupoClassificacao valor : EnumGrupoClassificacao.values()) {
+                    if (valor.getGrupoLei() == unidadeConservacao.getLei().getGrupoLei()) {
+                        gruposClassificao.add(new SelectItem(valor, valor.getDescricao()));
+                    }
+                }
+                if (unidadeConservacao.getLei() == EnumTipoLei.LEI_COMPLEMENTAR) {
+                    this.unidadeConservacao.setGrupoClassificacao(EnumGrupoClassificacao.NAO_SE_APLICA);
+                }
+            }
+            atualizarCategoriaUnidade();
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void atualizarCategoriaUnidade() {
+        try {
+            categoriasUnidade.clear();
+            if (unidadeConservacao.getGrupoClassificacao() != null) {
+                for (EnumCategoriaUnidade valor : EnumCategoriaUnidade.values()) {
+                    if (valor.getGrupo() == unidadeConservacao.getGrupoClassificacao().getGrupo()) {
+                        categoriasUnidade.add(new SelectItem(valor, valor.getDescricao()));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void atualizarPanelProprietario() {
+        try {
+            if (unidadeConservacao.getCategoriaUnidade() != null
+                    && unidadeConservacao.getCategoriaUnidade() == EnumCategoriaUnidade.RPPN) {
+                this.unidadeConservacao.setImovel(new Imovel());
+            } else {
+                this.unidadeConservacao.setImovel(null);
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public boolean isLiberaCadastroImovel() {
+        return unidadeConservacao.getCategoriaUnidade() != null
+                && unidadeConservacao.getCategoriaUnidade() == EnumCategoriaUnidade.RPPN;
+    }
+
+    private UnidadeConservacao recuperaUnidade(UnidadeConservacao unidadeConservacao) {
+        UnidadeConservacao conservacao = new UnidadeConservacao();
+        try {
+            if (unidadeConservacao.getId() != null) {
+                conservacao = unidadeConservacaoDao.consultarPorId(unidadeConservacao.getId());
+                this.setTabAtiva("tab1");
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return conservacao;
+    }
+
+    public void consultarPessoaCpfCnpj() {
+        try {
+            this.pessoas = new ArrayList<>();
+            Pessoa pess = pessoaDao.consultarProprietarioCredenciadaPorCpfCnpj(cpfCnpj,
+                    usuarioLogadoControl.getUsuario());
+            if (pess != null) {
+                this.pessoas.add(pess);
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public String baixarShapeFile() {
+        String urlShape = String.format("%s\\'%s\\'&outputFormat=shape-zip", getUrlBaseGeoServer(),
+                this.unidadeConservacao.getCodigoGeometria());
+        RequestContext.getCurrentInstance().execute("window.open('" + urlShape + "');");
+        return "";
+    }
+
+    public String baixarKml() {
+        String urlKml = String.format("%s\\'%s\\'&outputFormat=application/vnd.google-earth.kml+xml",
+                getUrlBaseGeoServer(), this.unidadeConservacao.getCodigoGeometria());
+        RequestContext.getCurrentInstance().execute("window.open('" + urlKml + "');");
+        return "";
+    }
+
+    private String getUrlBaseGeoServer() {
+        try {
+            return parametroDao.consultarValorPorChave("URL_BASE_GEOSERVER");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return "";
+    }
+
+    public void alterarUsuario() {
+        try {
+            this.unidadeConservacao.setUsuario(usuarioAlterar);
+            this.unidadeConservacao = unidadeConservacaoDao.alterar(this.unidadeConservacao);
+            this.usuarioAlterar = null;
+            this.cpfUsuario = null;
+            UtilFaces.addMensagemFaces("Usuario alterado com sucesso.");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void consultarUsuarioPorCPF() {
+        if (this.cpfUsuario == null || this.cpfUsuario.isEmpty()) {
+            UtilFaces.addMensagemFaces("Informe o CPF antes de pesquisar.", FacesMessage.SEVERITY_WARN);
+        }
+
+        try {
+            this.usuarioAlterar = usuarioDao.consultarPorCpf(this.cpfUsuario);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+
+        if (this.usuarioAlterar == null) {
+            UtilFaces.addMensagemFaces("Usuário não encontrado.", FacesMessage.SEVERITY_WARN);
+        }
+    }
+
+    public void adicionarPessoa(Pessoa pessoaSelecao) {
+        this.unidadeConservacao.setOrgaoOuProprietario(pessoaSelecao);
+    }
+
+    public void onTabChange(TabChangeEvent event) {
+        this.tabAtiva = event.getTab().getId();
+    }
+
+    public List<SelectItem> getUfs() {
+        return UtilFaces.getListEnum(EnumUf.values());
+    }
+
+    public List<SelectItem> getBiomas() {
+        return UtilFaces.getListEnum(EnumBiomaUnidade.values());
+    }
+
+    public List<SelectItem> getEsferas() {
+        return UtilFaces.getListEnum(EnumEsferaAdministrativa.values());
+    }
+
+    public List<SelectItem> getLeis() {
+        return UtilFaces.getListEnum(EnumTipoLei.values());
+    }
+
+    public UnidadeConservacao getUnidadeConservacao() {
+        return unidadeConservacao;
+    }
+
+    public void setUnidadeConservacao(UnidadeConservacao unidadeConservacao) {
+        this.unidadeConservacao = recuperaUnidade(unidadeConservacao);
+    }
+
+    public List<UnidadeConservacaoDocumento> getDocPareceres() {
+        return docPareceres;
+    }
+
+    public void setDocPareceres(List<UnidadeConservacaoDocumento> docPareceres) {
+        this.docPareceres = docPareceres;
+    }
+
+    public UnidadeConservacaoDocumento getDocParecer() {
+        return docParecer;
+    }
+
+    public void setDocParecer(UnidadeConservacaoDocumento docParecer) {
+        this.docParecer = docParecer;
+    }
+
+    public EnumUnidadeConservacaoTipoDocumento getDocParecerTipo() {
+        return docParecerTipo;
+    }
+
+    public void setDocParecerTipo(EnumUnidadeConservacaoTipoDocumento docParecerTipo) {
+        this.docParecerTipo = docParecerTipo;
+    }
+
+    public List<SelectItem> getCategoriasUnidade() {
+        return categoriasUnidade;
+    }
+
+    public List<UnidadeConservacao> getUnidadeConservacoes() {
+        return unidadeConservacoes;
+    }
+
+    public Municipio getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(Municipio municipio) {
+        this.municipio = municipio;
+    }
+
+    public Municipio getMunicipioExcluir() {
+        return municipioExcluir;
+    }
+
+    public void setMunicipioExcluir(Municipio municipioExcluir) {
+        this.municipioExcluir = municipioExcluir;
+    }
+
+    public String getUrlIframe() {
+        return urlIframe;
+    }
+
+    public Documento getDocumentoVisualizacao() {
+        return documentoVisualizacao;
+    }
+
+    public void setDocumentoVisualizacao(Documento documentoVisualizacao) {
+        this.documentoVisualizacao = documentoVisualizacao;
+    }
+
+    public StreamedContent getPdfDocumento() {
+        return pdfDocumento;
+    }
+
+    public void setPdfDocumento(StreamedContent pdfDocumento) {
+        this.pdfDocumento = pdfDocumento;
+    }
+
+    public boolean isBloqVisualizacao() {
+        return bloqVisualizacao;
+    }
+
+    public void setBloqVisualizacao(boolean bloqVisualizacao) {
+        this.bloqVisualizacao = bloqVisualizacao;
+    }
+
+    public String getTabAtiva() {
+        return tabAtiva;
+    }
+
+    public void setTabAtiva(String tabAtiva) {
+        this.tabAtiva = tabAtiva;
+    }
+
+    public List<Municipio> getMunicipios() {
+        return municipios;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCpfCnpj() {
+        return cpfCnpj;
+    }
+
+    public void setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
+    }
+
+    public List<Pessoa> getPessoas() {
+        return pessoas;
+    }
+
+    public List<SelectItem> getGruposClassificao() {
+        return gruposClassificao;
+    }
+
+    public Usuario getUsuarioAlterar() {
+        return usuarioAlterar;
+    }
+
+    public void setUsuarioAlterar(Usuario usuarioAlterar) {
+        this.usuarioAlterar = usuarioAlterar;
+    }
+
+    public String getCpfUsuario() {
+        return cpfUsuario;
+    }
+
+    public void setCpfUsuario(String cpfUsuario) {
+        this.cpfUsuario = cpfUsuario;
+    }
+}

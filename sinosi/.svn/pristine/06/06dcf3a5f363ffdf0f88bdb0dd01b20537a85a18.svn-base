@@ -1,0 +1,100 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.model.SelectItem;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUf;
+import br.gov.go.secima.unidadeconservacao.entidade.Municipio;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.persistencia.MunicipioDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.UsuarioDao;
+
+
+@Controller("UsuarioNovoControl")
+@Scope("conversation")
+public class UsuarioNovoControl {
+
+    private Usuario usuario = new Usuario();
+
+    private String confirmarSenha;
+
+    private EnumUf uf = EnumUf.GO;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
+
+    @Autowired
+    private MunicipioDao municipioDao;
+
+    private List<Municipio> municipios = new ArrayList<>();
+
+    @PostConstruct
+    public void init(){
+        uf = EnumUf.GO;
+        listaMunicipiosPorUfs();
+    }
+
+    public void limpar(){
+        this.usuario = new Usuario();
+    }
+
+    public void listaMunicipiosPorUfs() {
+        try {
+            municipios = municipioDao.listarPorUfNome(uf, null);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void confirmarNovoUsuario(){
+        try {
+            usuarioDao.criarNovoUsuario(this.usuario, this.confirmarSenha);
+            limpar();
+            UtilFaces.addMensagemFaces("Seu cadastro foi realizado com sucesso. ");
+            UtilFaces.addMensagemFaces("Acesse o seu endereço de email para confirmar o cadastro.");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public List<SelectItem> getUfs(){
+        return UtilFaces.getListEnum(EnumUf.values());
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getConfirmarSenha() {
+        return confirmarSenha;
+    }
+
+    public void setConfirmarSenha(String confirmarSenha) {
+        this.confirmarSenha = confirmarSenha;
+    }
+
+    public EnumUf getUf() {
+        return uf;
+    }
+
+    public void setUf(EnumUf uf) {
+        this.uf = uf;
+    }
+
+    public List<Municipio> getMunicipios() {
+        return municipios;
+    }
+
+}

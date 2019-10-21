@@ -1,0 +1,219 @@
+--> tabela parametro:
+INSERT INTO PARAMETRO (CHAVE,VALOR) VALUES('URL_CARCARA','/carcara');
+INSERT INTO PARAMETRO (CHAVE,VALOR) VALUES('IP_PROXY','10.207.30.119');
+INSERT INTO PARAMETRO (CHAVE,VALOR) VALUES('PORTA_PROXY','3128');
+
+--> Tabela usuario:
+insert into usuario (id, alterarsenha, celular, cep, confirmado, cpf, dataalteracaosenha, datacriacao, datanascimento, dataultimoacesso, email, endereco, nome, rg, senha, telefone, token, municipio_id)
+values
+(1,false,'(62) 3201-5286','74.000-000',true,'111.111.111-11','1900-01-01','2017-08-09','2017-08-09','2017-08-09','suporte@secima.go.gov.br','Palácio Pedro Ludovico Teixeira, Praça Cívica, 1º e 2º Andares, ala leste e oeste, St. Central','SECIMA','Corrigir','e10adc3949ba59abbe56e057f20f883e','(62) 3201-5682','token',2174),
+(2,false,'(62) 9813-8673','74.367-630',true,'911.806.001-34','2016-11-16','2016-11-16','1977-08-17','2017-08-31','erlon-mg@secima.go.gov.br','Av. Roma, 50, apt. 1503-II, Cond. Esmeralda, Res. Eldorado','Erlon Maikel Gouvêa','Corrigir','4ac7cc80083c076b8bc552f889e48c1f','(62) 3287-2372','token',2174),
+(3,false,'(62) 9906-3681','75.380-000',true,'968.793.001-20','2016-10-26','2016-10-26','1983-04-26','2017-08-28','tiagocintrao@bol.com.br','RUA DR. IRANI FERREIRA Nº 374 CENTRO','TIAGO CINTRA DE OLIVEIRA','Corrigir','e19d5cd5af0378da05f63f891c7467af','(62) 9906-3681','token',2349),
+(4,false,'62 96978838','74.715-380',true,'023.837.941-80','2015-03-30','2015-03-30','1986-05-22','2017-09-05','laura-ff@secima.go.gov.br','AV. PARANAGUA QD 29 LT 03 JARDIM NOVO MUNDO','LAURA FERNANDA FERREIRA ARANTES GONÇALVES','Corrigir','39fc0681659b4549d890aec59600b32e','62 32834873','token',2174),
+(5,false,'(62) 9656-0940','74.000-001',true,'011.657.351-13','2015-09-27','2015-09-27','2015-01-01','2017-08-30','eric-rk@secima.go.gov.br','Palácio Pedro Ludovico Teixeira, Praça Cívica, 1º e 2º Andares, ala leste e oeste, St. Central','SECIMA','Corrigir','6453b17dda00a82004f7a9a40bcaa7e3','(62) 3265-1340','token',2174),
+(6,false,'(64) 8416-9051','75.860-000',true,'776.268.851-04','2015-09-11','2015-09-11','2001-04-11','2016-08-10','semma@quirinopolis.go.gov.br','PRAÇA DOS TRÊS PODERES Nº 88 CENTRO','SILVIO RICARDO DE CARVALHO','2220402SPTC/GO','0220a48c1318328a35051afa400b514c','(64) 3615-9100','token',2293),
+(7,false,'6492135958','75.680-000',true,'098.771.588-76','2014-07-23','2014-07-23','1975-01-20','2017-08-24','semmacorumbaiba@outlook.com','Rua Simon Bolivar nº 58 Centro','ANTÔNIO CARLOS DA SILVA JÚNIOR','20753445','ec77f75f86fa60510784d057bb8c74da','64 34477000','token',2142),
+(8,false,'(62) 8101-3210','76.100-000',true,'869.641.861-15','2015-04-24','2015-04-24','2015-04-22','2015-06-29','semma.slmb@gmail.com','RUA RIO DA PRATA, Nº 662, CENTRO','CHRISTIAN SOUZA GUIMARAES','3970557','148755097a55b5c64303f3021ac93e21','(62) 3671-1227','token',2326),
+(9,false,'(64) 9995-2513','76.110-000',true,'853.320.381-00','2017-07-11','2017-07-11','2000-12-01','2017-09-01','adturvania@gmail.com','AVENIDA DR. ULISSES GUIMARÃES Nº 458, CENTRO','CLÁUDIO ALVES DA SILVA','3502091 DGPC/GO','e10adc3949ba59abbe56e057f20f883e','(64) 3682-1768','token',2352),
+(10,false,'(62) 8472-6082','76.490-000',true,'479.975.671-00','2017-05-18','2017-05-18','2017-04-27','2017-09-01','jpato25@hotmail.com','PRACA PREFEITO JOSE MAURICIO, 378, CENTRO','JOSMAR LUCIANO FERREIRA','2.651.849 - SSP/GP','25f9e794323b453885f5181f1b624d0b','(62) 3366-2310','token',2225),
+(11,false,'(64) 8439-3471','76.125-000',true,'628.799.521-15','2014-10-13','2014-10-13','1978-10-28','2014-10-13','kleitonclaudio@hotmail.com','Rua Coronel Seabra Guimarães, nº 321, Centro','Geraldo Antonio Neto','27.989 PM-GO','cc83d6a7db81bdc946b5af58fde4946a','(64) 3676-1122','token',2101),
+(12,false,'6235058633','75.380-000',true,'566.796.536-49','2014-08-13','2014-08-13','1977-01-02','2016-11-17','semma@trindade.go.gov.br','Praça Constantino Xavier, nº 330 - Centro','karla mara salgado dias e almeida','m3136700','afd857ad99801f8b91ffd5f92df07803','6235067041','token',2349),
+(13,false,'(62) 8404-3955','76.375-000',true,'028.768.511-05','2015-05-08','2015-05-08','2005-11-03','2017-03-31','secmahidrolina@gmail.com','Avenida Antônio Braga, nº 77, Setor Aeroporto','Lauana Souza Diniz','5469627','becb6e4cc2d680d1342d6b173ad8485d','(62) 3349-6613','token',2185),
+(14,false,'(62) 9663-8170','73.900-000',true,'269.530.211-87','2017-06-01','2017-06-01','2017-01-01','2017-06-28','meioambiente@posse.go.gov.br','AV. PE. TRAJANO, N. 55 - CENTRO','CÉSAR AUGUSTO DE ABREU','2441419 SSP/GO','b8ee30c08029d4b6924dc4330295cfa8','(62) 3481-1380','token',2290),
+(15,false,'(64) 8415-2690','75.600-000',true,'521.194.911-00','2017-08-07','2017-08-07','1996-12-27','2017-09-06','lynorpf@bol.com.br','Av. Rio Branco n° 1595','Lyno Régis de Paula Fernandes','2709473','e9302cbcfc385b9112643671dfd8dae4','(64) 3495-0042','token',2177),
+(16,false,'(64) 8432-4968','76.145-000',true,'111.540.086-06','2017-07-06','2017-07-06','2017-06-05','2017-07-06','gmnweb.contato@gmail.com','PRACA CORDEIRO, Nº 40 - CENTRO','GABRIEL MOREIRA NOGUEIRA','5732962 - SSP/GO','25f9e794323b453885f5181f1b624d0b','(64) 3687-1122','token',2139),
+(17,false,'(62) 8262-0487','76.515-000',true,'166.869.001-25','2017-04-27','2017-04-27','1989-01-06','2017-08-16','camposverdesg@gmail.com','Av. Campos Verdes, n 1 ','Sebastião Pimentel da Silva ','6279227859260','0d901b7984e481929b16e836db85f2d2','(62) 3351-6512','token',2117),
+(18,false,'(61) 99934-5071','72.800-060',true,'571.664.808-82','2015-04-27','2015-04-27','1952-05-10','2017-09-06','wilmadolago@gmail.com','Praça Nirson Carneiro Lobo, 34','Wilma do Lago','5.683.009 - SSP-SO','eed8f41dc21d83f97fa75321a4287ef4','(61) 3906-3115','token',2222),
+(19,false,'06291324235','75.827-000',true,'735.943.851-91','2016-08-24','2016-08-24','2005-07-05','2016-08-24','uc.aparecidadoriodoce@outlook.com','R ADALTO FERNANDES ,numero 201 ','Celso Leonardo Marques Mendes','5391202 SPTC-GO                      ','f64d03b9810a0dc13898e0fd63aec34b','06241410539','token',2072),
+(20,false,'(62) 9340-9894','75.396-970',true,'235.625.441-20','2017-06-12','2017-06-12','1977-05-10','2017-06-20','prefeituracampestre2017@gmail.com','Rua São Paulo n 39 centro','Esmeraldo Correia Guimarães','968516','ee88db75e4b78efd17d80406e28f7ab4','(62) 3557-1152','token',2110),
+(21,false,'(62) 8600-2023','76.350-000',true,'044.747.251-82','2017-06-06','2017-06-06','1978-02-28','2017-06-06','secmeioambiente@rubiataba.go.gov.br','Avenida Caraíba n. 385 Setor Bela Vista','Fernando Yuri Silva dos Anjos','5805720','644b9c7975620eccbdcad184d5ed15b7','(62) 3325-1230','token',2302),
+(22,false,'06291324235','75.610-000',true,'785.069.801-00','2016-11-22','2016-11-22','2004-06-12','2016-11-30','uc.joviania@outlook.com','R JOAQUIM LUIZ BARBOSA,numero 8, centro','Antonia Ribeiro de Mendonça','7319878 SSP/GO','9ef546bf04daa83702a9a75659540848','06241410539','token',2214),
+(23,false,'(62) 8401-8953','76.340-000',true,'011.969.021-78','2016-11-24','2016-11-24','1978-12-15','2016-11-25','adrielccp@gmail.com','Praça Alfredo Nasser, nr 5','Adriel José Pereira','4792041 DGPC/GO','366b6948cc60c6039b4faa5244b1d59d','(62) 3337-6357','token',2122),
+(24,false,'(62) 9188-2119','75.410-000',true,'413.430.691-49','2017-06-29','2017-06-29','1975-01-17','2017-06-29','aracugo@gmail.com','Praça 14 de Novembro, Centro ','Sirley Costa ','1735846','8352f911f9ee15f5720c1a3c2c5c75d5','(62) 3527-1263','token',2074),
+(25,false,'6481211303','75.503-090',true,'916.990.531-20','2014-07-21','2014-07-21','2009-06-29','2016-04-28','ammai@itumbiara.go.gov.br','Rua Rui de Almeida nº 630, Centro','Tatiane Goulart dos Santos','3653122','625b36dbea4b32e9da8247a16f08d6f2','64 34330316','token',2204),
+(26,false,'06291324235','76.345-000',true,'574.233.261-00','2015-06-25','2015-06-25','2004-10-30','2015-06-25','novaamericasemma@gmail.com','AV JUSCELINO KUBSTCHEK DE OLIVEIRA , N° 329','Veralúcia Rocha Pimenta','2.222.178 SSP/GO','7a4eb5dfb0ddf62c3f425acfce0cbb70','06241410539','token',2250),
+(27,false,'(64) 9215-8170','75.950-000',true,'004.217.881-94','2017-08-24','2017-08-24','1981-01-26','2017-08-31','agricultura.jandaia.go@gmail.com','AVENIDA JK DE OLIVEIRA Nº 742 CENTRO','MARTA ARCE BRITO','001314940','f1ec93d633734407da40e6982ca6894f','(64) 3563-2005','token',2207),
+(28,false,'64 9214-9073','75.970-000',true,'955.493.901-91','2014-07-21','2014-07-21','1983-03-15','2014-09-01','turvelandia@bol.com.br','AVENIDA JOSÉ MARIO DA COSTA REZENDE N° 13, CENTRO','DANIELA DA SILVA FERREIRA','3948952','e8aa35590ec2e3a81b0cd50fd271287b','64 3642-8037 ','token',2353),
+(29,false,'(64) 9676-6780','75.815-000',true,'005.408.641-88','2015-04-29','2015-04-29','2005-09-30','2017-08-29','prefeituradeitajaambiental@gmail.com','rua antônio nunes da silva ','wanderson martins lacerda de assis ','4720794','6a5a0b316803ecb63ba6d8ee4694702b','(64) 3648-7500','token',2198),
+(30,false,'(64) 9277-3106','75.990-000',true,'558.106.591-87','2014-07-28','2014-07-28','2013-10-15','2015-08-03','lgbomtempo@hotmail.com','RUA ORCELINO VICENTE SANTANA, Nº 138, CENTRO','LUCIANO BOMTEMPO GONÇALVES','2.512.387 SPTC/GO','e64e03a5a521ce4f36c65856d756ff9c','(64) 3675-1167','token',2270),
+(31,false,'(64) 9988-2010','75.828-000',true,'050.209.908-92','2015-06-22','2015-06-22','1991-01-16','2015-06-22','ronildo.galdino@bol.com.br','AV EMA QD 51 S/N','ALCIDES DE SA SOARES','15297358 ssp/sp','ed38eb854470887c0553873064137685','(64) 3634-1228','token',2132),
+(32,false,'(62) 9840-7070','75.195-000',true,'590.345.131-49','2017-06-14','2017-06-14','1989-06-01','2017-08-15','elietealvesamorimnathalia@hotmail.com','AVENIDA UM ESQUINA COM A RUA 05 Nº 594 CENTRO','ELIETE ALVES DE AMORIM','3138206 SSP/GO','de68810e651d3b756476b410ec10dc50','(62) 3334-1144','token',2091),
+(33,false,'64 9907 1948','75.915-000',true,'921.074.511-68','2014-07-30','2014-07-30','1980-11-17','2014-09-18','meioambiente@montividiu.go.gov.br','Avenida Rio Verde, nº 142, centro - sala 02','Doglas Alves Peres','4055940 DGPC/GO','3f0808a9f83480b38a423cf36b1b66bf','64 3629-1244','token',2238),
+(34,false,'(64) 8428-9910','75.810-000',true,'008.309.441-50','2017-04-20','2017-04-20','1984-11-07','2017-08-11','itarumago.uc@gmail.com','Praça Sebastião Assis Freitas, n 18, Centro ','Nicolau José Sousa de Freitas','001322210','6499b0f48b07d89a0adca25fb6f4cfbe','(64) 3659-1254','token',2202),
+(35,false,'(62) 9295-9328','76.315-000',true,'768.039.961-15','2017-05-04','2017-05-04','1958-12-18','2017-07-20','sama@rianapolis.go.gov.br','Praça Antônio de Moraes Rodrigues, nº 393, Centro.','Cristiano Fernandes dos Reis','3367672','ddbcc4a413b39c0e1c03973f263b12c8','(62) 3348-3130','token',2295),
+(36,false,'(64) 8116-6801','75.650-000',true,'950.579.191-72','2015-06-03','2015-06-03','1975-02-14','2017-05-16','loanec@gmail.com','Av Senador Hermenegildo n 160 Centro','Loane Cristina de Souza','3617316','1d9ffc0c9d8ed0fee62117dbd6188907','(64) 3417-2036','token',2240),
+(37,false,'(62) 9409-0516','76.470-000',true,'403.030.711-68','2015-03-05','2015-03-05','1669-10-25','2015-03-05','robsongleao@hotmial.com','PRAÇA VEREADORA NILDA MOTA LUCINDO S/N CENTRO','ROBSON GONÇALVES LEÃO','1888095','c8f0d2574431961d2bbe1e899bc236da','(62) 3377-6830','token',2166),
+(38,false,'(62) 9995-2227','75.260-000',true,'032.738.941-99','2016-11-25','2016-11-25','1974-10-14','2016-12-01','financaprefvps@gmail.com','R JOSE ISSY N115 CENTRO','PRISCILA INACIO GUEDES','5383647','fc7fb935055e9a4d20ca9526d7622d94','(62) 3255-8821','token',2363),
+(39,false,'(64) 3679-1227','76.160-000',true,'005.211.451-12','2017-04-25','2017-04-25','2017-04-15','2017-07-11','havilamartins@hotmail.com','PRACA 03 PODERES, NUMERO 07, CENTRO','HAVILA MARTINS MENDONÇA CARNEIRO','4.142.054','347dcef7ecc5a5e109c49b31b353460e','(64) 3679-1227','token',2303),
+(40,false,'(64) 8444-9864','75.800-089',true,'805.983.741-91','2017-02-14','2017-02-14','1999-12-17','2017-02-21','meioambiente@jatai.go.gov.br','Rua Itarumã nº 355 - Setor Santa Maria ','Núbia Maia de Assis','407573','182b8ebbf06ebc0c508f2ba64eb9e068','(64) 3632-4058','token',2209),
+(41,false,'(64) 9930-4465','75.630-000',true,'565.304.121-15','2017-07-10','2017-07-10','2017-06-28','2017-07-10','MAIRIPOTABA@BOL.COM.BR','RUA JOÃO MANOEL N 83 CENTRO','LINDOMAR CLAUDINO BESSA','2235792','3911ceeab017bbcea61f06745621ed07','(64) 3604-1149','token',2223),
+(42,false,'(64) 9291-2149','75.920-000',true,'013.448.851-28','2017-07-04','2017-07-04','1949-01-01','2017-08-16','meioambiente@santahelena.go.gov.br','Rua Vereador Eduvaldo Veloso do Carmo, n. 510, Centro','Guilherme Ribeiro Lana','623607','883c87c7729b514b37107f2895d5fb61','(64) 3641-8725','token',2308),
+(43,false,'(64) 9262-9287','75.780-000',true,'974.016.761-68','2015-09-28','2015-09-28','1984-04-02','2017-06-19','semma.ipameri@gmail.com','Avenida Pandiá Calógeras, nº 84, Centro','Uanderson Carneiro de Souza ','4520108 DGPC/GO','7dd61154758ef7106a545c529a7348ed','(64) 3491-6000','token',2191),
+(44,false,'34 96675858','75.701-050',true,'024.613.251-54','2015-05-21','2015-05-21','1986-05-03','2016-01-20','alinelins.bio@gmail.com','Avenida Dr. Lamartine Pinto de Avelar, n. 2.338, Bairro Ipanema.','Aline Batista Lins','5003414 DGPC - GO','c4a42f3157c747984d435ec27a965346','64 34411834','token',2125),
+(45,false,'(64) 9225-3564','75.200-000',true,'032.402.321-97','2017-06-29','2017-06-29','1971-11-11','2017-07-21','jayme_jhunner@hotmail.com','Praça Francisco Felipe Machado ;n37;Centro','Jayme Jhunner Rezende e Souza','5476938 SPTCGO','df848283536d95d461cff53251f41b0a','(64) 3461-4000','token',2284),
+(46,false,'(64) 9627-4710','75.760-000',true,'003.095.391-02','2017-07-03','2017-07-03','1947-12-10','2017-07-03','secmeioambientecumari@outlook.com','Praça São João Batista n° 01','Gabriel Lourenço da Silva','4653893 DGPC-GO','6638da4d2858bb85dfeef69a31d250cd','(64) 3440-1140','token',2148),
+(47,false,'6285572903','76.450-000',true,'984.205.851-49','2014-07-30','2014-07-30','1982-06-30','2015-04-16','anaferreira.alf@gmail.com','Av Amazonas, 295 Centro','ANA LÚCIA FERREIRA','4251096','7000b89311cd9d3e8532a346a7791673','6233791020','token',2233),
+(48,false,'(62) 9849-0551','76.304-000',true,'878.235.271-20','2017-06-29','2017-06-29','1999-10-25','2017-08-23','meioambienteipigo@gmail.com','Avenida Raimundo Alves de Souza Qd. 05 Setor Independência','Marcio Moacir Bessa','4120857','417a961000daadb6473b314761b42762','(62) 3342-6145','token',10090),
+(49,false,'(64) 9262-4939','76.105-000',true,'350.294.121-15','2014-07-28','2014-07-28','2013-09-27','2015-06-29','figueiraefernandes@gmail.com','AVENIDA GOIANIA, Nº 322 - CENTRO','MARGARETE BATISTA DOS SANTOS','2.165.317 SSP/GO','87ae763242fb11db99a0e40f103dc924','(64) 3681-2112','token',2163),
+(50,false,'(64) 9996-9265','75.715-000',true,'987.530.881-15','2017-06-30','2017-06-30','2004-09-04','2017-06-30','meioambiente@ouvidor.go.gov.br','AVENIDA IRAPUÃ COSTA JÚNIOR, N 915, CENTRO','ANGÉLICA SILVÉRIO FREIRES','4251448','b3b01b46d25e679f2dca4a36c0fdaa91','(64) 3478-1162','token',2265),
+(51,false,'64 93132111','75.901-150',true,'940.914.041-20','2014-07-31','2014-07-31','1981-10-19','2014-08-18','meioambiente@rioverdegoias.com.br','Rua Almiro de Moraes, nº 231 -Centro','Vinícius Cruvinel Pereira','3725858 DGPC/GO','fc71c02fbc29dacb56bbefe3f79201b7','64 36028400','token',2298),
+(52,false,'(62) 9999-1563','73.865-000',true,'566.495.686-00','2015-09-23','2015-09-23','2005-10-22','2016-08-03','divinopolisgo@hotmail.com','Praça São João Batista s/n Centro','Milton Ferreira da Silva','4851967 SSP MG','758b9ce3a6e6ea6e2b06946bae5566ca','(62) 3456-1100','token',2155),
+(53,false,'64 9239-9902','75.603-000',true,'763.974.081-91','2017-06-22','2017-06-22','1997-01-02','2017-06-22','uelson.machado@hotmail.com','RUA MATO GROSSO, Nº 838 - CENTRO','UELSON MACHADO MENDONÇA','3504364 DGPC/GO','0ee75390e6677ac186e1ed5d9850f9d5','64 3643-1144','token',2288),
+(54,false,'6281519914','76.360-000',true,'654.038.433-53','2015-04-28','2015-04-28','2013-04-24','2017-01-17','semma.itapaci@hotmail.com','AV. FLORESTA, Nº 198, KM 1, LOTE 1, CENTRO ','Leciane Moreira da Mata','146153020000','f74363c2090d7a08b87d9f2743b79b5f','62 3994 5002','token',2199),
+(55,false,'64 984516601','75.130-000',true,'760.743.401-10','2017-04-03','2017-04-03','1953-11-05','2017-07-13','prefivolandia@gmail.com','Rua Dep. Jamel Cecílio, nº 192, Centro','Aparecido Roque da Silva','2879875/ SSP-GO','e10adc3949ba59abbe56e057f20f883e','(64) 3685-1144','token',2205),
+(56,false,'06291324235','76.660-000',true,'612.212.951-87','2015-06-25','2015-06-25','2004-05-01','2015-06-25','itaguarusemma@gmail.com','LOC PCA DA MATRIZ , CENTRO','LUCIANO DE MATOS','3200621','8d42e4716ff86a631424bf7a0b4884d5','06241410539','token',2197),
+(57,false,'(62) 3636-1343','73.870-000',true,'892.937.031-49','2017-07-10','2017-07-10','2017-06-23','2017-07-11','cabeceiras@bol.com.br','AVENIDA VICENTE DE PAULA SOUZA S/N CENTRO','EVERTON FRANCISCO DE MATOS','2092413','e85a93bc738bd9dc2a451fff5baa6c71','(61) 3636-1343','token',2099),
+(58,false,'(62) 8412-8950','76.380-000',true,'129.757.296-34','2014-07-22','2014-07-22','1950-09-08','2014-09-24','meioambiente@goianesia.go.gov.br','Rua 14 n° 299 Centro','Jalles Fontoura de Siqueira','174174','27237fa8af4043146f641d6bd3bac8fc','(62) 3389-9445','token',2173),
+(59,false,'(62) 8131-5775','74.968-500',true,'009.689.591-80','2015-08-11','2015-08-11','1976-01-01','2017-08-19','semmaapg.licenciamento@gmail.com','RUA GERVÁSIO PINHEIRO, S/N, ÁREA PÚBLICA, RESIDENCIAL SOLAR CENTRAL PARK','WISLEM RICARDO ALVES CAVALCANTE','4711972','6b5557a225bfc1e837b337b6a546e770','(62) 3545-5859','token',2069),
+(60,false,'(64) 8405-7949','75.640-000',true,'015.922.001-76','2016-06-03','2016-06-03','1973-01-13','2016-06-27','brendaogbiologia@gmail.com','PRAÇA WILSON ELOY PIMENTA','Brenda Oliveira Guimarães','','9c554497722e4302f7e27d902e8bc724','(64) 3405-4002','token',2280),
+(61,false,'(62) 9255-6645','76.740-000',true,'807.691.601-15','2015-12-01','2015-12-01','1989-06-06','2017-08-29','sec.meioambiente.faina@gmail.com','Rua Pereira Galvão, nº. 237, centro','Alessandra Pereira da Costa','3361497','89f75ee93552787c3ed22ee7801b2825','(62) 3386-1128','token',2161),
+(62,false,'(64)82024808','75.660-000',true,'024.789.231-90','2017-06-01','2017-06-01','1975-02-14','2017-08-30','semmaburitialegre@gmail.com','RUA GOIÁS N°563','Regina Alves de Morais Neta','4905395','c867bc2e96ce80f6f58a09751e52cc3f','(64)34449904','token',2096),
+(63,false,'06291324235','75.555-000',true,'469.523.571-49','2015-06-26','2015-06-26','2005-07-30','2015-06-26','vicentinopolisambiental@gmail.com','AV VICENTE FERREIRA 22 QD 12 LT 01 E 02 ESQ C/ RUA TANCREDO NEV','Rosildo Tavares','1937940 DGPC-GO','5aa1a2484783cfb997dafd85246c30fc','06241410539','token',2364),
+(64,false,'(62) 8119-2051','76.420-000',true,'839.850.501-04','2015-04-28','2015-04-28','2008-04-28','2015-04-30','meioambiente@niquelândia.go.gov.br','Praça Mestre Dário, 01','Geane Silva','3736685','4270f7837e7ddb1cfb348bb6ba2317f5','(62) 3959-7011','token',2249),
+(65,false,'06291324235','76.555-000',true,'005.919.871-04','2015-06-23','2015-06-23','2005-07-22','2015-06-23','bonopolisambiental@gmail.com','R SAO JOSE ,QUADRA51 LOTE 08, 09 E 10','JAIR DE SOUZA','4694154 DGPC-GO','5195982f6abe723f612eb9275cad21b9','06241410539','token',2092),
+(66,false,'64- 84517087','76.170-000',true,'837.976.966-04','2014-08-01','2014-08-01','1911-06-06','2017-01-04','prefeitura.anicuns@hotmail.com','AV. TOCANTINS, Nº 1.140','ELDIMARA OLIVEIRA CAIRES','5623777','de84abbdaa34cc52506fcb4c0857e566','64 - 35643559','token',2067),
+(67,false,'(64) 8163-1971','75.955-000',true,'026.209.291-30','2017-06-20','2017-06-20','2017-05-02','2017-07-11','arrecadacao@indiara.go.gov.br','RUA MIZAEL MACHADO, S/Nº, CENTRO','FERNANDA DOS SANTOS DE MORAIS','4393485 - DGPC/GO','25f9e794323b453885f5181f1b624d0b','(64) 3547-1157','token',2188),
+(68,false,'(62) 8444-3680','75.355-000',true,'797.368.071-34','2017-08-22','2017-08-22','1989-01-04','2017-09-08','marcioarriel@hotmail.com','AVENIDA FLAMBOYANT Nº 79 CENTRO','MARCIO FERREIRA ARRIEL','3489693','cad88275188ac4b4ca485b7022ee650d','(62) 3334-3144','token',2241),
+(69,false,'06291324235','75.230-000',true,'167.851.501-91','2015-06-23','2015-06-23','2005-09-30','2016-11-30','cristianopolisambiental@gmail.com','R WILSON DA PAIXAO ,N°01, CENTRO','Jose Dias Machado ','167.851.501-91','5719786d2129f36ee7a49245ab1c78f0','06241410539','token',2144),
+(70,false,'(64) 9238-4667','75.220-000',true,'022.865.411-40','2017-03-27','2017-03-27','1973-09-17','2017-07-31','santacruzdego@gmail.com','Rua Padre n. 37','Mateus Felix Lopes ','5032667','3998cd271eebcc436fa5c23a66a839e8','(64) 3472-1286','token',2306),
+(71,false,'(62) 8164-2700','76.380-000',true,'002.085.341-64','2015-04-28','2015-04-28','1953-07-03','2016-06-09','feliposo_@hotmail.com','Rua 33, nº 453, Setor Sul','Felipe Alves Barbosa','4072535','a61f0a2e1c4dbdf3f309e1cfe549125d','(62) 3389-9400','token',2173),
+(72,false,'(64) 9219-0181','75.870-000',true,'910.565.941-87','2017-03-14','2017-03-14','1975-03-31','2017-08-04','uc.arieca@gmail.com','Rua Bela Vista, N116, Centro','Paulo Henrique M. de Souza','3654838','ffffe3d99499aec5444f6eb4b83ec9e9','(64) 3654-1417','token',2100),
+(73,false,'06291324235','76.140-000',true,'607.330.981-34','2015-06-23','2015-06-23','2005-11-03','2015-06-23','amorinopolisambiental@gmail.com','Loc. PCA da Matriz, centro, Amorinópolis – GO','João Machado de resende','3212750 SPTC-GO','525c508a7b3b81fc3e9e8d78a2199c48','06241410539','token',2064),
+(74,false,'(62) 99635-8938','76.700-000',true,'382.216.321-04','2014-09-30','2014-09-30','2005-10-14','2017-06-03','prefmozar@gmail.com','RUA SÃO PAULO, S/N - CENTRO','AMARILDA DE FATIMA MORAIS COSTA','1567314','f26604db03d909a620e9b725949e0297','(62) 3348-6333','token',2243);
+
+insert into usuario_papeis(usuario_id,papeis) values(1,'ADMIN');
+
+--> Tabela Pessoa:
+---->Criando campo temporário para guardar o cpf do usuário:
+alter table pessoa add column cpfusuario character varying(255);
+----> Removendo a constraint do usuário:
+alter table pessoa drop constraint fk8e48fbc7ee194722  RESTRICT;
+ALTER TABLE pessoa ALTER COLUMN usuario_id DROP NOT NULL;
+
+insert into pessoa (id, cep, cpfcnpj, datacriacao, email, endereco, inscricaoestadual, nome, rg, telefone, tipo, municipio_id, cpfusuario, usuario_id)
+values
+(468,'75.430-000','01.319.326/0001-49','2014-08-06 11:15:12.113','cristianosousa2301@gmail.com','PC PRACA 14 DE NOVEMBRO, N°211 , CENTRO','Corrigir','MUNICIPIO DE CATURAI ','Corrigir','(062) 3528-1130','ORGAO',2126,'735.943.851-91',null),
+(711,'76.100-000','02.320.406/0001-87','2015-04-24 11:09:56.059','semma.slmb@gmail.com','RUA RIO DA PRATA, Nº 662, CENTRO','Corrigir','MUNICIPIO DE SAO LUIS DE MONTES BELOS','Corrigir','(62) 3671-1227','ORGAO',2326,'869.641.861-15',null),
+(439,'75.901-150','02.056.729/0001-05','2014-07-31 09:47:12.139','meioambiente@rioverdegoias.com.br','Rua Almiro de Moraes, nº 231 -Centro','Corrigir','Prefeitura Municipal de Rio Verde','Corrigir','64 36028400','ORGAO',2298,'940.914.041-20',null),
+(1152,'76.145-000','02.321.115/0001-03','2017-07-06 14:24:11.204','gmnweb.contato@gmail.com','PRACA CORDEIRO, Nº 40 - CENTRO','Corrigir','MUNICIPIO DE CORREGO DO OURO','Corrigir','(64) 3687-1122','ORGAO',2139,'111.540.086-06',null),
+(430,'76.450-000','02.215.275/0001-78','2014-07-30 15:51:30.212','anaferreira.alf@gmail.com','Av Amazonas, 295 Centro','Corrigir','PREFEITURA MUNICIPAL DE MINAÇU','Corrigir','6233791020','ORGAO',2233,'984.205.851-49',null),
+(632,'76.470-000','02.395.812/0001-09','2015-03-05 15:54:50.72','robsongleao@hotmial.com','PRAÇA VEREADORA NILDA MOTA LUCINDO S/N CENTRO','Corrigir','MUNICÍPIO DE FORMOSO','Corrigir','(62) 3377-6830','ORGAO',2166,'403.030.711-68',null),
+(1129,'75.410-000','01.318.898/0001-03','2017-06-29 14:23:17.806','aracugo@gmail.com','Praça 14 de Novembro, Centro ','Corrigir','Secretaria Municipal de Cultura e Meio Ambiente ','Corrigir','(62) 3527-1263','ORGAO',2074,'413.430.691-49',null),
+(730,'76.375-000','01.067.230/0001-30','2015-05-08 17:11:02.884','secmahidrolina@gmail.com','Avenida Antônio Braga, nº 77, Setor Aeroporto','Corrigir','Prefeitura Municipal de Hidrolina','Corrigir','(62) 3349-6613','ORGAO',2185,'028.768.511-05',null),
+(1074,'75.810-000','01.067.271/0001-27','2017-04-20 11:10:03.171','itarumago.uc@gmail.com','Praça Sebastião Assis Freitas, n 18, Centro ','Corrigir','Prefeitura Municipal de Itarumã ','Corrigir','(64) 3659-1254','ORGAO',2202,'008.309.441-50',null),
+(473,'75.230-000','01.180.645/0001-16','2014-08-06 15:41:57.577','cristianopolisambiental@gmail.com','R WILSON DA PAIXAO ,N°01, CENTRO','Corrigir','MUNICIPIO DE CRISTIANOPOLIS ','Corrigir','06241410539','ORGAO',2144,'167.851.501-91',null),
+(994,'75.260-000','01.299.692/0001-83','2016-11-25 11:42:23.369','financaprefvps@gmail.com','R JOSE ISSY N115 CENTRO','Corrigir','MUNICIPIO DE VIANOPOLIS ','Corrigir','(62) 3255-8821','ORGAO',2363,'032.738.941-99',null),
+(444,'76.170-000','02.262.368/0001-53','2014-08-01 13:30:07.313','prefeitura.anicuns@hotmail.com','AV. TOCANTINS, Nº 1.140','Corrigir','FUNDO MUNICIPAL DO MEIO AMBIENTE DE ANICUNS','Corrigir','64 - 35643559','ORGAO',2067,'837.976.966-04',null),
+(574,'76.700-000','01.135.227/0001-07','2014-09-30 11:37:48.509','prefmozar@gmail.com','RUA SÃO PAULO, S/N - CENTRO','Corrigir','PREFEITURA MUNICIPAL DE MOZARLÃNDIA','Corrigir','(62) 3348-6333','ORGAO',2243,'382.216.321-04',null),
+(1178,'75.950-000','02.879.138/0001-38','2017-08-24 13:08:58.858','agricultura.jandaia.go@gmail.com','AVENIDA JK DE OLIVEIRA Nº 742 CENTRO','Corrigir','PREFEITURA MUNICIPAL DE JANDAIA','Corrigir','(64) 3563-2005','ORGAO',2207,'004.217.881-94',null),
+(470,'76.555-000','01.634.272/0001-06','2014-08-06 14:28:14.445','bonopolisambiental@gmail.com','R SAO JOSE ,QUADRA51 LOTE 08, 09 E 10','Corrigir','MUNICIPIO DE BONOPOLIS','Corrigir','06241410539','ORGAO',2092,'005.919.871-04',null),
+(460,'75.610-000','02.029.957/0001-96','2014-08-05 14:19:48.954','uc.joviania@outlook.com','R JOAQUIM LUIZ BARBOSA,numero 8, centro','Corrigir','MUNICIPIO DE JOVIANIA','Corrigir','06241410539','ORGAO',2214,'785.069.801-00',null),
+(469,'76.345-000','01.135.409/0001-88','2014-08-06 11:28:22.598','novaamericasemma@gmail.com','AV JUSCELINO KUBSTCHEK DE OLIVEIRA , N° 329','Corrigir','MUNICIPIO DE NOVA AMERICA ','Corrigir','06241410539','ORGAO',2250,'574.233.261-00',null),
+(1157,'76.110-000','02.321.883/0001-67','2017-07-11 16:22:48.458','adturvania@gmail.com','AVENIDA DR. ULISSES GUIMARÃES Nº 458, CENTRO','Corrigir','SECRETARIA MUNICIPAL DE MEIO AMBIENTE DE TURVÂNIA','Corrigir','(64) 3682-1768','ORGAO',2352,'853.320.381-00',null),
+(719,'76.420-000','10.489.266/0001-01','2015-04-28 10:17:47.424','meioambiente@niquelândia.go.gov.br','Praça Mestre Dário, 01','Corrigir','Fundo Municipal de Meio Ambiente de Niquelândia','Corrigir','(62) 3959-7011','ORGAO',2249,'839.850.501-04',null),
+(1081,'76.515-000','01.493.998/0001-76','2017-04-27 12:28:56.487','camposverdesg@gmail.com','Av. Campos Verdes, n 1 ','Corrigir','Secretaria Municipal do Meio Ambiente ','Corrigir','(62) 3351-6512','ORGAO',2117,'166.869.001-25',null),
+(1120,'75.955-000','00.005.959/0001-10','2017-06-20 15:03:58.393','arrecadacao@indiara.go.gov.br','RUA MIZAEL MACHADO, S/Nº, CENTRO','Corrigir','MUNICIPIO DE INDIARA','Corrigir','(64) 3547-1157','ORGAO',2188,'026.209.291-30',null),
+(1135,'75.715-000','01.131.010/0001-29','2017-06-30 11:47:00.281','meioambiente@ouvidor.go.gov.br','AVENIDA IRAPUÃ COSTA JÚNIOR, N 915, CENTRO','Corrigir','Município de Ouvidor ','Corrigir','(64) 3478-1162','ORGAO',2265,'987.530.881-15',null),
+(723,'76.360-000','18.065.135/0001-09','2015-04-28 15:33:21.337','semma.itapaci@hotmail.com','AV. FLORESTA, Nº 198, KM 1, LOTE 1, CENTRO ','Corrigir','FUNDO MUNICIPAL DE MEIO AMBIENTE DE ITAPACI','Corrigir','62 3994 5002','ORGAO',2199,'654.038.433-53',null),
+(1155,'75.630-000','01.067.842/0001-23','2017-07-10 19:53:26.923','MAIRIPOTABA@BOL.COM.BR','RUA JOÃO MANOEL N 83 CENTRO','Corrigir','PREFEITURA DE MAIRIPOTABA','Corrigir','(64) 3604-1149','ORGAO',2223,'565.304.121-15',null),
+(370,'75.990-000','01.178.573/0001-72','2014-07-28 13:18:03.057','lgbomtempo@hotmail.com','RUA ORCELINO VICENTE SANTANA, Nº 138, CENTRO','Corrigir','DEPARTAMENTO DE GESTAO AMBIENTAL DO MUNICIPIO DE PALMINOPOLIS','Corrigir','(64) 3675-1167','ORGAO',2270,'558.106.591-87',null),
+(808,'75.780-000','01.763.606/0001-41','2015-09-28 15:28:53.026','semma.ipameri@gmail.com','Avenida Pandiá Calógeras, nº 84, Centro','Corrigir','Município de Ipameri','Corrigir','(64) 3491-6000','ORGAO',2191,'974.016.761-68',null),
+(603,'76.340-000','02.542.538/0001-53','2014-11-19 22:14:54.462','adrielccp@gmail.com','Praça Alfredo Nasser, nr 5','Corrigir','Município de Carmo do Rio Verde','Corrigir','(62) 3337-6357','ORGAO',2122,'011.969.021-78',null),
+(462,'75.827-000','24.859.316/0001-00','2014-08-05 16:24:00.925','uc.aparecidadoriodoce@outlook.com','R ADALTO FERNANDES ,numero 201 ','Corrigir','MUNICIPIO DE APARECIDA DO RIO DOCE','Corrigir','06241410539','ORGAO',2072,'735.943.851-91',null),
+(461,'75.555-000','00.044.834/0001-07','2014-08-05 15:15:35.685','vicentinopolisambiental@gmail.com','AV VICENTE FERREIRA 22 QD 12 LT 01 E 02 ESQ C/ RUA TANCREDO NEV','Corrigir','MUNICIPIO DE VICENTINOPOLIS','Corrigir','06241410539','ORGAO',2364,'469.523.571-49',null),
+(813,'75.920-000','02.056.711/0001-03','2015-10-08 09:58:49.731','meioambiente@santahelena.go.gov.br','Rua Vereador Eduvaldo Veloso do Carmo, n. 510, Centro','Corrigir','Secretaria Municipal de Meio Ambiente e Recursos Hídricos de Santa Helena','Corrigir','(64) 3641-8725','ORGAO',2308,'013.448.851-28',null),
+(752,'75.828-000','24.859.332/0001-94','2015-06-22 11:31:41.645','ronildo.galdino@bol.com.br','AV EMA QD 51 S/N','Corrigir','PREFEITURA MUNICIPAL DE CHAPADAO DO CEU','Corrigir','(64) 3634-1228','ORGAO',2132,'050.209.908-92',null),
+(949,'75.130-000','02.321.891/0001-03','2016-07-26 13:37:18.04','prefivolandia@gmail.com','Rua Dep. Jamel Cecílio, nº 192, Centro','Corrigir','Prefeitura Municipal de Ivolandia','Corrigir','(64) 3685-1144','ORGAO',2205,'760.743.401-10',null),
+(722,'76.380-000','25.141.813/0001-22','2015-04-28 14:24:48.036','feliposo_@hotmail.com','Rua 33, nº 453, Setor Sul','Corrigir','Prefeitura Municipal de Goianésia','Corrigir','(62) 3389-9400','ORGAO',2173,'002.085.341-64',null),
+(760,'75.800-089','01.165.729/0001-80','2015-07-13 14:50:58.219','meioambiente@jatai.go.gov.br','Rua Itarumã nº 355 - Setor Santa Maria ','Corrigir','Prefeitura Municipal  de Jataí/Secretária Municipal de Meio Ambiente','Corrigir','(64) 3632-4058','ORGAO',2209,'805.983.741-91',null),
+(1088,'76.315-000','01.300.094/0001-87','2017-05-04 13:42:41.664','sama@rianapolis.go.gov.br','Praça Antônio de Moraes Rodrigues, nº 393, Centro.','Corrigir','Prefeitura Municipal de Rianápolis','Corrigir','(62) 3348-3130','ORGAO',2295,'768.039.961-15',null),
+(1156,'73.870-000','01.740.430/0001-02','2017-07-10 19:58:06.059','cabeceiras@bol.com.br','AVENIDA VICENTE DE PAULA SOUZA S/N CENTRO','Corrigir','PREFEITURA DE CABECEIRAS','Corrigir','(61) 3636-1343','ORGAO',2099,'892.937.031-49',null),
+(1037,'75.870-000','02.056.760/0001-46','2017-03-14 15:50:24.393','uc.arieca@gmail.com','Rua Bela Vista, N116, Centro','Corrigir','Superintendência de Agricultura Pecuária e Meio Ambiente','Corrigir','(64) 3654-1417','ORGAO',2100,'910.565.941-87',null),
+(1045,'75.220-000','02.669.976/0001-87','2017-03-27 14:57:22.77','santacruzdego@gmail.com','Rua Padre n. 37','Corrigir','Secretaria Municipal de Meio Ambiente ','Corrigir','(64) 3472-1286','ORGAO',2306,'022.865.411-40',null),
+(1096,'76.490-000','00.007.468/0001-08','2017-05-18 16:52:41.265','jpato25@hotmail.com','PRACA PREFEITO JOSE MAURICIO, 378, CENTRO','Corrigir','MUNICIPIO DE MARA ROSA','Corrigir','(62) 3366-2310','ORGAO',2225,'479.975.671-00',null),
+(1132,'76.304-000','04.215.377/0001-19','2017-06-29 17:26:23.161','meioambienteipigo@gmail.com','Avenida Raimundo Alves de Souza Qd. 05 Setor Independência','Corrigir','PREFEITURA MUNICIPAL DE IPIRANGA DE GOIAS','Corrigir','(62) 3342-6145','ORGAO',10090,'878.235.271-20',null),
+(294,'75.503-090','11.983.899/0001-26','2014-07-21 09:57:20.801','ammai@itumbiara.go.gov.br','Rua Rui de Almeida nº 630, Centro','Corrigir','AGENCIA MUNICIPAL DO MEIO AMBIENTE DE ITUMBIARA - AMMAI ','Corrigir','64 34330316','ORGAO',2204,'916.990.531-20',null),
+(1118,'75.195-000','24.857.096/0001-77','2017-06-14 15:40:32.539','elietealvesamorimnathalia@hotmail.com','AVENIDA UM ESQUINA COM A RUA 05 Nº 594 CENTRO','Corrigir','PREFEITURA MUNICIPAL DE BONFINÓPOLIS','Corrigir','(62) 3334-1144','ORGAO',2091,'590.345.131-49',null),
+(774,'75.640-000','01.179.647/0001-95','2015-08-06 16:40:59.441','andremachadopba@gmail.com','PRAÇA WILSON ELOY PIMENTA','Corrigir','PREFEITURA MUNICIPAL DE PIRACANJUBA','Corrigir','(64) 3405-4002','ORGAO',2280,'015.922.001-76',null),
+(377,'76.105-000','02.321.917/0001-13','2014-07-28 13:42:19.743','figueiraefernandes@gmail.com','AVENIDA GOIANIA, Nº 322 - CENTRO','Corrigir','SUPERINTENDENCIA DE MEIO AMBIENTE E RECURSOS HIDRICOS','Corrigir','(64) 3681-2112','ORGAO',2163,'350.294.121-15',null),
+(777,'74.968-500','01.005.727/0001-24','2015-08-11 12:50:42.251','semmaapg.licenciamento@gmail.com','RUA GERVÁSIO PINHEIRO, S/N, ÁREA PÚBLICA, RESIDENCIAL SOLAR CENTRAL PARK','Corrigir','MUNICÍPIO DE APARECIDA DE GOIÂNIA','Corrigir','(62) 3545-5859','ORGAO',2069,'009.689.591-80',null),
+(435,'75.915-000','25.043.571/0001-34','2014-07-30 17:17:31.538','meioambiente@montividiu.go.gov.br','Avenida Rio Verde, nº 142, centro - sala 02','Corrigir','Prefeitura Municipal de Montividiu','Corrigir','64 3629-1244','ORGAO',2238,'921.074.511-68',null),
+(457,'76.140-000','01.067.073/0001-63','2014-08-05 09:31:46.969','amorinopolisambiental@gmail.com','Loc. PCA da Matriz, centro, Amorinópolis – GO','Corrigir','MUNICIPIO DE AMORINOPOLIS ','Corrigir','06241410539','ORGAO',2064,'607.330.981-34',null),
+(1109,'76.350-000','02.382.836/0001-23','2017-06-06 16:30:33.246','secmeioambiente@rubiataba.go.gov.br','Avenida Caraíba n. 385 Setor Bela Vista','Corrigir','Prefeitura de Rubiataba','Corrigir','(62) 3325-1230','ORGAO',2302,'044.747.251-82',null),
+(803,'73.865-000','01.067.206/0001-00','2015-09-23 12:07:04.482','divinopolisgo@hotmail.com','Praça São João Batista s/n Centro','Corrigir','Município de Divinopolis de Goiás','Corrigir','(62) 3456-1100','ORGAO',2155,'566.495.686-00',null),
+(1078,'76.160-000','02.164.804/0001-51','2017-04-25 18:31:59.943','havilamartins@hotmail.com','PRACA 03 PODERES, NUMERO 07, CENTRO','Corrigir','MUNICIPIO DE SANCLERLANDIA','Corrigir','(64) 3679-1227','ORGAO',2303,'005.211.451-12',null),
+(296,'75.970-000','25.107.657/0001-83','2014-07-21 15:21:29.044','turvelandia@bol.com.br','AVENIDA JOSÉ MARIO DA COSTA REZENDE N° 13, CENTRO','Corrigir','PREFEITURA MUNICIPAL DE TURVELÂNDIA','Corrigir','64 3642-8037 ','ORGAO',2353,'955.493.901-91',null),
+(472,'76.660-000','01.067.255/0001-34','2014-08-06 14:32:47.082','itaguarusemma@gmail.com','LOC PCA DA MATRIZ , CENTRO','Corrigir','MUNICIPIO DE ITAGUARU ','Corrigir','06241410539','ORGAO',2197,'612.212.951-87',null),
+(1114,'75.396-970','02.262.236/0001-21','2017-06-12 16:21:32.764','prefeituracampestre2017@gmail.com','Rua São Paulo n 39 centro','Corrigir','PREFEITURA MUNICIPAL DE CAMPESTRE DE GOIÁS','Corrigir','(62) 3557-1152','ORGAO',2110,'235.625.441-20',null),
+(400,'75.701-050','01.505.643/0001-50','2014-07-29 14:25:21.542','alinelins.bio@gmail.com','Avenida Dr. Lamartine Pinto de Avelar, n. 2.338, Bairro Ipanema.','Corrigir','MUNICIPIO DE CATALAO','Corrigir','64 34411834','ORGAO',2125,'024.613.251-54',null),
+(836,'76.740-000','25.141.318/0001-13','2015-12-01 07:46:47.957','sec.meioambiente.faina@gmail.com','Rua Pereira Galvão, nº. 237, centro','Corrigir','Prefeitura Municipal de Faina','Corrigir','(62) 3386-1128','ORGAO',2161,'807.691.601-15',null),
+(307,'75.660-000','01.345.909/0001-44','2014-07-22 10:38:39.632','semmaburitialegre@gmail.com','RUA GOIÁS N°563','Corrigir','MUNICÍPIO DE BURITI ALEGRE','Corrigir','(64)34449904','ORGAO',2096,'024.789.231-90',null),
+(325,'75.603-000','01.617.413/0001-82','2014-07-23 10:32:25.819','uelson.machado@hotmail.com','RUA MATO GROSSO, Nº 838 - CENTRO','Corrigir','MUNICIPIO DE PORTEIRÃO','Corrigir','64 3643-1144','ORGAO',2288,'763.974.081-91',null),
+(717,'72.800-060','01.169.416/0001-09','2015-04-27 15:22:00.114','wilmadolago@gmail.com','Praça Nirson Carneiro Lobo, 34','Corrigir','Prefeitura Municipal de Luziânia','Corrigir','(61) 3906-3115','ORGAO',2222,'571.664.808-82',null),
+(1146,'75.760-000','01.302.728/0001-30','2017-07-03 14:25:15.375','secmeioambientecumari@outlook.com','Praça São João Batista n° 01','Corrigir','Prefeitura de Cumari','Corrigir','(64) 3440-1140','ORGAO',2148,'003.095.391-02',null),
+(1128,'75.200-000','01.181.585/0001-56','2017-06-29 14:29:46.584','jayme_jhunner@hotmail.com','Praça Francisco Felipe Machado ;n37;Centro','Corrigir','Municipio de Pires do Rio','Corrigir','(64) 3461-4000','ORGAO',2284,'032.402.321-97',null),
+(317,'75.680-000','01.302.603/0001-00','2014-07-23 09:39:48.857','semmacorumbaiba@outlook.com','Rua Simon Bolivar nº 58 Centro','Corrigir','PREFEITURA MUNICIPAL DE CORUMBAIBA','Corrigir','64 34477000','ORGAO',2142,'098.771.588-76',null),
+(1174,'75.355-000','25.043.621/0001-83','2017-08-22 13:44:55.992','marcioarriel@hotmail.com','AVENIDA FLAMBOYANT Nº 79 CENTRO','Corrigir','PREFEITURA MUNICIPAL DE MORRO AGUDO','Corrigir','(62) 3334-3144','ORGAO',2241,'797.368.071-34',null),
+(794,'75.860-000','15.792.574/0001-17','2015-09-11 10:45:32.407','semma@quirinopolis.go.gov.br','PRAÇA DOS TRÊS PODERES Nº 88 CENTRO','Corrigir','FUNDO MUNICIPAL DO MEIO AMBIENTE','Corrigir','(64) 3615-9100','ORGAO',2293,'776.268.851-04',null),
+(1106,'73.900-000','01.743.335/0001-62','2017-06-01 17:42:54.189','meioambiente@posse.go.gov.br','AV. PE. TRAJANO, N. 55 - CENTRO','Corrigir','PREFEITURA MUNICIPAL DE POSSE','Corrigir','(62) 3481-1380','ORGAO',2290,'269.530.211-87',null),
+(744,'75.650-000','01.789.551/0001-49','2015-06-03 14:30:26.077','loanec@gmail.com','Av Senador Hermenegildo n 160 Centro','Corrigir','Município de Morrinhos','Corrigir','(64) 3417-2036','ORGAO',2240,'950.579.191-72',null),
+(656,'75.815-000','02.186.757/0001-47','2015-03-12 10:03:35.626','prefeituradeitajaambiental@gmail.com','rua antônio nunes da silva ','Corrigir','prefeitura municipal de itaja ','Corrigir','(64) 3648-7500','ORGAO',2198,'005.408.641-88',null),
+(1166,'75.600-000','04.413.256/0001-81','2017-08-07 15:33:21.302','lynorpf@bol.com.br','Av. Rio Branco n° 1595','Corrigir','Fundo Municipal do Meio Ambiente','Corrigir','(64) 3495-0042','ORGAO',2177,'521.194.911-00',null),
+(587,'76.125-000','02.164.820/0001-44','2014-10-13 07:42:34.424','kleitonclaudio@hotmail.com','Rua Coronel Seabra Guimarães, nº 321, Centro','Corrigir','Prefeitura Municipal de Cachoeira de Goiás - Go','Corrigir','(64) 3676-1122','ORGAO',2101,'628.799.521-15',null),
+(484,'75.380-000','01.217.538/0001-15','2014-08-13 17:20:59.542','semma@trindade.go.gov.br','Praça Constantino Xavier, nº 330 - Centro','Corrigir','Prefeitura Municipal de Trindade','Corrigir','6235067041','ORGAO',2349,'566.796.536-49',null),
+(308,'76.380-000','01.065.846/0001-72','2014-07-22 15:05:01.972','meioambiente@goianesia.go.gov.br','Rua 14 n° 299 Centro','Corrigir','Município de Goianésia','Corrigir','(62) 3389-9445','ORGAO',2173,'129.757.296-34',null),
+(806,'74.000-001','00.638.357/0001-08','2014-08-06 11:15:12.113','eric-rk@secima.go.gov.br','Palácio Pedro Ludovico Teixeira, Praça Cívica, 1º e 2º Andares, ala leste e oeste, St. Central','---','NOME','---','(062) 3528-1340','ORGAO',2174,5);
+--Atulizando o id do usuário da tabela pessoa:
+update pessoa set usuario_id = (select id from usuario where usuario.cpf = pessoa.cpfusuario);
+update pessoa set usuario_id = 1 where usuario_id is null;
+-----> Removendo o campo temporário
+alter table pessoa drop column cpfusuario;
+-----> Recriando a constraint do usuário:
+ALTER TABLE pessoa ALTER COLUMN usuario_id SET NOT NULL;
+alter table pessoa add constraint fk8e48fbc7ee194722 FOREIGN KEY (usuario_id) REFERENCES usuario (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+--> Criando o credenciamento para as pessoas existentes....
+ALTER TABLE credenciamento ALTER COLUMN id SET DEFAULT nextval('credenciamento_seq'::regclass);
+
+insert into credenciamento (aprovado,data,oficio_id,pessoa_id,usuario_id)
+select true,now(),null,id,usuario_id from pessoa;
+
+ALTER TABLE credenciamento ALTER COLUMN id DROP DEFAULT;
+
+--> Atualizando os usuário da unidade de conservação:
+update unidadeconservacao set usuario_id = (select id from usuario where usuario.cpf = unidadeconservacao.cpf);
+update unidadeconservacao set usuario_id = 1 where usuario_id is null;
+
+--> Atualizando o orgao/proprietario da unidade de conservação:
+update unidadeconservacao set orgaoouproprietario_id = responsavel_id;
+alter table unidadeConservacao drop column responsavel_id;
+alter table unidadeConservacao drop column docparecer_id;
+
+-----> Removendo o campo temporário
+alter table unidadeconservacao drop column cpf;
+
+--> Adcionando as constraints nas tabelas;
+ALTER TABLE unidadeconservacao ALTER COLUMN usuario_id SET NOT NULL;
+ALTER TABLE unidadeconservacao ALTER COLUMN orgaoouproprietario_id SET NOT NULL;
+alter table unidadeconservacao add constraint unidadeconservacao_usuario_fk FOREIGN KEY (usuario_id) REFERENCES usuario (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
+alter table unidadeconservacao add constraint unidadeconservacao_pessoa_fk FOREIGN KEY (orgaoouproprietario_id) REFERENCES pessoa (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
+alter table unidadeconservacao add constraint unidadeconservacao_usuario_aprovacao_fk FOREIGN KEY (usuarioaprovacao_id) REFERENCES usuario (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
+alter table unidadeconservacao add constraint unidadeconservacao_imovel_fk FOREIGN KEY (imovel_id) REFERENCES imovel (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+-- Resetando as sequences do sistema:
+SELECT SETVAL('credenciamento_seq', (SELECT MAX(ID) FROM credenciamento));
+SELECT SETVAL('documento_seq', (SELECT MAX(ID) FROM documento));
+SELECT SETVAL('historicologin_seq', (SELECT MAX(ID) FROM historicologin));
+SELECT SETVAL('imovel_seq', (SELECT MAX(ID) FROM imovel));
+SELECT SETVAL('pessoa_seq', (SELECT MAX(ID) FROM pessoa));
+SELECT SETVAL('unidade_conservacao_seq', (SELECT MAX(ID) FROM unidadeconservacao ));
+SELECT SETVAL('unidadeconservacaodocumento_seq', (SELECT MAX(ID) FROM unidadeconservacaodocumento  ));
+SELECT SETVAL('usuario_seq', (SELECT MAX(ID) FROM usuario ));
+
+--Remoção dos objetos largos inutilizados:
+SELECT lo_unlink(l.oid)
+FROM   pg_largeobject_metadata l
+WHERE (NOT EXISTS (SELECT 1 FROM unidadeconservacaodocumento as t WHERE t.conteudo = l.oid))
+AND   (NOT EXISTS (SELECT 1 FROM documento as t WHERE t.conteudo = l.oid));
+
+VACUUM FULL ANALYZE VERBOSE;

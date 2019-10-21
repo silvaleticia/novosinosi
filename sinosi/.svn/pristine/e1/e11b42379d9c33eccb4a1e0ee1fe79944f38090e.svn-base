@@ -1,0 +1,60 @@
+package br.gov.go.secima.unidadeconservacao.util;
+
+import java.util.Date;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.com.ambientinformatica.util.UtilLog;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumPapelUsuario;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.persistencia.MunicipioDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.UsuarioDao;
+
+@Service("inicializadorSistema")
+public class InicializadorSistema {
+
+    @Autowired
+    private UsuarioDao usuarioDao;
+
+    @Autowired
+    private MunicipioDao municipioDao;
+
+    @PostConstruct
+    public void iniciar(){
+        inicializarUsuarioAdmin();
+    }
+
+    private void inicializarUsuarioAdmin(){
+        try {
+            Usuario usuario = usuarioDao.consultarPorCpf("111.111.111-11");
+            if(usuario == null){
+                usuario = new Usuario();
+                usuario.setNome("Administrador");
+                usuario.setCpf("111.111.111-11");
+                usuario.setEmail("admin@admin");
+                usuario.setDataCriacao(new Date());
+                usuario.setDataNascimento(new Date());
+                usuario.setCep("74.000-000");
+                usuario.setTelefone("(62)9999-9999");
+                usuario.setCelular("(62)9999-9999");
+                usuario.setEndereco("Rua");
+                usuario.setRg("123");
+                usuario.setMunicipio(municipioDao.municipioPorCodigoIBGE(5208707));
+                usuario.setSenhaNaoCriptografada("123456");
+                usuario.addPapel(EnumPapelUsuario.ADMIN);
+                usuario.setConfirmado(true);
+                usuario.setAlterarSenha(false);
+
+                usuarioDao.incluir(usuario);
+
+                UtilLog.getLog().info("*** USUÁRIO admin CRIADO com a senha 123456 ***");
+            }
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+        }
+    }
+
+}

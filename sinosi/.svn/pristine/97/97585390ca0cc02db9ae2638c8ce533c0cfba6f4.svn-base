@@ -1,0 +1,114 @@
+package br.gov.go.secima.unidadeconservacao.persistencia;
+
+import java.util.List;
+
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.com.ambientinformatica.jpa.exception.PersistenciaException;
+import br.com.ambientinformatica.jpa.persistencia.PersistenciaJpa;
+import br.com.ambientinformatica.util.UtilLog;
+import br.gov.go.secima.unidadeconservacao.entidade.Credenciamento;
+import br.gov.go.secima.unidadeconservacao.entidade.Pessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.util.UtilUnidadeConservcao;
+
+@Repository("credenciamentoDao")
+public class CredenciamentoDaoJpa extends PersistenciaJpa<Credenciamento> implements CredenciamentoDao{
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    @Transactional(rollbackFor={PersistenciaException.class})
+    public Credenciamento consultarPorPessoaUsuario(Pessoa pessoa, Usuario usuario) throws PersistenciaException {
+        try {
+            TypedQuery<Credenciamento> query = em.createQuery("select distinct c from Credenciamento c left join fetch c.oficio doc where c.pessoa = :pessoa and c.usuario = :usuario", Credenciamento.class);
+            query.setParameter("pessoa", pessoa);
+            query.setParameter("usuario", usuario);
+            List<Credenciamento> credenciamentos = query.getResultList();
+
+            if(credenciamentos.isEmpty()){
+                return null;
+            }else{
+                return credenciamentos.get(0);
+            }
+        }catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException("Erro ao consultar credenciamento por pessoa e usuário.", e);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor={PersistenciaException.class})
+    public List<Credenciamento> listarPorPessoa(Pessoa pessoa) throws PersistenciaException {
+        try {
+            TypedQuery<Credenciamento> query = em.createQuery("select distinct c from Credenciamento c left join fetch c.oficio doc where c.pessoa = :pessoa", Credenciamento.class);
+            query.setParameter("pessoa", pessoa);
+            List<Credenciamento> credenciamentos = query.getResultList();
+
+            if(credenciamentos.isEmpty()){
+                return null;
+            }else{
+                return credenciamentos;
+            }
+        }catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException("Erro ao listar credenciamentos por pessoa.", e);
+        }
+    }
+
+    @Override
+    public void enviarEmail(Credenciamento credenciamento) {
+        try{
+            String host = "https://portal.meioambiente.go.gov.br";
+            StringBuilder assunto = new StringBuilder();
+
+            assunto.append("<div>");
+            assunto.append("<table align='center' border='0' cellpadding='0' cellspacing='0' style='color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.8000001907349px; line-height: normal;' width='570'>");
+            assunto.append("<tbody>");
+            assunto.append("<tr>");
+            assunto.append("<td align='middle' style='font-family: Helvetica, Arial, sans-serif; margin: 0px; color: rgb(43, 43, 43); font-size: 20px; line-height: 24px; padding: 0px 34px 10px;'>");
+            assunto.append("<p>");
+            assunto.append("<a href='");
+            assunto.append(host);
+            assunto.append("/unidadeconservacao");
+            assunto.append("' target='_blank'><img alt='Unidade de Conserva&ccedil;&atilde;o' src='");
+            assunto.append(host);
+            assunto.append("/unidadeconservacao/resources/imagens/logo-unidadeconservacao.png");
+            assunto.append("' style='border-width: 0px; border-style: solid; margin: 0px;' />");
+            assunto.append("</a>");
+            assunto.append("</p>");
+
+            assunto.append("<p><strong>Aviso</span></strong></p>");
+            assunto.append("</td></tr><tr>");
+            assunto.append("<td style='font-size: 14px; padding: 0px 34px 25px; line-height: 20px; font-weight: lighter;'> ");
+
+            assunto.append("<br/><br/> <b> Org&atilde;o/Propriet&aacute;rio: </b> " + credenciamento.getPessoa().getNome());
+            assunto.append("<br/> <b> Situa&ccedil;&atilde;o: </b> " + "Aprovado");
+            assunto.append("<br/> <b> Mensagem: </b> <br/>");
+
+            String conteudo = " Esta mensagem está sendo encaminhada para que o administrador do sistema esteja ciente de que já se encontra habilitado e poderá registrar os dados da unidade de conservação proposta. Porém, informamos que a unidade de conservação somente será considerada cadastrada, após a devida análise processual e vistoria in loco. Caso possua alguma dúvida, poderá entrar em contato com a área responsável....";
+
+            assunto.append(conteudo);
+
+            assunto.append("</td>");
+            assunto.append("<tr><td style='font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: lighter; padding: 0px 34px 35px; line-height: 20px;'>");
+            assunto.append("Voc&ecirc; n&atilde;o solicitou o processo? Ent&atilde;o ignore este e-mail. Caso tenha d&uacute;vidas, estamos &agrave; disposi&ccedil;&atilde;o para ajudar. Entre em contato conosco pelos telefones&nbsp; (62) 3265-1303 e (62) 3265-1348");
+            assunto.append("</span><span style='color: rgb(43, 43, 43); font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px;'>");
+            assunto.append("</td></tr>");
+
+            assunto.append("<tr><td style='font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: lighter; padding: 0px 34px 35px; line-height: 20px;'>Obrigado, <br/> Equipe SECIMA</td></tr></tbody></table></div>");
+            assunto.append("<div style='background-color:#DCDCDC;'>&nbsp;</div>");
+            assunto.append("</tbody></table></div>");
+
+            UtilUnidadeConservcao.enviarEmail(assunto.toString(), "Unidade de Conservação", credenciamento.getUsuario().getEmail());
+
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+}

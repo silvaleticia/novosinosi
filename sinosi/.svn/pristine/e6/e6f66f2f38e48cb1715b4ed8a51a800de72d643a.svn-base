@@ -1,0 +1,20 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import br.com.ambientinformatica.util.IEnum;
+
+public enum EnumEsferaAdministrativa implements IEnum{
+    FE("Federal"),
+    ES("Estadual"),
+    MU("Municipal");
+
+    private final String descricao;
+
+    private EnumEsferaAdministrativa(String descricao) {
+        this.descricao = descricao;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+}

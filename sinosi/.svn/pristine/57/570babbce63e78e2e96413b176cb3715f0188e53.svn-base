@@ -1,0 +1,21 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import br.com.ambientinformatica.util.IEnum;
+
+public enum EnumTipoImovel implements IEnum {
+
+    RURAL("Imóvel Rural"),
+    URBANO("Imóvel Urbano");
+
+    private final String descricao;
+
+    private EnumTipoImovel(String descricao) {
+        this.descricao = descricao;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+
+}

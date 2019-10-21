@@ -1,0 +1,22 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import br.com.ambientinformatica.util.IEnum;
+
+public enum EnumStatusUnidade implements IEnum {
+
+    APROVADA("APROVADA"),
+    PENDENTE("PENDENTE"),
+    ANALISE("EM ANALISE"),
+    CANCELADA("CANCELADA");
+
+    private final String descricao;
+
+    private EnumStatusUnidade(String descricao) {
+        this.descricao = descricao;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+}

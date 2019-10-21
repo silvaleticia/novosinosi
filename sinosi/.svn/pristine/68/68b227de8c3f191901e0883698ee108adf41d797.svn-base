@@ -1,0 +1,70 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import br.com.ambientinformatica.util.Entidade;
+
+@Entity
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class Municipio extends Entidade implements Serializable{
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    private Integer id;
+
+    private String descricao;
+
+    @Enumerated(EnumType.STRING)
+    private EnumUf uf;
+
+    private Integer codigoIbge;
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public EnumUf getUf() {
+        return uf;
+    }
+
+    public void setUf(EnumUf uf) {
+        this.uf = uf;
+    }
+
+    public Integer getCodigoIbge() {
+        return codigoIbge;
+    }
+
+    public void setCodigoIbge(Integer codigoIbge) {
+        this.codigoIbge = codigoIbge;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", descricao, uf);
+    }
+
+}
+

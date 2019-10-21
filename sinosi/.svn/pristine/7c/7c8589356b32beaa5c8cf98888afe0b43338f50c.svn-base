@@ -1,0 +1,38 @@
+package br.gov.go.secima.unidadeconservacao.persistencia;
+
+import java.util.List;
+
+import br.com.ambientinformatica.jpa.exception.PersistenciaException;
+import br.com.ambientinformatica.jpa.persistencia.Persistencia;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumBiomaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumCategoriaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumEsferaAdministrativa;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumGrupoClassificacao;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumStatusUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoLei;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUnidadeConservacaoTipoDocumento;
+import br.gov.go.secima.unidadeconservacao.entidade.Municipio;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacao;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacaoDocumento;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+
+public interface UnidadeConservacaoDao extends Persistencia<UnidadeConservacao> {
+
+    UnidadeConservacao consultarPorId(Integer id) throws PersistenciaException;
+
+    UnidadeConservacaoDocumento consultarDocumenotParecerUltimoTipo(Integer id,  EnumUnidadeConservacaoTipoDocumento statusUnidade) throws PersistenciaException;
+
+    List<UnidadeConservacao> consultarUnidades(String nome, EnumCategoriaUnidade categoria, EnumEsferaAdministrativa esferaAdministrativa,
+            Municipio municipio, EnumBiomaUnidade bioma, EnumTipoLei lei, EnumGrupoClassificacao grupoClassificacao) throws PersistenciaException;
+
+    void enviarEmail(UnidadeConservacao unidade, UnidadeConservacaoDocumento docParecer);
+
+    UnidadeConservacao salvarUnidadePendente(UnidadeConservacao unidadeConservacao) throws PersistenciaException;
+
+    UnidadeConservacao salvarUnidadeEnviarParaAnalise(UnidadeConservacao unidadeConservacao) throws PersistenciaException;
+
+    List<UnidadeConservacao> listar(String nome, EnumStatusUnidade enumStatus, String cpfCnpj, Usuario usuario,
+            EnumEsferaAdministrativa esferaAdministrativa, EnumCategoriaUnidade categoriaUnidade,
+            EnumGrupoClassificacao grupoClassificacao, EnumTipoLei lei) throws PersistenciaException;
+
+}

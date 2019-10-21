@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="templateExterna.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel id="panelInicio" styleClass="inicio panel-index">
+			<div class="row" style="text-align: center">
+				<h2>Denúncias de crimes ambientais</h2>
+
+				<div class="texto-comunicado">Ao detectar um acidente
+					envolvendo óleo ou outro produto perigoso, como nos casos de
+					explosões, colisões, descarrilamentos, incêndios, vazamentos e
+					derramamentos, qualquer cidadão pode avisar o Ibama. A disposição
+					inadequada e o abandono de produtos perigosos, por colocar em risco
+					vidas humanas, o meio ambiente, a saúde pública ou atividades
+					sociais e econômicas, também devem ser comunicados, assim como o
+					rompimento de barragens de água, resíduos e rejeitos.</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<p:commandLink class="btn-index-acao"
+						action="escolherCategoria?faces-redirect=true"
+						actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
+						immediate="true">
+						 Registrar Denúncia 
+					</p:commandLink>
+				</div>
+				<div class="col-md-6">
+					<div class="float-right">
+						<p:commandLink class="btn-index-acao"
+							action="consultarDenuncia?faces-redirect=true"
+							actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
+							immediate="true">
+							 Acompanhar Denúncia
+						</p:commandLink>
+					</div>
+				</div>
+			</div>
+			<a:newLine />
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>

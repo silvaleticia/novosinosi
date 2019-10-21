@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:a="http://www.ambientinformatica.com.br/jsf2" xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+		<p:panel id="panelempreendedor">
+			<p:outputPanel id="painelCPFCNPJ">
+				<a:fieldset id="fieldCpfCnpj" legend="Dados do Empreendedor" style="width:780px;">
+					<a:field label="Tipo de Pessoa">
+						<p:selectOneRadio value="#{EmpreendedorControl.empreendedor.tipoPessoa }">
+							<f:selectItem itemLabel="Física" itemValue="PF" />
+							<f:selectItem itemLabel="Jurídica" itemValue="PJ" />
+							<f:ajax event="change" render="panelempreendedor" immediate="true" />
+						</p:selectOneRadio>
+					</a:field>
+	
+					<a:field spaceLeft="30px" label="CPF" rendered="#{EmpreendedorControl.empreendedor.tipoPessoa == 'PF'}">
+						<p:inputMask mask="999.999.999-99" styleClass="obrigatorio" id="cpfPessoa" value="#{EmpreendedorControl.empreendedor.cpfCnpj}" style="width:160px">
+						</p:inputMask>
+					</a:field>
+					
+					<a:field spaceLeft="30px" label="CNPJ" rendered="#{EmpreendedorControl.empreendedor.tipoPessoa == 'PJ'}">
+						<p:inputMask mask="99.999.999/9999-99" styleClass="obrigatorio" id="cnpjPessoa" value="#{EmpreendedorControl.empreendedor.cpfCnpj}" style="width:160px">
+						</p:inputMask>
+					</a:field>
+					
+				</a:fieldset>
+			</p:outputPanel>
+			
+			
+			<a:newLine/>
+			<h:panelGroup id="painelDados">
+				<p:selectOneRadio value="#{EmpreendedorControl.empreendedor.tipoImovel}">
+					<f:selectItem itemLabel="Imóvel Urbano" itemValue="URBANO" />
+					<f:selectItem itemLabel="Imóvel Rural" itemValue="RURAL" />
+					<f:ajax event="change" render=":formCorpo:painelDados" immediate="true" />
+				</p:selectOneRadio>
+				<a:field label="Nome / Razão social">
+					<p:inputText id="nomeCliente" styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.nome }" style="width:580px;" />
+				</a:field>
+				
+				<a:field label="RG" style="width:130px" rendered="#{EmpreendedorControl.empreendedor.tipoPessoa == 'PF'}" spaceLeft="10px">
+					<p:inputText id="rgCliente" styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.rg }" style="width:180px;" />
+				</a:field>
+				
+				<a:field label="Inscrição estadual" style="width:130px" rendered="#{EmpreendedorControl.empreendedor.tipoPessoa == 'PJ'}" spaceLeft="10px">
+						<p:inputText id="InscEstadual" styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.inscricaoEstadual }" style="width:180px" />
+				</a:field>
+				<a:newLine />
+				
+				<a:field label="Nome da propriedade" style="width:130px" rendered="#{EmpreendedorControl.empreendedor.tipoImovel eq 'RURAL'}">
+					<p:inputText id="idNomePropriedade" styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.nomeDaPropriedade }" style="width:580px" />
+				</a:field>
+				<a:field label="Nº de recibo do CAR" style="width:130px" spaceLeft="10px" rendered="#{EmpreendedorControl.empreendedor.tipoImovel eq 'RURAL'}">
+					<p:inputText id="idReciboCar" styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.numeroReciboCar }" style="width:180px" />
+				</a:field>
+				<a:newLine />
+				
+				<a:field label="Responsável / Proprietário" style="width:130px">
+					<p:inputText id="idResponsavel" styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.responsavel }" style="width:770px;" />
+				</a:field>
+				
+				<a:newLine />
+				<a:field label="Telefone">
+					<p:inputMask id="telefone" styleClass="obrigatorio" mask="(99)9 9999-9999" value="#{EmpreendedorControl.empreendedor.telefone }" style="width:180px;" >
+						
+					</p:inputMask>
+				</a:field>
+	
+				<a:field label="E-mail" spaceLeft="10px;">
+					<p:inputText styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.email }" style="width:580px;" />
+				</a:field>
+	
+				<a:newLine />
+	
+				<a:field label="Endereço">
+					<p:inputText styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.endereco }" style="width:660px;" />
+				</a:field>
+	
+				<a:field label="CEP" spaceLeft="10px;">
+					<p:inputMask styleClass="obrigatorio" mask="99.999-999" value="#{EmpreendedorControl.empreendedor.cep }" style="width:100px;" />
+				</a:field>
+	
+				<a:newLine />
+	
+				<a:field label="Estado">
+					<p:selectOneMenu id="estado" styleClass="obrigatorio" value="#{EmpreendedorControl.uf}" style="width:180px;">
+						<f:selectItems value="#{EmpreendedorControl.ufs}" />
+						<p:ajax listener="#{EmpreendedorControl.listarMunicipios}" process="@this" update=":formCorpo:municRequerente" />
+					</p:selectOneMenu>
+				</a:field>
+	
+				<a:field label="Município do empreendedor" spaceLeft="10px">
+					<p:selectOneMenu id="municRequerente" styleClass="obrigatorio" converter="objectConverter" value="#{EmpreendedorControl.empreendedor.municipio}" style="width:580px" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemLabel="Selecione o município" itemValue="#{null}" noSelectionOption="true" />
+						<f:selectItems value="#{EmpreendedorControl.municipios}" var="municRequerente" itemLabel="#{municRequerente.descricao}" itemValue="#{municRequerente}" />
+					</p:selectOneMenu>
+				</a:field>
+				
+				<a:newLine />
+				<a:fieldset id="fieldCnaes" legend="Atividades (CNAE)" rendered="#{EmpreendedorControl.empreendedor.tipoPessoa == 'PJ'}">
+	
+					<a:field label="Atividade (CNAE)">
+						<p:selectOneMenu id="cnae" filter="true" filterMatchMode="contains" styleClass="obrigatorio" converter="objectConverter" value="#{EmpreendedorControl.cnae}" style="width:640px;">
+							<f:selectItem itemLabel="Selecione a atividade(CNAE) e clique no botão Adicionar" itemValue="#{null}" noSelectionOption="true" />
+							<f:selectItems value="#{EmpreendedorControl.cnaes}" var="cnae" itemLabel="#{cnae.descricao}" itemValue="#{cnae}" />
+						</p:selectOneMenu>
+					</a:field>
+					
+					<a:field spaceLeft="10px">
+						<p:commandButton icon="ui-icon-plus" value="Adicionar" actionListener="#{EmpreendedorControl.adicionarCnae}" update=":formCorpo:tblCnaes cnae" />
+					</a:field>
+	
+					<a:newLine />
+					<a:newLine />
+	
+					<p:dataTable id="tblCnaes" value="#{EmpreendedorControl.empreendedor.cnaes}" var="cnae" style="width:780px;" emptyMessage="Sem registros...">
+						<p:column headerText="Descrição da atividade">
+							<p:outputLabel value="#{cnae.descricao}" />
+						</p:column>
+						<p:column style="width:50px; text-align:center">
+							<p:commandButton icon="ui-icon-trash" actionListener="#{EmpreendedorControl.removerCnae(cnae)}" update=":formCorpo:tblCnaes :formCorpo:cnae" />
+						</p:column>
+					</p:dataTable>
+				</a:fieldset>
+				
+				<a:fieldset id="fieldAtividade" legend="Atividade exercida" rendered="#{EmpreendedorControl.empreendedor.tipoPessoa == 'PF'}">
+					<p:inputText styleClass="obrigatorio" value="#{EmpreendedorControl.empreendedor.descricaoDaAtividade }" style="width:770px;" />
+				</a:fieldset>
+				
+				<a:fieldset id="fieldPatios" legend="Pátios">
+	
+					<a:field>
+						<p:commandButton icon="ui-icon-plus" value="Adicionar pátios" actionListener="#{EmpreendedorControl.limparDadosPatio }" action="patio?faces-redirect=true" update=":formCorpo:tblPatios"/>
+					</a:field>
+	
+					<a:newLine />
+					<a:newLine />
+	
+					<p:dataTable id="tblPatios" value="#{EmpreendedorControl.empreendedor.patios}" var="patio" style="width:780px;" emptyMessage="Sem registros...">
+						<p:column headerText="Nome do pátio">
+							<p:outputLabel value="#{patio.nome}" />
+						</p:column>
+						<p:column style="width:50px; text-align:center">
+							<p:commandButton icon="ui-icon-trash" actionListener="#{EmpreendedorControl.removerPatio(patio)}" update=":formCorpo:tblPatios" />
+						</p:column>
+					</p:dataTable>
+				</a:fieldset>
+				
+				<a:field>
+					<p:commandButton value="Salvar" actionListener="#{EmpreendedorControl.confirmar }" icon="ui-icon-disk" update=":formCorpo:panelempreendedor"/>
+				</a:field>
+					
+			</h:panelGroup>
+			<a:newLine/>
+		</p:panel>
+	
+	</ui:define>
+</ui:composition>

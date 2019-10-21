@@ -1,0 +1,69 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+
+@Entity
+public class Documento {
+
+    @Id
+    @GeneratedValue(generator="documento_seq", strategy=GenerationType.SEQUENCE)
+    @SequenceGenerator(name="documento_seq", sequenceName="documento_seq", allocationSize=1, initialValue=1)
+    private Integer id;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataDocumento = new Date();
+
+    @Lob
+    private byte [] conteudo;
+
+    private String nome;
+
+    public Date getDataDocumento() {
+        return dataDocumento;
+    }
+
+    public void setDataDocumento(Date dataDocumento) {
+        this.dataDocumento = dataDocumento;
+    }
+
+    public byte[] getConteudo() {
+        if (conteudo != null)
+            return conteudo.clone();
+        return null;	
+    }
+
+    public StreamedContent getDocumentoDownload(){
+        InputStream stream = new ByteArrayInputStream(conteudo);
+        return new DefaultStreamedContent(stream, null, nome);
+    }
+    public void setConteudo(byte[] conteudo) {
+        this.conteudo = conteudo.clone();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+}

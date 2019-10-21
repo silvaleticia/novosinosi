@@ -1,0 +1,133 @@
+package br.gov.go.secima.unidadeconservacao.util;
+
+import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.RandomStringUtils;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.com.ambientinformatica.util.UtilLog;
+import br.com.ambientinformatica.util.UtilTexto;
+
+public class UtilUnidadeConservcao {
+
+    private UtilUnidadeConservcao(){}
+
+    public static boolean isPessoaFisica(String cpfCnpj){
+        return cpfCnpj.length()==14;
+    }
+
+    public static String getSenhaAleatoria(int qtdDigito){
+        String alfabeto = "abcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder conteudo = new StringBuilder();
+        for (int i = 0; i < qtdDigito; i++) {
+            int indice = (int) (Math.random() * alfabeto.length());
+            indice = indice < alfabeto.length() ? indice : 0;
+            conteudo.append(alfabeto.charAt(indice));
+        }
+        return conteudo.toString();
+    }
+
+    /**
+     * @param parametro = texto para concatenação.
+     * @param tamanho = quantidade de caracteres randomicos.
+     * @param ProximoID = Inteiro para evitar códigos iguais.
+     * @return String concatenada.
+     */
+    public static String gerarCodigoAleatorio(int tamanho, Integer proximoID){
+        String id = Integer.toHexString(proximoID).toUpperCase();
+        return RandomStringUtils.randomAlphanumeric(tamanho - id.length()).toUpperCase() + id;
+    }
+
+    public static void enviarEmail(final String conteudo, final String assunto, final String emailDestinatario){
+        try{
+            Mensagem msg = new Mensagem();
+            Mail mail = new Mail();
+
+            msg.setDe("sistema.meioambiente@goias.gov.br");
+            msg.setPara(emailDestinatario);   
+            msg.setConteudo(conteudo);
+            msg.setAssunto(assunto);
+            msg.setData(new Date());
+
+            mail.enviarEmail("mail.mailMago", msg, "sistema.meioambiente@goias.gov.br", "!S3c1M@05518#");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public static void enviarEmailComAnexo(final String conteudo, final String assunto, final String emailDestinatario, final List<File> anexos){
+        try{
+            Mensagem msg = new Mensagem();
+            Mail mail = new Mail();
+
+            msg.setDe("sistema.meioambiente@goias.gov.br");
+            msg.setPara(emailDestinatario);   
+            msg.setConteudo(conteudo);
+            msg.setAssunto(assunto);
+            msg.setData(new Date());
+
+            mail.enviarEmailAnexo("mail.mailMago", msg, "sistema.meioambiente@goias.gov.br", "!S3c1M@05518#", anexos);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public static boolean validarMenorIdade16(Date dataNascimento){
+        boolean deMaior = false;
+        Calendar calDataNascimento = Calendar.getInstance();
+        calDataNascimento.setTime(dataNascimento);
+        calDataNascimento.add(Calendar.YEAR, 16);
+        Calendar calDataAtual = Calendar.getInstance();
+        if(calDataNascimento.after(calDataAtual)){
+            deMaior = true;
+        }
+        return deMaior;
+    }
+
+    public static boolean isNullOrEmpty(Object o) {
+        if (o != null) {
+            if (o instanceof String) {
+                return ((String) o).isEmpty();
+            } else if (o instanceof List && ((List<?>) o).size() == 0) {
+                return true;
+            } else if (o instanceof Set && ((Set<?>) o).size() == 0) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public static void visualizarPdf(byte[] conteudoPdf, String nomeArquivo) {
+
+        FacesContext fc = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+
+        response.reset();
+        response.setContentType("application/pdf");
+        response.setContentLength(conteudoPdf.length);
+        response.setHeader("Content-disposition", "inline; filename=" + UtilTexto.removerCaracteresNaoAlfaNumericos(nomeArquivo) + ".pdf");
+
+        try {
+            response.getOutputStream().write(conteudoPdf);
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+            fc.responseComplete();
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+        }
+    }
+
+    public static Object getManagedBean(final String theBeanName) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        return context.getELContext().getELResolver().getValue(context.getELContext(), null, theBeanName);
+    }
+
+}

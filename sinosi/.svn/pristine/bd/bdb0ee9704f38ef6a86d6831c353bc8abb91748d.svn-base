@@ -1,0 +1,6 @@
+jndi-datasource=java:comp/env/jdbc/unidadeconservacao
+persistenceUnit=unidadeconservacao
+database.showSql=true
+database.format_sql=true
+database.generateDdl=false
+database.dialect=org.hibernate.dialect.PostgreSQLDialect

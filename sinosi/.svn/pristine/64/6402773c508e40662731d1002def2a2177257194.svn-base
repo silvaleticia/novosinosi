@@ -1,0 +1,49 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.persistencia.UsuarioDao;
+
+@Controller("Confirmacao")
+@Scope("request")
+public class Confirmacao {
+
+    private Usuario usuario;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
+
+    @PostConstruct
+    public void init(){
+        try {
+            consultarUsuario();
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    private void consultarUsuario(){
+        try {
+            String cpf = (String) UtilFaces.getRequest().getSession().getAttribute("_cpf");
+            setUsuario(usuarioDao.consultarPorCpf(cpf));
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+
+}

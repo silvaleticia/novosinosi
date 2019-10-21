@@ -1,0 +1,123 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import javax.faces.context.FacesContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.persistencia.UsuarioDao;
+
+@Controller("AlterarSenhaExternoControl")
+@Scope("conversation")
+public class AlterarSenhaExternoControl{
+
+    private Usuario usuario;
+
+    private String confirmarSenha;
+
+    private String senha1;
+
+    private String senha2;
+
+    private String nomeUsuario;
+
+    private boolean alterou = false;
+
+    private String token;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
+
+    public void atualizar(){
+        this.token = UtilFaces.getRequest().getParameter("token");
+        try {
+            if(this.token !=null && this.usuario == null){
+                setAlterou(false);
+                this.usuario = usuarioDao.consultarPorToken(this.token);
+            } 
+            if (this.usuario == null && !alterou) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("erroToken.secima");
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void alterarSenha() {
+        try {
+            this.usuario.setSenha(senha1);
+            usuarioDao.validarSenha(this.usuario, senha2);
+            this.usuario.setSenhaNaoCriptografada(senha1);
+            this.usuario.setAlterarSenha(false);
+            this.usuario.setToken(null);
+            usuarioDao.alterar(this.usuario);
+            setToken(null);
+            setAlterou(true);
+            this.nomeUsuario = usuario.getNome();
+            this.usuario = null;
+            UtilFaces.addMensagemFaces("Senha alterada com sucesso!");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public String getConfirmarSenha() {
+        return confirmarSenha;
+    }
+
+    public void setConfirmarSenha(String confirmarSenha) {
+        this.confirmarSenha = confirmarSenha;
+    }
+
+    public String getSenha1() {
+        return senha1;
+    }
+
+    public void setSenha1(String senha1) {
+        this.senha1 = senha1;
+    }
+
+    public String getSenha2() {
+        return senha2;
+    }
+
+    public void setSenha2(String senha2) {
+        this.senha2 = senha2;
+    }
+
+    public boolean isAlterou() {
+        return alterou;
+    }
+
+    public void setAlterou(boolean alterou) {
+        this.alterou = alterou;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getNomeUsuario() {
+        return nomeUsuario;
+    }
+
+    public void setNomeUsuario(String nomeUsuario) {
+        this.nomeUsuario = nomeUsuario;
+    }
+
+}

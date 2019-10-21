@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel widgetVar="panelNotSimplesList" id="horizontal"
+			header="pesquisa de comunicações simples">
+
+			<a:field label="Estado" spaceLeft="10px;">
+				<p:selectOneMenu id="estado"
+					value="#{ComunicacaoSimplesListControl.uf}"
+					converter="objectConverter" filter="true"
+					filterMatchMode="contains" style="width:200px;">
+					<f:selectItem itemLabel="Todos" itemValue="" />
+					<f:selectItems value="#{ComunicacaoSimplesListControl.ufs }" />
+					<f:ajax event="change"
+						listener="#{ComunicacaoSimplesListControl.listaMunicipiosPorUfs}"
+						render="municipio" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field label="Município" spaceLeft="10px;">
+				<p:selectOneMenu id="municipio"
+					value="#{ComunicacaoSimplesListControl.municipio}"
+					converter="objectConverter" filter="true"
+					filterMatchMode="contains" style="width:200px;">
+					<f:selectItem itemLabel="Selecione o município" itemValue="" />
+					<f:selectItems value="#{ComunicacaoSimplesListControl.municipios }"
+						itemLabel="#{municipio.descricao}" var="municipio" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field spaceLeft="20px" label="Data de Cadastramento">
+				<p:outputLabel value="Inicial" />
+				<p:spacer width="5px" />
+				<p:inputMask value="#{ComunicacaoSimplesListControl.dataInicio}"
+					style="width: 110px" mask="99/99/9999">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputMask>
+
+				<p:spacer width="10px" />
+				<p:outputLabel value="Final" />
+				<p:spacer width="5px" />
+				<p:inputMask value="#{ComunicacaoSimplesListControl.dataFim}"
+					style="width: 110px" mask="99/99/9999">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputMask>
+			</a:field>
+
+			<a:field spaceLeft="10px;">
+				<p:commandButton
+					actionListener="#{ComunicacaoSimplesListControl.listarComunicacaoSimples}"
+					value="Pesquisar" icon="ui-icon ui-icon-search"
+					update="tblNotSimples" ajax="false" />
+
+			</a:field>
+			<a:field spaceLeft="10px">
+				<p:commandButton ajax="false"
+					action="comunicacaoSimples?faces-redirect=true" value="Cadastrar"
+					icon="ui-icon-plus" immediate="true" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Limpar" ajax="false"
+					action="comunicacaoSimplesList?faces-redirect=true"
+					icon="ui-icon ui-icon-trash" immediate="true" />
+			</a:field>
+
+			<a:newLine />
+		</p:panel>
+
+		<p:dataTable id="tblNotSimples"
+			value="#{ComunicacaoSimplesListControl.comunicacoes}"
+			var="comunicacaoSimples" emptyMessage="Sem registros">
+			<f:facet name="header">
+				<h:outputText value="Notificações Simples cadastradas" />
+			</f:facet>
+			<p:column style="text-align:center" headerText="Número">
+				<p:outputLabel value="#{comunicacaoSimples.id}" />
+			</p:column>
+			<p:column style="text-align:center" headerText="Tipo de Evento">
+				<p:outputLabel value="#{comunicacaoSimples.tipoEvento.descricao}" />
+			</p:column>
+			<p:column style="text-align:center" headerText="Município">
+				<p:outputLabel value="#{comunicacaoSimples.localAcidente.municipio}" />
+			</p:column>
+
+			<p:column style="text-align:center" headerText="Data da Notificação">
+				<p:outputLabel value="#{comunicacaoSimples.dataDaNotificacao}">
+					<f:convertDateTime pattern="dd/MM/yyyy " />
+				</p:outputLabel>
+
+			</p:column>
+			<p:column headerText="Visualizar" style="text-align:center"
+				exportable="false">
+				<p:commandButton id="btnVisualizar" icon="ui-icon-search"
+					action="visualizarComunicacaoSimples?faces-redirect=true"
+					ajax="false"
+					title="Clique aqui para visualizar os dados dessa Comunicação">
+					<f:setPropertyActionListener value="#{comunicacaoSimples}"
+						target="#{ComunicacaoSimplesControl.comunicacaoSimples}" />
+				</p:commandButton>
+			</p:column>
+
+		</p:dataTable>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel id="painelAmbiente"
+			header="Cadastro de Ambientes Atingidos ou Ocorrências">
+
+			<a:field label="Descrição">
+				<p:inputText styleClass="obrigatorio" id="descrição"
+					value="#{AmbienteControl.ambienteAtingido.descricao}"
+					style="width:500px;" />
+			</a:field>
+			<a:newLine />
+			<a:newLine />
+
+			<a:field>
+				<p:commandButton id="btnSalvar"
+					actionListener="#{AmbienteControl.confirmar }" icon="ui-icon-disk"
+					value="Salvar" update=":formCorpo:painelAmbiente" />
+			</a:field>
+			<a:field spaceLeft="10px">
+				<p:commandButton immediate="true" action="ambienteList"
+					value="Fechar" ajax="false" icon="ui-icon ui-icon-close" />
+			</a:field>
+
+		</p:panel>
+		<a:newLine />
+		
+	</ui:define>
+</ui:composition>

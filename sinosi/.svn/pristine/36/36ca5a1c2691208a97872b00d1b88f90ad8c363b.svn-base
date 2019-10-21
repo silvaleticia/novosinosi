@@ -1,0 +1,507 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.com.ambientinformatica.util.AmbientValidator;
+import br.com.ambientinformatica.util.Entidade;
+
+@Entity
+public class UnidadeConservacao  extends Entidade {	
+
+    private static final String PARAM_DATA_ATO_CRIACAO_ANTERIOR17072000 = "17/07/2000";
+
+    @Id
+    @GeneratedValue(generator="unidade_conservacao_seq", strategy=GenerationType.SEQUENCE)
+    @SequenceGenerator(name="unidade_conservacao_seq", sequenceName="unidade_conservacao_seq", allocationSize=1, initialValue=1)
+    private Integer id;
+
+    @Column(nullable=false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull(message="Informe a data de Registro", groups=AmbientValidator.class)
+    private Date dataRegistro = new Date();
+
+    @Column(nullable=false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull(message="Informe a data do Ato de Criação", groups=AmbientValidator.class)
+    private Date dataAtoCriacao = new Date();
+
+    @ManyToOne(optional=false)
+    @NotNull(message="Informe o Orgão/Proprietário", groups=AmbientValidator.class)
+    private Pessoa orgaoOuProprietario;
+
+    @NotEmpty(message="Informe o nome da Unidade de Conservação", groups=AmbientValidator.class)
+    @Length(min=0, max=255, message="O limite do campo nome da Unidade de Conservação é de 255 caracteres.", groups=AmbientValidator.class)
+    @Column(nullable=false, length=255)
+    private String nomeUnidade;
+
+    @NotNull(message="Informe a Esfera Administrativa da Unidade de Conservação", groups=AmbientValidator.class)
+    @Column(nullable=false, length=255)
+    @Enumerated(EnumType.STRING)
+    private EnumEsferaAdministrativa esferaAdministrativa;
+
+    private String atosLegais;
+
+    @NotEmpty(message="Informe a Situação Fundiaria", groups=AmbientValidator.class)	
+    @Length(min=0, max=255, message="O limite do campo Situação Fundiaria é de 255 caracteres.", groups=AmbientValidator.class)
+    @Column(nullable=false, length=255)
+    private String situacaoFundiaria;
+
+    @Length(min=0, max=255, message="O limite do campo endereço é de 255 caracteres.", groups=AmbientValidator.class)
+    @Column(length=255)
+    private String endereco;
+
+    @ManyToOne
+    private Municipio municipio;
+
+    private String cep;
+
+    private String telefone;    
+
+    @Email(message="Informe um endereço de e-mail válido", groups=AmbientValidator.class)
+    @NotNull(message="Informe o E-mail", groups=AmbientValidator.class)
+    @Column(nullable=false, length=255)
+    private String email;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    private List<Municipio> municipios = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false, length=255)
+    @NotNull(message="Informe o Grupo de Classificação", groups=AmbientValidator.class)
+    private EnumGrupoClassificacao grupoClassificacao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false, length=255)
+    @NotNull(message="Informe a Categoria da Unidade", groups=AmbientValidator.class)
+    private EnumCategoriaUnidade categoriaUnidade;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false, length=255)
+    @NotNull(message="Informe o Bioma da Unidade de Conservação", groups=AmbientValidator.class)
+    private EnumBiomaUnidade bioma;
+
+    @NotNull(message="Informe a Área", groups=AmbientValidator.class)
+    @Column(nullable=false)
+    private Double areaHectares;
+
+    @Length(min=0, max=2048, message="O limite do campo Caracteristica Física é de 2048 caracteres.", groups=AmbientValidator.class)
+    @Column(length=2048)
+    private String caracteristicaFisica;
+
+    @Length(min=0, max=2048, message="O limite do campo Caracteristica Biológica é de 2048 caracteres.", groups=AmbientValidator.class)
+    @Column(length=2048)
+    private String caracteristicaBiologica;
+
+    @Length(min=0, max=2048, message="O limite do campo Caracteristica Turistica é de 2048 caracteres.", groups=AmbientValidator.class)
+    @Column(length=2048)
+    private String caracteristicaTuristica;
+
+    @Length(min=0, max=2048, message="O limite do campo Caracteristica Gerencial é de 2048 caracteres.", groups=AmbientValidator.class)
+    @Column(length=2048)
+    private String caracteristicaGerencial;
+
+    @Length(min=0, max=2048, message="O limite do campo Objetivos é de 2048 caracteres.", groups=AmbientValidator.class)
+    @Column(length=2048)	
+    private String objetivos;
+
+    @Length(min=0, max=2048, message="O limite do campo Observações é de 2048 caracteres.", groups=AmbientValidator.class)
+    @Column(length=2048)   
+    private String observacoes;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false, length=255)
+    @NotNull(message="Informe o Status da Unidade de Conservação", groups=AmbientValidator.class)
+    private EnumStatusUnidade status = EnumStatusUnidade.PENDENTE;
+
+    @ManyToOne(optional=false)
+    private Usuario usuario;
+
+    @ManyToOne
+    private Usuario usuarioAprovacao;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAutorizacao;
+
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    private Documento docEstudoCriacao;
+
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    private Documento docConvocacaoConsultaPublica;
+
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    private Documento docConsultaPublica;
+
+    @NotNull(message="Informe documento lei de criação(obrigatório)!", groups=AmbientValidator.class)
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL,optional=false)
+    private Documento docLeiCriacao;
+
+    @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+    @JoinTable(name="unidadeconservacao_unidadeconservacaodocumento", joinColumns={@JoinColumn(name="unidadeconservacao_id", referencedColumnName="id")}, inverseJoinColumns={@JoinColumn(name="docpareceres_id", referencedColumnName="id")})
+    private List<UnidadeConservacaoDocumento> docPareceres = new ArrayList<>();
+
+    @Length(min=0, max=255, message="O limite do campo Código da Geometria é de 255 caracteres.", groups=AmbientValidator.class)
+    @Column(length=255)
+    private String codigoGeometria;
+
+    @OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE}, fetch=FetchType.LAZY, optional=true, orphanRemoval=true)
+    @LazyToOne(value = LazyToOneOption.NO_PROXY)
+    private Imovel imovel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false, length=255)
+    @NotNull(message="Informe a Lei de Criação da Unidade de Conservação", groups=AmbientValidator.class)
+    private EnumTipoLei lei = EnumTipoLei.LEI_FEDERAL_ESTADUAL;
+
+    public boolean isDataAtoCriacaoAnterior17072000(){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            if (this.dataAtoCriacao != null) {
+                return this.dataAtoCriacao.before(sdf.parse(PARAM_DATA_ATO_CRIACAO_ANTERIOR17072000));
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return false;
+    }
+
+    public String getStatusRow() {
+        return status.toString();
+    }
+
+    public void addDocParecer(UnidadeConservacaoDocumento documento){
+        if(!docPareceres.contains(documento)){
+            docPareceres.add(documento);
+        }
+    }
+
+    public void removeDocParecer(UnidadeConservacaoDocumento documento){
+        if(docPareceres.contains(documento)){
+            docPareceres.remove(documento);
+        }
+    }
+
+    public List<UnidadeConservacaoDocumento> getDocParecerList() {
+        return new ArrayList<>(this.getDocPareceres());
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+    public Date getDataRegistro() {
+        return dataRegistro;
+    }
+
+    public Date getDataAtoCriacao() {
+        return dataAtoCriacao;
+    }
+
+    public void setDataAtoCriacao(Date dataAtoCriacao) {
+        this.dataAtoCriacao = dataAtoCriacao;
+    }
+
+    public String getNomeUnidade() {
+        return nomeUnidade;
+    }
+
+    public EnumEsferaAdministrativa getEsferaAdministrativa() {
+        return esferaAdministrativa;
+    }
+
+    public String getSituacaoFundiaria() {
+        return situacaoFundiaria;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public Municipio getMunicipio() {
+        return municipio;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public List<Municipio> getMunicipios() {
+        return municipios;
+    }
+
+    public EnumGrupoClassificacao getGrupoClassificacao() {
+        return grupoClassificacao;
+    }
+
+    public EnumCategoriaUnidade getCategoriaUnidade() {
+        return categoriaUnidade;
+    }
+
+    public EnumBiomaUnidade getBioma() {
+        return bioma;
+    }
+
+    public Double getAreaHectares() {
+        return areaHectares;
+    }
+
+    public String getCaracteristicaFisica() {
+        return caracteristicaFisica;
+    }
+
+    public String getCaracteristicaBiologica() {
+        return caracteristicaBiologica;
+    }
+
+    public String getCaracteristicaTuristica() {
+        return caracteristicaTuristica;
+    }
+
+    public String getCaracteristicaGerencial() {
+        return caracteristicaGerencial;
+    }
+
+    public String getObjetivos() {
+        return objetivos;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public EnumStatusUnidade getStatus() {
+        return status;
+    }
+
+    public Date getDataAutorizacao() {
+        return dataAutorizacao;
+    }
+
+    public Documento getDocEstudoCriacao() {
+        return docEstudoCriacao;
+    }
+
+    public Documento getDocConvocacaoConsultaPublica() {
+        return docConvocacaoConsultaPublica;
+    }
+
+    public Documento getDocConsultaPublica() {
+        return docConsultaPublica;
+    }
+
+    public Documento getDocLeiCriacao() {
+        return docLeiCriacao;
+    }
+
+    public List<UnidadeConservacaoDocumento> getDocPareceres() {
+        return docPareceres;
+    }
+
+    public String getCodigoGeometria() {
+        return codigoGeometria;
+    }
+
+    public void setDataRegistro(Date dataRegistro) {
+        this.dataRegistro = dataRegistro;
+    }
+
+    public void setNomeUnidade(String nomeUnidade) {
+        this.nomeUnidade = nomeUnidade;
+    }
+
+    public void setEsferaAdministrativa(
+            EnumEsferaAdministrativa esferaAdministrativa) {
+        this.esferaAdministrativa = esferaAdministrativa;
+    }
+
+    public String getAtosLegais() {
+        return atosLegais;
+    }
+
+    public void setAtosLegais(String atosLegais) {
+        this.atosLegais = atosLegais;
+    }
+
+    public void setSituacaoFundiaria(String situacaoFundiaria) {
+        this.situacaoFundiaria = situacaoFundiaria;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public void setMunicipio(Municipio municipio) {
+        this.municipio = municipio;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setMunicipios(List<Municipio> municipios) {
+        this.municipios = municipios;
+    }
+
+    public void setGrupoClassificacao(EnumGrupoClassificacao grupoClassificacao) {
+        this.grupoClassificacao = grupoClassificacao;
+    }
+
+    public void setCategoriaUnidade(EnumCategoriaUnidade categoriaUnidade) {
+        this.categoriaUnidade = categoriaUnidade;
+    }
+
+    public void setBioma(EnumBiomaUnidade bioma) {
+        this.bioma = bioma;
+    }
+
+    public void setAreaHectares(Double areaHectares) {
+        this.areaHectares = areaHectares;
+    }
+
+    public void setCaracteristicaFisica(String caracteristicaFisica) {
+        this.caracteristicaFisica = caracteristicaFisica;
+    }
+
+    public void setCaracteristicaBiologica(String caracteristicaBiologica) {
+        this.caracteristicaBiologica = caracteristicaBiologica;
+    }
+
+    public void setCaracteristicaTuristica(String caracteristicaTuristica) {
+        this.caracteristicaTuristica = caracteristicaTuristica;
+    }
+
+    public void setCaracteristicaGerencial(String caracteristicaGerencial) {
+        this.caracteristicaGerencial = caracteristicaGerencial;
+    }
+
+    public void setObjetivos(String objetivos) {
+        this.objetivos = objetivos;
+    }
+
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    public void setStatus(EnumStatusUnidade status) {
+        this.status = status;
+    }
+
+    public void setDataAutorizacao(Date dataAutorizacao) {
+        this.dataAutorizacao = dataAutorizacao;
+    }
+
+    public void setDocEstudoCriacao(Documento docEstudoCriacao) {
+        this.docEstudoCriacao = docEstudoCriacao;
+    }
+
+    public void setDocConvocacaoConsultaPublica(
+            Documento docConvocacaoConsultaPublica) {
+        this.docConvocacaoConsultaPublica = docConvocacaoConsultaPublica;
+    }
+
+    public void setDocConsultaPublica(Documento docConsultaPublica) {
+        this.docConsultaPublica = docConsultaPublica;
+    }
+
+    public void setDocLeiCriacao(Documento docLeiCriacao) {
+        this.docLeiCriacao = docLeiCriacao;
+    }
+
+    public void setDocPareceres(List<UnidadeConservacaoDocumento> docPareceres) {
+        this.docPareceres = docPareceres;
+    }
+
+    public void setCodigoGeometria(String codigoGeometria) {
+        this.codigoGeometria = codigoGeometria;
+    }
+
+    public Pessoa getOrgaoOuProprietario() {
+        return orgaoOuProprietario;
+    }
+
+    public void setOrgaoOuProprietario(Pessoa orgaoOuProprietario) {
+        this.orgaoOuProprietario = orgaoOuProprietario;
+    }
+
+    public Usuario getUsuarioAprovacao() {
+        return usuarioAprovacao;
+    }
+
+    public void setUsuarioAprovacao(Usuario usuarioAprovacao) {
+        this.usuarioAprovacao = usuarioAprovacao;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Imovel getImovel() {
+        return imovel;
+    }
+
+    public void setImovel(Imovel imovel) {
+        this.imovel = imovel;
+    }
+
+    public EnumTipoLei getLei() {
+        return lei;
+    }
+
+    public void setLei(EnumTipoLei lei) {
+        this.lei = lei;
+    }
+
+}

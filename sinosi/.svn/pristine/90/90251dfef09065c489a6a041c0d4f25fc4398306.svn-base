@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Unidade de Conservação</title>
+	<link rel="shortcut icon" href="resources/imagens/favicon.ico"
+		type="image/x-icon" />
+
+	<h:outputStylesheet library="css" name="bootstrap.css" />
+	<h:outputStylesheet library="css" name="styles.css" />
+	<h:outputStylesheet library="css" name="unidadeconservacao.css" />
+	<h:outputScript library="js" name="unidadeconservacao.js" />
+</h:head>
+
+<h:body>
+	<div id="pagewrapper">
+
+		<div class="header-topo">
+			<div class="header-topo-nav-links">
+				<ul>
+					<li><a href="http://www.goias.gov.br/" target="_blank">GOIÁS</a>
+						<span>&#187;</span></li>
+					<li><a href="http://www.secima.go.gov.br/" target="_blank">SECIMA</a>
+						<span>&#187;</span></li>
+					<li><a
+						href="http://www.secima.go.gov.br/post/ver/198329/meio-ambiente---servicos"
+						target="_blank">SERVIÇOS</a><span>&#187;</span></li>
+					<li><a
+						href="https://portal.meioambiente.go.gov.br/unidadeconservacao/inicio.secima"
+						target="_blank">Unidade de Conservação</a></li>
+				</ul>
+			</div>
+
+			<div class="header-topo-container">
+				<div class="col-md-9">
+					<img
+						src="#{request.contextPath}/resources/imagens/logo-unidadeconservacao.png"
+						alt="Unidade de Conservação" width="200" />
+				</div>
+				<div class="col-md-3"></div>
+			</div>
+		</div>
+		<h:form id="formCorpo" prependId="false">
+			<p:messages id="mensagens" autoUpdate="true" />
+
+			<div id="main-content">
+				<ui:insert name="corpo" />
+			</div>
+		</h:form>
+	</div>
+	<div>
+		<ui:insert name="footer">
+			<ui:include src="/menuRodape.jspx" />
+		</ui:insert>
+	</div>
+</h:body>
+</html>

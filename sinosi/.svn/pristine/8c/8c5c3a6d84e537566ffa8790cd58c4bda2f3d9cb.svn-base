@@ -1,0 +1,39 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import br.com.ambientinformatica.util.IEnum;
+
+public enum EnumCategoriaUnidade implements IEnum
+{
+    EE("Estação Ecológica - EE", 0), 
+    RB("Reserva Biológica - RB", 0),
+    PQ("Parque - PQ", 0), 
+    MN("Monumento Natural - MN", 0), 
+    RVS("Réfugio de Vida Silvestre - RVS", 0), 
+    APA("Area de Proteção Ambiental - APA", 1), 
+    ARIE("Área de Relevante Interesse Ecológico - ARIE", 1), 
+    FLO("Floresta - FLO", 1), 
+    RE("Reserva Extrativista - RE", 1), 
+    RF("Reserva de Fauna - RF", 1),
+    RDS("Reserva de Desenvolvimento Sustentável - RDS", 1), 
+    RPPN("Reserva Particular do Patrimônio Natural - RPPN", 1),
+    HORTO_FLORESTAL("Horto Florestal", 2),
+    RESERVA_FLORESTAL("Reserva Florestal", 2);
+
+    private final String descricao;
+
+    private final int grupo;
+
+    private EnumCategoriaUnidade(String descricao, int grupo) {
+        this.descricao = descricao;
+        this.grupo = grupo;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public int getGrupo() {
+        return grupo;
+    }
+}

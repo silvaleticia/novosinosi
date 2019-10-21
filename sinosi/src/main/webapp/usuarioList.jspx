@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel id="panelGeral" header="Pesquisar Usuários Cadastrados">
+
+			<a:field label="Nome do Usuario">
+				<p:inputText value="#{UsuarioControl.nome}" style="width:400px;" filterBy="#{UsuarioControl.nome}" footerText="contains"/>
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton actionListener="#{UsuarioControl.listarPorNome}"
+					value="Pesquisar" icon="ui-icon ui-icon-search"
+					update="tblUsuarios" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton actionListener="#{MenuControlador.gerenciarSessao}"
+					ajax="false" action="usuario?faces-redirect=true" value="Cadastrar"
+					icon="ui-icon-plus" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Limpar"
+					actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
+					action="usuarioList?faces-redirect=true"
+					icon="ui-icon ui-icon-trash" />
+			</a:field>
+
+			<a:newLine />
+			<a:newLine />
+
+			<p:dataTable value="#{UsuarioControl.usuarios}" var="usuario"
+				id="tblUsuarios" emptyMessage="Usuário não encontrado!">
+
+				<f:facet name="header">
+					Usuários Cadastrados
+					</f:facet>
+
+				<p:column headerText="Login" style="width:200px"
+					filterMatchMode="contains">
+					#{usuario.login}
+					</p:column>
+
+				<p:column headerText="Nome">
+					#{usuario.nome}
+					</p:column>
+
+				<p:column headerText="CPF">
+					#{usuario.cpf}
+					</p:column>
+
+				<p:column headerText="RG">
+					#{usuario.rg}
+					</p:column>
+
+				<p:column headerText="Data de Nascimento">
+					#{usuario.dataNascimento}
+					</p:column>
+
+				<p:column headerText="Email">
+					#{usuario.email}
+					</p:column>
+
+				<p:column headerText="Telefone">
+					#{usuario.telefone}
+					</p:column>
+
+				<p:column headerText="cep">
+					#{usuario.cep}
+					</p:column>
+
+				<p:column headerText="Endereço">
+					#{usuario.endereco}
+					</p:column>
+
+				<p:column headerText="Municipio">
+					#{usuario.municipio}
+					</p:column>
+
+				<p:column style="width:80px;" headerText="Editar">
+					<p:commandButton id="btnEditar" icon="ui-icon-pencil"
+						action="usuario?faces-redirect=true">
+						<f:setPropertyActionListener value="#{usuario}"
+							target="#{UsuarioControl.usuario}" />
+					</p:commandButton>
+				</p:column>
+				<p:column style="width:80px;" headerText="Excluir">
+					<p:commandButton id="btnConfirmarExclusao"
+						oncomplete="PF('confirmacaoExclusao').show()" icon="ui-icon-trash"
+						update=":formCorpo:confirmacaoExclusao">
+						<f:setPropertyActionListener value="#{usuario}"
+							target="#{UsuarioControl.usuarioExcluir}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+
+		<p:dialog id="confirmacaoExclusao"
+			header="Confirmar a exclusão do usuário:"
+			widgetVar="confirmacaoExclusao">
+			<h3 style="color: red;">#{UsuarioControl.usuarioExcluir.nome}</h3>
+			<a:newLine />
+			<a:newLine />
+			<p:commandButton id="btnSim" value="Sim"
+				oncomplete="PF('confirmacaoExclusao').hide()"
+				actionListener="#{UsuarioControl.excluir }"
+				update=":formCorpo:tblUsuarios" />
+			<p:commandButton id="btnNao" value="Não"
+				onclick="PF('confirmacaoExclusao').hide()" type="button" />
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Sinosi</title>
+	<link rel="shortcut icon"
+		type="image/x-icon" />
+
+	<h:outputStylesheet library="css" name="bootstrap.css" />
+	<h:outputStylesheet library="css" name="sb-admin-2.css" />
+	<h:outputStylesheet library="css" name="styles.css" />
+	<h:outputStylesheet library="font-awesome" name="css/font-awesome.css" />
+	<h:outputStylesheet library="css" name="sinosi.css" />
+	<h:outputScript library="js" name="sinosi.js" />
+
+	<ui:insert name="cabecalho" />
+</h:head>
+
+<h:body>
+	<ui:include src="/menuTopo.jspx" />
+	<div id="pagewrapper">
+		<h:form id="formCorpo">
+			
+
+			<p:ajaxStatus onstart="ativaTimeOut()" onsuccess="fechaDialog()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:row>
+					<p:column style="text-align: center;">
+						<h1>Processando sua solicitação...</h1>
+					</p:column>
+				</p:row>
+				<p:graphicImage alt="ajax" url="/resources/imagens/ajax.gif"
+					style="display: block; margin: 0px auto;" />
+			</p:dialog>
+
+			<div id="main-content">
+				<ui:insert name="corpo" />
+			</div>
+			<div>
+				<ui:insert name="footer">
+					<ui:include src="/menuRodape.jspx" />
+				</ui:insert>
+			</div>
+		</h:form>
+	</div>
+</h:body>
+</html>

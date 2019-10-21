@@ -1,0 +1,198 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.application.FacesMessage;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.gov.go.secima.unidadeconservacao.entidade.Credenciamento;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoPessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.Pessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.persistencia.CredenciamentoDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.PessoaDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.UsuarioDao;
+import br.gov.go.secima.unidadeconservacao.util.UtilUnidadeConservcao;
+
+@Controller("PessoaListControl")
+@Scope("conversation")
+public class PessoaListControl {
+
+    private Pessoa pessoa;
+
+    private String cpfCnpj;
+
+    private String cpfUsuario;
+
+    private Usuario usuarioAlterar;
+
+    private String situacao = "TODAS";
+
+    private EnumTipoPessoa tipoPessoa = null;
+
+    private String nome;
+
+    @Autowired
+    private UsuarioLogadoControl usuarioLogadoControl;
+
+    @Autowired
+    private PessoaDao pessoaDao;
+
+    @Autowired
+    private UsuarioDao usuarioDao; 
+
+    @Autowired
+    private CredenciamentoDao credenciamentoDao;
+
+    private List<Pessoa> pessoas = new ArrayList<>();
+
+    private List<Credenciamento> credenciamentos = new ArrayList<>();
+
+    public void credenciarUsuario(Integer id){
+        try {
+            Credenciamento credenciamento = credenciamentoDao.consultar(id);
+            credenciamento.setAprovado(true);
+            credenciamento = credenciamentoDao.alterar(credenciamento);
+            credenciamentoDao.enviarEmail(credenciamento);
+            this.setCredenciamentos(credenciamentoDao.listarPorPessoa(pessoa));
+            UtilFaces.addMensagemFaces("Usuário credenciado!");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void descredenciarUsuario(Integer id){
+        try {
+            Credenciamento credenciamento = credenciamentoDao.consultar(id);
+            credenciamento.setAprovado(false);
+            credenciamentoDao.alterar(credenciamento);
+            this.setCredenciamentos(credenciamentoDao.listarPorPessoa(pessoa));
+            UtilFaces.addMensagemFaces("Usuário descredenciado!");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void listarPessoas(){
+        try {
+            this.pessoas = pessoaDao.listarPorNomeOuCnpj(this.nome, this.cpfCnpj, usuarioLogadoControl.getUsuario(), tipoPessoa, situacao);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void consultarUsuarioPorCPF(){
+        try {
+            this.usuarioAlterar = usuarioDao.consultarPorCpf(cpfUsuario);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void alterarUsuarioResponsavel(){
+        try {
+            if(this.usuarioAlterar != null){
+                this.pessoa.setUsuario(usuarioAlterar);
+                pessoaDao.alterar(pessoa);
+                this.usuarioAlterar = null;
+                UtilFaces.addMensagemFaces("Usuário Alterado");
+            }else{
+                UtilFaces.addMensagemFaces("Pesquise o usuário antes de tentar alterar.",FacesMessage.SEVERITY_ERROR);
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+        try{
+            if(this.pessoa.getTipo() == EnumTipoPessoa.ORGAO){
+                this.setCredenciamentos(credenciamentoDao.listarPorPessoa(pessoa));
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void visualizarOficio(Credenciamento credenciamento) {
+        try {
+            if (credenciamento.getOficio().getConteudo() != null){
+                UtilUnidadeConservcao.visualizarPdf(credenciamento.getOficio().getConteudo(),credenciamento.getOficio().getNome());
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public String getCpfCnpj() {
+        return cpfCnpj;
+    }
+
+    public void setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
+    }
+
+    public String getCpfUsuario() {
+        return cpfUsuario;
+    }
+
+    public void setCpfUsuario(String cpfUsuario) {
+        this.cpfUsuario = cpfUsuario;
+    }
+
+    public Usuario getUsuarioAlterar() {
+        return usuarioAlterar;
+    }
+
+    public void setUsuarioAlterar(Usuario usuarioAlterar) {
+        this.usuarioAlterar = usuarioAlterar;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public List<Pessoa> getPessoas() {
+        return pessoas;
+    }
+
+    public String getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(String situacao) {
+        this.situacao = situacao;
+    }
+
+    public EnumTipoPessoa getTipoPessoa() {
+        return tipoPessoa;
+    }
+
+    public void setTipoPessoa(EnumTipoPessoa tipoPessoa) {
+        this.tipoPessoa = tipoPessoa;
+    }
+
+    public List<Credenciamento> getCredenciamentos() {
+        return credenciamentos;
+    }
+
+    public void setCredenciamentos(List<Credenciamento> credenciamentos) {
+        this.credenciamentos = credenciamentos;
+    }
+
+}
+

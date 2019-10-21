@@ -1,0 +1,33 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import br.com.ambientinformatica.util.IEnum;
+
+public enum EnumGrupoClassificacao implements IEnum {
+
+    PI("Proteção Integral - PI", 0,0),
+    US("Uso Sutententável - US", 1,0),
+    NAO_SE_APLICA("Não se Aplica", 2,1);
+
+    private final String descricao;
+    private final int grupo;
+    private final int grupoLei;
+
+    private EnumGrupoClassificacao(String descricao, int grupo, int grupoLei) {
+        this.descricao = descricao;
+        this.grupo = grupo;
+        this.grupoLei = grupoLei;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public int getGrupo() {
+        return grupo;
+    }
+
+    public int getGrupoLei() {
+        return grupoLei;
+    }
+}

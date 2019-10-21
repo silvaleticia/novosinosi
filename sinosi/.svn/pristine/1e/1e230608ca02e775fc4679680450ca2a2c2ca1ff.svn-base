@@ -1,0 +1,50 @@
+<%@page import="br.com.ambientinformatica.util.UtilLog"%>
+<%@page contentType="text/html; charset=utf-8" isErrorPage="true"%>
+
+<%@page import="javax.faces.application.ViewExpiredException"%>
+
+<%
+   String msg = "";
+			if (pageContext != null) {
+
+				try {
+					ErrorData ed = pageContext.getErrorData();
+					int codigo = ed.getStatusCode();
+					if (codigo == 404) {
+						msg = "Esta tela não foi encontrada.";
+					} else {
+						Throwable erro = ed.getThrowable();
+						if (erro instanceof ViewExpiredException) {
+							msg = "Sua sessão foi encerrada porque você deixou de usar o sistema por um tempo. Inicie a atividade novamente!";
+						} else if (erro != null) {
+							msg = "Um ERRO inesperado aconteceu.\\nPedimos desculpas pelo ocorrido.\\nUma solicitação de atendimento foi aberta no sistema.\\nEm breve será corrigido.";
+							erro.printStackTrace();
+							String msgErro = String
+									.format("Ocorreu um erro ao processar a resposta HTTP. \nEsta msg foi vista pelo usuário %s na maquina %s \n %s",
+											request.getRemoteUser(),
+											request.getRemoteAddr(), msg);
+							UtilLog.getLog().error(erro.getMessage(), erro);
+						} else {
+							msg = "Um ERRO inesperado aconteceu.\\nUma solicitação de atendimento foi aberta no sistema.\\nEm breve será atendida.";
+							String msgErro = String
+									.format("Ocorreu um erro ao processar a resposta HTTP. \nEsta msg foi vista pelo usuário %s na maquina %s \n %s",
+											request.getRemoteUser(),
+											request.getRemoteAddr(), msg);
+							UtilLog.getLog().error(erro.getMessage(), erro);
+						}
+					}
+				} catch (Throwable e) {
+					UtilLog.getLog().error(e.getMessage(), e);
+				}
+
+			}
+%>
+
+
+<script type="text/javascript">
+//alert('<%=msg%>');
+document.location.href = "<%=request.getContextPath()%>
+	/index.html";
+</script>
+
+</html>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+	
+	
+		<p:panel widgetVar="panelNotificacaoList" id="horizontal"
+			header="Notificações">
+
+			<a:field label="Municipio">
+				<p:inputText styleClass="obrigatorio" id="chave"
+					value="#{}" style="width:200px;" />
+			</a:field>
+			
+			<a:field spaceLeft="10px" label="Data de comunicação">
+				<p:outputLabel value="Inicial" />
+				<p:spacer width="5px" />
+				<p:inputMask
+					value="#{AutTransporteListControl.dataInicioAutTransporte}"
+					style="width: 110px" mask="99/99/9999">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputMask>
+
+				<p:spacer width="10px" />
+				<p:outputLabel value="Final" />
+				<p:spacer width="5px" />
+				<p:inputMask
+					value="#{AutTransporteListControl.dataFimAutTransporte}"
+					style="width: 110px" mask="99/99/9999">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputMask>
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton id="btnPesquisar"
+					actionListener="#{OrgaoAtuandoNoLocalControl.listar }"
+					icon="ui-icon-search" value="Pesquisar" ajax="false" />
+			</a:field>
+
+			<a:newLine />
+		</p:panel>
+
+		<p:dataTable id="tblNotificacaoList" value="#{OrgaoAtuandoNoLocalControl.orgaos}"
+			var="not" emptyMessage="Sem registros">
+			<f:facet name="header">
+				<h:outputText value="Notificações" />
+			</f:facet>
+			<p:column headerText="Tipo de Órgão"
+				sortBy="#{note.localAcidente.municipio}">
+				<p:outputLabel value="#{note.localAcidente.municipio}" />
+			</p:column>
+			
+			<p:column headerText="Editar" style="width:70px;">
+				<p:commandButton id="alterOrgao" icon="ui-icon-pencil"
+					action="orgao?faces-redirect=true" update="orgao tblOrgao"
+					title="Editar"
+					actionListener="#{OrgaoAtuandoNoLocalControl.editarOrgao }">
+					<f:param name="orgao" value="#{orgao}" id="orgao" />
+				</p:commandButton>
+			</p:column>
+			
+		</p:dataTable>
+
+
+		
+	</ui:define>
+</ui:composition>

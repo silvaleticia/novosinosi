@@ -1,0 +1,361 @@
+package br.gov.go.secima.unidadeconservacao.persistencia;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Query;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.ambientinformatica.jpa.exception.PersistenciaException;
+import br.com.ambientinformatica.jpa.exception.ValidacaoException;
+import br.com.ambientinformatica.jpa.persistencia.PersistenciaJpa;
+import br.com.ambientinformatica.util.UtilLog;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumBiomaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumCategoriaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumEsferaAdministrativa;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumGrupoClassificacao;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumStatusUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoLei;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUnidadeConservacaoTipoDocumento;
+import br.gov.go.secima.unidadeconservacao.entidade.Municipio;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacao;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacaoDocumento;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.util.UtilUnidadeConservcao;
+
+@Repository("unidadeConservacaoDao")
+public class UnidadeConservacaoDaoJpa extends PersistenciaJpa<UnidadeConservacao> implements UnidadeConservacaoDao {
+
+    private static final long serialVersionUID = 1L;
+    private static final String PATH_ANEXOS_TEMP = "anexos_temp";
+
+    @Override
+    @Transactional(readOnly=true)
+    public UnidadeConservacao consultarPorId(Integer id) throws PersistenciaException {
+        try {
+
+            String sql = "select u from UnidadeConservacao u left join fetch u.docPareceres dp left join fetch u.docEstudoCriacao dec left join fetch u.docConvocacaoConsultaPublica dcc"
+                    + " left join fetch u.docConsultaPublica dcp left join fetch u.docLeiCriacao dlc where u.id =:id";
+            Query query = em.createQuery(sql);
+            query.setParameter("id",id);
+
+            return (UnidadeConservacao) query.getSingleResult();
+
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException("Erro ao consultar unidade de conservação por ID", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public UnidadeConservacao salvarUnidadePendente(UnidadeConservacao unidadeConservacao) throws PersistenciaException {
+        this.validar(unidadeConservacao);
+        this.validarDocumentos(unidadeConservacao);
+        try {
+            unidadeConservacao.setStatus(EnumStatusUnidade.PENDENTE);
+            return this.alterar(unidadeConservacao);
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public UnidadeConservacao salvarUnidadeEnviarParaAnalise(UnidadeConservacao unidadeConservacao) throws PersistenciaException {
+        this.validar(unidadeConservacao);
+        this.validarDocumentos(unidadeConservacao);
+        this.validarCamposObrigatorios(unidadeConservacao);
+        try {
+            unidadeConservacao.setStatus(EnumStatusUnidade.ANALISE);
+            return this.alterar(unidadeConservacao);
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException(e.getMessage(), e);
+        }
+    }
+
+    private void validarDocumentos(UnidadeConservacao unidadeConservacao) throws ValidacaoException{
+        if (unidadeConservacao.getDataAtoCriacao() == null) {
+            throw new ValidacaoException("Informe a data do Ato de Criação");
+        }
+
+        if (!unidadeConservacao.isDataAtoCriacaoAnterior17072000()) { //Se data anterior nao e necessario as documentacoes
+            if (unidadeConservacao.getDocEstudoCriacao() == null) {
+                throw new ValidacaoException("Informe documento de estudo de criação(obrigatório)!");
+            }
+            if (unidadeConservacao.getDocConvocacaoConsultaPublica() == null && !isEstacaoOuReservaBiologica(unidadeConservacao.getCategoriaUnidade())) {
+                throw new ValidacaoException("Informe documento de convocação da consulta pública(obrigatório)!");
+            }
+            if (unidadeConservacao.getDocConsultaPublica() == null && !isEstacaoOuReservaBiologica(unidadeConservacao.getCategoriaUnidade())) {
+                throw new ValidacaoException("Informe documento de consulta pública(obrigatório)!");
+            }
+        }
+    }
+
+    private void validarCamposObrigatorios(UnidadeConservacao unidadeConservacao) throws ValidacaoException{
+        if (unidadeConservacao.getCaracteristicaFisica() == null || unidadeConservacao.getCaracteristicaFisica().isEmpty()) {
+            throw new ValidacaoException("Preencha o campo Caracteristica Física!");
+        }
+        if (unidadeConservacao.getCaracteristicaBiologica() == null || unidadeConservacao.getCaracteristicaBiologica().isEmpty()) {
+            throw new ValidacaoException("Preencha o campo Caracteristica Biológica!");
+        }
+        if (unidadeConservacao.getCaracteristicaTuristica() == null || unidadeConservacao.getCaracteristicaTuristica().isEmpty()) {
+            throw new ValidacaoException("Preencha o campo Caracteristica Turistica!");
+        }
+        if (unidadeConservacao.getCaracteristicaGerencial() == null || unidadeConservacao.getCaracteristicaGerencial().isEmpty()) {
+            throw new ValidacaoException("Preencha o campo Caracteristica Gerencial!");
+        }
+        if (unidadeConservacao.getObjetivos() == null || unidadeConservacao.getObjetivos().isEmpty()) {
+            throw new ValidacaoException("Preencha o campo Objetivos!");
+        }
+    }
+
+    private boolean isEstacaoOuReservaBiologica(EnumCategoriaUnidade categoriaUnidade){
+        return categoriaUnidade.equals(EnumCategoriaUnidade.EE) || categoriaUnidade.equals(EnumCategoriaUnidade.RB);
+    }
+
+    @Override
+    public UnidadeConservacaoDocumento consultarDocumenotParecerUltimoTipo(Integer id,  EnumUnidadeConservacaoTipoDocumento statusUnidade) throws PersistenciaException {
+        try {
+
+            Session session = em.unwrap(Session.class);
+
+            Criteria criteria =    session.createCriteria(UnidadeConservacaoDocumento.class,"ucd")
+                    .createCriteria("unidadeConservacao", "uc")
+                    .add(Restrictions.eq("uc.id", id))
+                    .add(Restrictions.eq("ucd.status", statusUnidade))
+                    .addOrder(Order.desc("ucd.dataDocumento"))
+                    .setMaxResults(1);
+
+            UnidadeConservacaoDocumento documento = (UnidadeConservacaoDocumento) criteria.uniqueResult();
+
+            return documento;
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new RuntimeException("Erro ao consultar Ultimo Parecer!", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<UnidadeConservacao> consultarUnidades(String nome, EnumCategoriaUnidade categoria, EnumEsferaAdministrativa esferaAdministrativa, 
+            Municipio municipio, EnumBiomaUnidade bioma, EnumTipoLei lei, EnumGrupoClassificacao grupoClassificacao) throws PersistenciaException {
+        try {
+            String sql = "select u from UnidadeConservacao u where 1 = 1 and u.status = 'APROVADA'";
+
+            if (nome != null && !nome.equals("")) {
+                sql += " and UPPER(u.nomeUnidade) like :nome";
+            }
+            if(categoria != null) {
+                sql += " and u.categoriaUnidade = :categoria";
+            }
+            if (esferaAdministrativa != null) {
+                sql += " and u.esferaAdministrativa = :esferaAdministrativa";
+            }
+            if (municipio != null) {
+                sql += " and u.municipio = :municipio";
+            }
+            if (bioma != null) { 
+                sql += " and u.bioma = :bioma";
+            }
+            if (grupoClassificacao != null){
+                sql += " and u.grupoClassificacao = :grupoClassificacao";
+            }
+            if (lei != null){
+                sql += " and u.lei = :lei";
+            }
+
+            Query query = em.createQuery(sql);
+
+            if (nome != null && !nome.equals("")) {
+                query.setParameter("nome", "%" + nome.toUpperCase()
+                + "%");
+            }
+            if(categoria != null) {
+                query.setParameter("categoria", categoria);
+            }
+            if (esferaAdministrativa != null) {
+                query.setParameter("esferaAdministrativa",
+                        esferaAdministrativa);
+            }
+            if (municipio != null) {
+                query.setParameter("municipio", municipio);
+            }
+            if (bioma != null) {
+                query.setParameter("bioma", bioma);
+            }
+            if (grupoClassificacao != null){
+                query.setParameter("grupoClassificacao", grupoClassificacao);
+            }
+            if (lei != null){
+                query.setParameter("lei", lei);
+            }
+
+            return query.getResultList();
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new RuntimeException(
+                    "Erro ao Listar as Unidades de Conservação", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<UnidadeConservacao> listar(String nome, EnumStatusUnidade status, String cpfCnpj, Usuario usuario, EnumEsferaAdministrativa esferaAdministrativa,
+            EnumCategoriaUnidade categoriaUnidade, EnumGrupoClassificacao grupoClassificacao, EnumTipoLei lei) throws PersistenciaException {
+        try {
+
+            StringBuilder stringConsulta = new StringBuilder();	
+            stringConsulta.append("select u from UnidadeConservacao u where 1=1");
+
+            if (nome != null && !nome.isEmpty()){
+                stringConsulta.append(" and upper(u.nomeUnidade) like upper(:nome)");
+            }
+            if (status != null){
+                stringConsulta.append(" and u.status = :status");
+            }
+            if (cpfCnpj != null && !cpfCnpj.isEmpty()){
+                stringConsulta.append(" and u.orgaoOuProprietario.cpfCnpj = :cpfCnpj");
+            }
+
+            if (usuario != null && !usuario.isPodeConsultarUnidades()){
+                stringConsulta.append(" and u.usuario = :usuario");
+            }
+            if (esferaAdministrativa != null){
+                stringConsulta.append(" and u.esferaAdministrativa = :esferaAdministrativa");
+            }
+            if (categoriaUnidade != null){
+                stringConsulta.append(" and u.categoriaUnidade = :categoriaUnidade");
+            }
+            if (grupoClassificacao != null){
+                stringConsulta.append(" and u.grupoClassificacao = :grupoClassificacao");
+            }
+            if (lei != null){
+                stringConsulta.append(" and u.lei = :lei");
+            }
+
+            stringConsulta.append(" order by u.dataRegistro desc");
+
+            Query query = em.createQuery(stringConsulta.toString());
+
+            if (nome != null && !nome.isEmpty()){
+                query.setParameter("nome", "%" + nome.toUpperCase() + "%");
+            }   
+            if (status != null){
+                query.setParameter("status", status);
+            }
+            if (cpfCnpj != null && !cpfCnpj.isEmpty()){
+                query.setParameter("cpfCnpj", cpfCnpj);
+            }
+            if (usuario != null && !usuario.isPodeConsultarUnidades()){
+                query.setParameter("usuario", usuario);
+            }
+            if (esferaAdministrativa != null){
+                query.setParameter("esferaAdministrativa", esferaAdministrativa);
+            }
+            if (categoriaUnidade != null){
+                query.setParameter("categoriaUnidade", categoriaUnidade);
+            }
+            if (grupoClassificacao != null){
+                query.setParameter("grupoClassificacao", grupoClassificacao);
+            }
+            if (lei != null){
+                query.setParameter("lei", lei);
+            }
+
+            return query.getResultList();
+
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new RuntimeException("Erro ao Listar as Unidades de Conservação", e);
+        }
+    }
+
+    @Override
+    public void enviarEmail(UnidadeConservacao unidade, UnidadeConservacaoDocumento docParecer) {
+        try{
+            String host = "https://portal.meioambiente.go.gov.br";
+            StringBuilder sbConteudo = new StringBuilder();
+
+            sbConteudo.append("<div>");
+            sbConteudo.append("<table align='center' border='0' cellpadding='0' cellspacing='0' style='color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.8000001907349px; line-height: normal;' width='570'>");
+            sbConteudo.append("<tbody>");
+            sbConteudo.append("<tr>");
+            sbConteudo.append("<td align='middle' style='font-family: Helvetica, Arial, sans-serif; margin: 0px; color: rgb(43, 43, 43); font-size: 20px; line-height: 24px; padding: 0px 34px 10px;'>");
+            sbConteudo.append("<p>");
+            sbConteudo.append("<a href='");
+            sbConteudo.append(host);
+            sbConteudo.append("/unidadeconservacao");
+            sbConteudo.append("' target='_blank'><img alt='Unidade de Conserva&ccedil;&atilde;o' src='");
+            sbConteudo.append(host);
+            sbConteudo.append("/unidadeconservacao/resources/imagens/logo-unidadeconservacao.png");
+            sbConteudo.append("' style='border-width: 0px; border-style: solid; margin: 0px;' />");
+            sbConteudo.append("</a>");
+            sbConteudo.append("</p>");
+
+            sbConteudo.append("<p><strong>Aviso</span></strong></p>");
+            sbConteudo.append("</td></tr><tr>");
+            sbConteudo.append("<td style='font-size: 14px; padding: 0px 34px 25px; line-height: 20px; font-weight: lighter;'> ");
+
+            sbConteudo.append("<br/><br/> <b> Nome da Unidade de Conserva&ccedil;&atilde;o: </b> " + unidade.getNomeUnidade());
+            sbConteudo.append("<br/> <b> Org&atilde;o/Propriet&aacute;rio: </b> " + unidade.getOrgaoOuProprietario().getNome());
+            sbConteudo.append("<br/> <b> Situa&ccedil;&atilde;o: </b> " + unidade.getStatus());
+            sbConteudo.append("<br/> <b> Notifica&ccedil;&atilde;o: </b> <br/>");
+
+            String conteudoEspecifico = "";
+
+            if(unidade.getStatus().equals(EnumStatusUnidade.PENDENTE)){
+                conteudoEspecifico = "Este documento está sendo encaminhado para que o órgão gestor responsável pela unidade de conservação proposta esteja ciente, que após análise processual, verificou-se que não houve atendimento satisfatório para o cumprimento do registro no Cadastro Estadual de Unidades de Conservação. Portanto o órgão gestor deverá providenciar as devidas adequações apontadas durante a análise processual e, as solicitações  deverão ser atendidas no prazo máximo estabelecido nas Notificações emitidas, contados a partir da data de recebimento desta notificação";
+            }else if(unidade.getStatus().equals(EnumStatusUnidade.CANCELADA)){
+                conteudoEspecifico = "Este documento está sendo encaminhado para que o gestor responsável pela unidade de conservação proposta, esteja ciente, que após a análise processual, a área apresentada foi indeferida e não poderá ser registrada no Cadastro Estadual de Unidades de Conservação. Caso possua alguma dúvida, poderá entrar em contato com a área responsável....";
+            }else if(unidade.getStatus().equals(EnumStatusUnidade.APROVADA)){
+                conteudoEspecifico = "Este documento está sendo encaminhado para que o gestor responsável pela unidade de conservação proposta, esteja ​ciente, que após a análise processual, a área apresentada foi deferida e devidamente registrada no Cadastro Estadual de Unidades de Conservação. Caso possua alguma dúvida, poderá entrar em contato com a área responsável....";
+            }
+
+            sbConteudo.append(conteudoEspecifico);
+
+            sbConteudo.append("</td>");
+            sbConteudo.append("<tr><td style='font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: lighter; padding: 0px 34px 35px; line-height: 20px;'>");
+            sbConteudo.append("Voc&ecirc; n&atilde;o solicitou o processo? Ent&atilde;o ignore este e-mail. Caso tenha d&uacute;vidas, estamos &agrave; disposi&ccedil;&atilde;o para ajudar. Entre em contato conosco pelos telefones&nbsp; (62) 3265-1303 e (62) 3265-1348");
+            sbConteudo.append("</span><span style='color: rgb(43, 43, 43); font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px;'>");
+            sbConteudo.append("</td></tr>");
+
+            sbConteudo.append("<tr><td style='font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: lighter; padding: 0px 34px 35px; line-height: 20px;'>Obrigado, <br/> Equipe SECIMA</td></tr></tbody></table></div>");
+            sbConteudo.append("<div style='background-color:#DCDCDC;'>&nbsp;</div>");
+            sbConteudo.append("</tbody></table></div>");
+
+            File directory = new File(PATH_ANEXOS_TEMP);
+
+            if (!directory.exists()){
+                directory.mkdir();
+            }
+
+            File file = new File(PATH_ANEXOS_TEMP + File.separator + docParecer.getNome());
+
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            bos.write(docParecer.getConteudo());
+            bos.close();    
+
+            List<File> anexos = new ArrayList<>();
+            anexos.add(file);
+            UtilUnidadeConservcao.enviarEmailComAnexo(sbConteudo.toString(), "Unidade de Conservação", unidade.getUsuario().getEmail(), anexos);
+            //Aqui irá remover o arquivo temporário após o envio do e-mail.
+            file.delete();
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new RuntimeException("Erro ao enviar e-mail", e);
+        }
+    }
+
+}

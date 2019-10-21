@@ -1,0 +1,6 @@
+--> Alterando cadastro de unidades para aceitar as leis federias e estaduais
+alter table unidadeconservacao add column lei character varying(255);
+update unidadeconservacao set lei = 'LEI_FEDERAL_ESTADUAL';
+alter table unidadeconservacao alter column lei set not null;
+alter table credenciamento alter column data set not null;
+alter table credenciamento alter column aprovado set not null;

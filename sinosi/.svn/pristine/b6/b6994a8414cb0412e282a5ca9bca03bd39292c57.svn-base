@@ -1,0 +1,85 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+public class UnidadeConservacaoDocumento {
+
+    @Id
+    @GeneratedValue(generator="unidadeconservacaodocumento_seq", strategy=GenerationType.SEQUENCE)
+    @SequenceGenerator(name="unidadeconservacaodocumento_seq", sequenceName="unidadeconservacaodocumento_seq", allocationSize=1, initialValue=1)
+    private Integer id;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataDocumento = new Date();
+
+    @Enumerated(EnumType.STRING)
+    private EnumUnidadeConservacaoTipoDocumento status = EnumUnidadeConservacaoTipoDocumento.PENDENCIA;
+
+    @ManyToOne(cascade=CascadeType.ALL, targetEntity=UnidadeConservacao.class)
+    @JoinColumn(name="unidadeconservacao_id", nullable=false)
+    private UnidadeConservacao unidadeConservacao;  
+
+    @Lob
+    private byte [] conteudo;
+
+    private String nome;
+
+    public EnumUnidadeConservacaoTipoDocumento getStatus() {
+        return status;
+    }
+
+    public void setStatus(EnumUnidadeConservacaoTipoDocumento status) {
+        this.status = status;
+    }
+
+    public Date getDataDocumento() {
+        return dataDocumento;
+    }
+
+    public void setDataDocumento(Date dataDocumento) {
+        this.dataDocumento = dataDocumento;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public byte[] getConteudo() {
+        return conteudo.clone();
+    }
+
+    public void setConteudo(byte[] conteudo) {
+        this.conteudo = conteudo.clone();
+    }
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public UnidadeConservacao getUnidadeConservacao() {
+        return unidadeConservacao;
+    }
+
+    public void setUnidadeConservacao(UnidadeConservacao unidadeConservacao) {
+        this.unidadeConservacao = unidadeConservacao;
+    }
+
+}

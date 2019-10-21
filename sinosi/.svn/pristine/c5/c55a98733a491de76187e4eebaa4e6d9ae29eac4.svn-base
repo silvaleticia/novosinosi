@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page contentType="text/html; charset=UTF-8"%>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Unidade de Conservação</title>
+<link rel="shortcut icon" href="resources/imagens/favicon.ico"
+	type="image/x-icon" />
+<link href="resources/css/bootstrap.css" rel="stylesheet" />
+<link href="resources/css/bootstrap-responsive.css" rel="stylesheet" />
+<link href="resources/css/styles.css" rel="stylesheet" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control"
+	content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+<script src="resources/js/jquery.js" type="text/javascript"></script>
+<script src="resources/js/jquery.maskedinput.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	jQuery(function($) {
+		$("#usuario").mask("999.999.999-99");
+	});
+	function focar() {
+		document.getElementById("usuario").focus();
+	}
+	function usuarioExterno() {
+		location.href = "usuario.secima";
+	}
+	function recuperarSenha() {
+		location.href = "recuperarSenha.secima";
+	}
+	function faleConosco() {
+		location.href = "https://portal.meioambiente.go.gov.br/weblicencas/faq.secima";
+	}
+</script>
+</head>
+<body>
+	<div class="container">
+
+		<form action="j_spring_security_check" method="post">
+
+			<div class="well row"
+				style="height: auto; min-height: 545px; width: 320px; max-width: 320px; margin: 0px auto; margin-top: 7%; padding: 0px; padding-bottom: 20px;">
+
+				<div class="col-md-12">
+					<img src="resources/imagens/logo-unidadeconservacao.png"
+						alt="Unidade de Conservação" width="292px;" height="110px;" />
+				</div>
+
+				<div class="col-md-12"
+					style="min-height: 430px; height: auto; width: 320px;">
+
+					<div class="col-md-12" style="text-align: center">
+						<h4 style="padding-top: 10px;">Acesso ao sistema</h4>
+					</div>
+
+					<%
+					    if (request.getParameter("msg") != null) {
+					        out.print(
+					                "<div class=\"col-md-12\"><span style='color: red;font-weight: bold;'>Usuário ou senha incorretos</span></div>");
+					    }
+					%>
+
+					<div class="col-md-12"
+						style="margin-bottom: 5px; margin-top: 10px;">
+						<label for="j_username">CPF:</label> <input type="text"
+							id="usuario" name="j_username" class="form-control"
+							placeholder="Informe seu CPF." required="true" autofocus="true" />
+					</div>
+					<div class="col-md-12" style="margin-bottom: 5px;">
+						<label for="j_password">SENHA:</label> <input name="j_password"
+							class="form-control" type="password"
+							placeholder="Informe sua senha." />
+					</div>
+					<div class="col-md-12" style="margin-bottom: 10px">
+						<div class="col-md-6"
+							style="padding-left: 0px; padding-right: 6px;">
+							<input class="btn btn-large btn-success btnSignup"
+								style="width: 100%;" type="submit" value="Entrar" />
+						</div>
+						<div class="col-md-6"
+							style="text-align: center; padding-left: 6px; padding-right: 0px;">
+							<input class="btn btn-large btn-success btnSignup"
+								style="width: 100%; background-color: #C8A700; border-color: #C8A700;"
+								type="button" value="Cadastrar" onclick="usuarioExterno()" />
+						</div>
+						<div class="col-md-6"
+							style="padding-left: 0px; padding-right: 0px; padding-top: 8px; text-align: left;">
+							<a href="#" onclick="faleConosco()"
+								style="font-size: small; margin-left: 10px; color: #4cae4c">Fale
+								conosco</a>
+						</div>
+						<div class="col-md-6"
+							style="padding-left: 0px; padding-right: 0px; padding-top: 8px; text-align: right;">
+							<a href="#" onclick="recuperarSenha()" style="font-size: small;">Esqueceu
+								a senha?</a>
+						</div>
+					</div>
+					<div class="col-md-12" style="text-align: center;">
+						<a href="unidadeConsListExterna.secima"
+							class="btn btn-large btn-primary btn-block"
+							title="Clique aqui para consultar as licenças habilitadas.">Consultar
+							Unidades Habilitadas</a>
+					</div>
+					<div class="col-md-12" style="font-size: small;">
+						<p style="text-align: justify;">
+							<b>Informe o CPF e a Senha para acessar o sistema.</b></br> </br> <em>Caso
+								ainda n&atilde;o seja cadastrado clique no botão Cadastrar.</em>
+						</p>
+						<br />
+					</div>
+					<div class="col-md-12">
+						<div align="center">
+							<img src="resources/imagens/logoGoiasSemad.png" width="290px"
+								align="bottom" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+
+	</div>
+</body>
+</html>

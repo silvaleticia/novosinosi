@@ -1,0 +1,225 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.model.SelectItem;
+
+import org.primefaces.event.FileUploadEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.gov.go.secima.unidadeconservacao.controle.dto.ViaCEPDTO;
+import br.gov.go.secima.unidadeconservacao.entidade.Credenciamento;
+import br.gov.go.secima.unidadeconservacao.entidade.Documento;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoPessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUf;
+import br.gov.go.secima.unidadeconservacao.entidade.Municipio;
+import br.gov.go.secima.unidadeconservacao.entidade.Pessoa;
+import br.gov.go.secima.unidadeconservacao.persistencia.CredenciamentoDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.MunicipioDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.PessoaDao;
+import br.gov.go.secima.unidadeconservacao.service.CepService;
+import br.gov.go.secima.unidadeconservacao.util.UtilUnidadeConservcao;
+
+@Controller("PessoaControl")
+@Scope("conversation")
+public class PessoaControl {
+
+    private Pessoa pessoa = new Pessoa();
+
+    private Credenciamento credenciamento = new Credenciamento();
+
+    private EnumUf uf = EnumUf.GO;
+
+    private boolean habilitarCampos = false;
+
+    private List<Municipio> municipios = new ArrayList<>();
+
+    @Autowired
+    private UsuarioLogadoControl usuarioLogadoControl;
+
+    @Autowired
+    private PessoaDao pessoaDao;
+
+    @Autowired
+    private MunicipioDao municipioDao;
+
+    @Autowired
+    private CepService cepService;
+
+    @Autowired
+    private CredenciamentoDao credenciamentoDao;
+
+    @PostConstruct
+    public void init(){
+        try{
+            listaMunicipiosPorUfs();
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void listaMunicipiosPorUfs() {
+        try {
+            municipios = municipioDao.listarPorUfNome(uf, null);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void consultarPessoa() {
+        try {
+            String cfpCnpj = this.pessoa.getCpfCnpj();
+            EnumTipoPessoa tipo = this.pessoa.getTipo();
+            this.pessoa = pessoaDao.consultarPorCpf(this.pessoa.getCpfCnpj());
+            if(this.pessoa == null){
+                this.pessoa = new Pessoa();
+                this.pessoa.setCpfCnpj(cfpCnpj);
+                this.pessoa.setTipo(tipo);
+                UtilFaces.addMensagemFaces("Não existe cadastro para este CPF/CNPJ. Preencha todos os campos.", FacesMessage.SEVERITY_WARN);
+            }else{
+                if(this.pessoa.getTipo() == EnumTipoPessoa.ORGAO){
+                    this.credenciamento = credenciamentoDao.consultarPorPessoaUsuario(this.pessoa, usuarioLogadoControl.getUsuario());
+                    if(this.credenciamento == null){
+                        this.credenciamento = new Credenciamento();
+                    }
+                }
+            }
+            setHabilitarCampos(true);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void consultarCep(){
+        if(this.pessoa.getCep() != null){
+            try{
+                ViaCEPDTO viaCEPDTO = cepService.consultarCep(this.pessoa.getCep());
+
+                if(viaCEPDTO != null){
+                    this.pessoa.setEndereco(viaCEPDTO.getEnderecoCompleto());
+                    this.pessoa.setMunicipio(viaCEPDTO.getMunicipio());
+                    this.uf = this.pessoa.getMunicipio().getUf();
+                }else{
+                    this.pessoa.setEndereco(null);
+                    this.pessoa.setMunicipio(null);
+                    this.uf = EnumUf.GO;
+                    listaMunicipiosPorUfs();
+                    UtilFaces.addMensagemFaces("CEP não encontrado.", FacesMessage.SEVERITY_WARN);
+                    UtilFaces.addMensagemFaces("Caso seja um endereço novo preencha todos os campos de endereço.", FacesMessage.SEVERITY_WARN);
+                }
+            } catch (Exception e) {
+                UtilFaces.addMensagemFaces(e);
+            }
+        }
+    }
+
+    public void confirmar(){
+        try {
+            if (this.pessoa != null) {
+                if(this.pessoa.getId() == null){
+                    pessoa.setUsuario(usuarioLogadoControl.getUsuario());
+                }
+                pessoaDao.validarPessoa(this.pessoa,this.credenciamento);
+                this.pessoa = pessoaDao.alterar(this.pessoa);
+                confirmarCredenciamento();
+                this.pessoa = new Pessoa();
+                habilitarCampos = false;
+                UtilFaces.addMensagemFaces("Seu cadastro foi realizado com sucesso. ");
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    private void confirmarCredenciamento(){
+        try {
+            if(this.pessoa.getTipo() == EnumTipoPessoa.ORGAO){
+                if(this.credenciamento.getPessoa() == null){
+                    this.credenciamento.setPessoa(this.pessoa);
+                }
+                if(this.credenciamento.getUsuario() == null){
+                    this.credenciamento.setUsuario(usuarioLogadoControl.getUsuario());
+                }
+                this.credenciamento.setAprovado(false);
+                credenciamentoDao.alterar(this.credenciamento);
+                this.credenciamento = new Credenciamento();
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void anexarOficio(FileUploadEvent evt) {
+        try {
+            if(this.credenciamento.getOficio() == null){
+                Documento oficio = new Documento();
+                oficio.setConteudo(evt.getFile().getContents());
+                oficio.setNome(evt.getFile().getFileName());
+                this.credenciamento.setOficio(oficio);
+            }else{
+                this.credenciamento.getOficio().setConteudo(evt.getFile().getContents());
+                this.credenciamento.getOficio().setNome(evt.getFile().getFileName());
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void visualizarDocumento() {
+        try {
+            if (this.credenciamento.getOficio().getConteudo() != null){
+                UtilUnidadeConservcao.visualizarPdf(this.credenciamento.getOficio().getConteudo(),this.credenciamento.getOficio().getNome());
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public List<SelectItem> getUfs(){
+        return UtilFaces.getListEnum(EnumUf.values());
+    }
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+
+    public EnumUf getUf() {
+        return uf;
+    }
+
+    public void setUf(EnumUf uf) {
+        this.uf = uf;
+    }
+
+    public List<Municipio> getMunicipios() {
+        return municipios;
+    }
+
+    public boolean isHabilitarCampos() {
+        return habilitarCampos;
+    }
+
+    public void setHabilitarCampos(boolean habilitarCampos) {
+        this.habilitarCampos = habilitarCampos;
+    }
+
+    public Credenciamento getCredenciamento() {
+        return credenciamento;
+    }
+
+    public void setCredenciamento(Credenciamento credenciamento) {
+        this.credenciamento = credenciamento;
+    }
+
+}
+

@@ -1,0 +1,217 @@
+--> Remover extenção espacial do postgis;
+DROP EXTENSION postgis;
+
+--> Remover tabelas desnecessárias do banco de dados:
+DROP TABLE inventarioresiduo_residuo;
+DROP TABLE inventarioresiduo_produto;
+DROP TABLE inventarioresiduo_residuoantigo;
+DROP TABLE inventarioresiduo_materiaprimaisumo;
+DROP TABLE inventarioresiduo;
+DROP TABLE atividadeindustrial;
+DROP TABLE cnae;
+DROP TABLE contato;
+DROP TABLE residuo;
+DROP TABLE disposicaofinalresiduo;
+DROP TABLE empresatratamentoresiduo;
+DROP TABLE entidadeambientalista;
+DROP TABLE produto_etapaproducao;
+DROP TABLE etapaproducao;
+DROP TABLE residuoantigo;
+DROP TABLE formadearmazenamento;
+DROP TABLE historicologin;
+DROP TABLE materiaprimaisumo;
+DROP TABLE papelusuario;
+DROP TABLE parametro;
+DROP TABLE prorrogacaocadastroinventarioresiduo;
+DROP TABLE anoreferenciainventario;
+DROP TABLE produto;
+DROP TABLE reciclagemresiduo;
+DROP TABLE tiporesiduo;
+DROP TABLE tiporesiduoibama;
+DROP TABLE tratamentoresiduo;
+
+--Deletando as sequences do sistema:
+DROP SEQUENCE ano_referencia_inventario_seq;
+DROP SEQUENCE atividade_industrial_seq;
+DROP SEQUENCE cnae_seq;
+DROP SEQUENCE contato_seq;
+DROP SEQUENCE disposicao_final_residuo_seq;
+DROP SEQUENCE empresa_tratamento_residuo_seq;
+DROP SEQUENCE entidade_ambientalista_seq;
+DROP SEQUENCE etapa_producao_seq;
+DROP SEQUENCE forma_armazenamento_seq;
+DROP SEQUENCE historico_login_seq;
+DROP SEQUENCE inventario_residuo_seq;
+DROP SEQUENCE materia_prima_isumo_seq;
+DROP SEQUENCE papel_usuario_seq;
+DROP SEQUENCE produto_seq;
+DROP SEQUENCE prorro_cad_inventario_residuo_seq;
+DROP SEQUENCE reciclagem_residuo_seq;
+DROP SEQUENCE representante_seq;
+DROP SEQUENCE residuo_antigo_seq;
+DROP SEQUENCE residuo_seq;
+DROP SEQUENCE responsavel_seq;
+DROP SEQUENCE tipo_residuo_seq;
+DROP SEQUENCE tipo_residuos_ibama_seq;
+DROP SEQUENCE tratamento_residuo_seq;
+
+--criando as sequences do sistema:
+CREATE SEQUENCE credenciamento_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+CREATE SEQUENCE historicologin_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+CREATE SEQUENCE imovel_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+CREATE SEQUENCE usuario_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+
+--> Removendo campos inutilizados das tabelas existentes:
+alter table unidadeconservacao drop column programaespecial;
+
+--> tabela unidadeconservacao
+------> Criando a coluna temporária para receber o cpf do representante:
+alter table unidadeconservacao add column cpf character varying(255);
+
+------> Atualizando a coluna cpf com os dados do representante:
+update unidadeconservacao set cpf = (select distinct representante.cpf from representante left outer join pessoa on pessoa.representante_id = representante.id where unidadeconservacao.responsavel_id = pessoa.id);
+
+----> Removendo tabelas restantes	
+DROP TABLE responsavel;
+DROP TABLE usuario cascade;
+DROP TABLE representante cascade;
+DROP TABLE pessoa cascade;
+
+--> Acrescentado novos campos as tabelas existentes:
+alter table unidadeconservacao add column imovel_id integer;
+alter table unidadeconservacao add column orgaoouproprietario_id integer;
+alter table unidadeconservacao add column usuario_id integer;
+alter table unidadeconservacao add column usuarioaprovacao_id integer;
+
+--> Corrigindo tipos de campos...
+ALTER TABLE unidadeconservacao ALTER COLUMN caracteristicafisica TYPE character varying(2048);
+ALTER TABLE unidadeconservacao ALTER COLUMN caracteristicagerencial TYPE character varying(2048);
+ALTER TABLE unidadeconservacao ALTER COLUMN caracteristicabiologica TYPE character varying(2048);
+ALTER TABLE unidadeconservacao ALTER COLUMN caracteristicaturistica TYPE character varying(2048);
+ALTER TABLE unidadeconservacao ALTER COLUMN objetivos TYPE character varying(2048);
+ALTER TABLE unidadeconservacao ALTER COLUMN observacoes TYPE character varying(2048);
+
+--> Criar as novas tabelas do banco de dados:
+CREATE TABLE usuario
+(
+  id integer NOT NULL,
+  alterarsenha boolean NOT NULL,
+  celular character varying(255),
+  cep character varying(255) NOT NULL,
+  confirmado boolean,
+  cpf character varying(255) NOT NULL,
+  dataalteracaosenha date,
+  datacriacao date,
+  datanascimento date,
+  dataultimoacesso date,
+  email character varying(255),
+  endereco character varying(255) NOT NULL,
+  nome character varying(255) NOT NULL,
+  rg character varying(255) NOT NULL,
+  senha character varying(255),
+  telefone character varying(255) NOT NULL,
+  token character varying(255),
+  municipio_id integer NOT NULL,
+  CONSTRAINT usuario_pkey PRIMARY KEY (id),
+  CONSTRAINT fk5b4d8b0e617b30c2 FOREIGN KEY (municipio_id)
+      REFERENCES municipio (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT usuario_cpf_key UNIQUE (cpf),
+  CONSTRAINT usuario_email_key UNIQUE (email)
+);
+
+CREATE TABLE pessoa
+(
+  id integer NOT NULL,
+  cep character varying(255),
+  cpfcnpj character varying(255) NOT NULL,
+  datacriacao timestamp without time zone,
+  email character varying(255),
+  endereco character varying(255) NOT NULL,
+  inscricaoestadual character varying(255),
+  nome character varying(255) NOT NULL,
+  rg character varying(255),
+  telefone character varying(255) NOT NULL,
+  tipo character varying(255),
+  municipio_id integer NOT NULL,
+  usuario_id integer NOT NULL,
+  CONSTRAINT pessoa_pkey PRIMARY KEY (id),
+  CONSTRAINT fk8e48fbc7617b30c2 FOREIGN KEY (municipio_id)
+      REFERENCES municipio (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk8e48fbc7ee194722 FOREIGN KEY (usuario_id)
+      REFERENCES usuario (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT pessoa_cpfcnpj_key UNIQUE (cpfcnpj),
+  CONSTRAINT pessoa_email_key UNIQUE (email)
+);
+
+CREATE TABLE credenciamento
+(
+  id integer NOT NULL,
+  aprovado boolean,
+  data timestamp without time zone,
+  oficio_id integer,
+  pessoa_id integer NOT NULL,
+  usuario_id integer NOT NULL,
+  CONSTRAINT credenciamento_pkey PRIMARY KEY (id),
+  CONSTRAINT fk266a628d9b550b32 FOREIGN KEY (pessoa_id)
+      REFERENCES pessoa (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk266a628ddb44551f FOREIGN KEY (oficio_id)
+      REFERENCES documento (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk266a628dee194722 FOREIGN KEY (usuario_id)
+      REFERENCES usuario (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE historicologin
+(
+  id bigint NOT NULL,
+  data timestamp without time zone,
+  usuario_id integer,
+  CONSTRAINT historicologin_pkey PRIMARY KEY (id),
+  CONSTRAINT fkb0f6179ee194722 FOREIGN KEY (usuario_id)
+      REFERENCES usuario (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE imovel
+(
+  id integer NOT NULL,
+  areareservalegalha numeric(19,2),
+  areatotalha numeric(19,2),
+  cep character varying(255),
+  comarca character varying(255),
+  dataregistro date,
+  endereco character varying(255),
+  folha character varying(255),
+  livro character varying(255),
+  matricula character varying(255),
+  nome character varying(255),
+  numerocar character varying(255),
+  numeroinscricaoincra character varying(255),
+  tipoimovel character varying(255),
+  municipio_id integer,
+  CONSTRAINT imovel_pkey PRIMARY KEY (id),
+  CONSTRAINT fk82c60412617b30c2 FOREIGN KEY (municipio_id)
+      REFERENCES municipio (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE parametro
+(
+  chave character varying(255) NOT NULL,
+  valor character varying(255) NOT NULL,
+  CONSTRAINT parametro_pkey PRIMARY KEY (chave)
+);
+
+CREATE TABLE usuario_papeis
+(
+  usuario_id integer NOT NULL,
+  papeis character varying(255),
+  CONSTRAINT fk1bdaa5a1ee194722 FOREIGN KEY (usuario_id)
+      REFERENCES usuario (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel id="painelInstituicao" header="Cadastro de Instituição">
+
+			<a:field label="CNPJ">
+				<p:inputMask mask="99.999.999/9999-99" styleClass="obrigatorio"
+					id="cnpj" value="#{InstituicaoControl.instituicao.cnpj}"
+					style="width:180px;">
+				</p:inputMask>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Nome da instituição">
+				<p:inputText styleClass="obrigatorio" id="nome"
+					value="#{InstituicaoControl.instituicao.nome}" style="width:500px;" />
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Licença AMbiental">
+				<p:selectOneMenu id="licenca" converter="objectConverter"
+					value="#{InstituicaoControl.licenca}" style="width:160px;">
+					<f:selectItems value="#{InstituicaoControl.licencas }" var="uf"
+						itemLabel="#{licenca.descricao}" itemValue="#{licenca}" />
+
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field>
+				<p:commandButton id="btnSalvar"
+					actionListener="#{InstituicaoControl.confirmar }"
+					icon="ui-icon-disk" value="Salvar"
+					update=":formCorpo:painelInstituicao" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton immediate="true" action="instituicaoList"
+					value="Fechar" ajax="false" icon="ui-icon ui-icon-close" />
+			</a:field>
+
+			<a:newLine />
+			<a:newLine />
+		</p:panel>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,9 @@
+#propriedades para o exchange Segplan
+mail.smtp.socketFactory.fallback=false
+mail.mime.charset=ISO-8859-1
+mail.smtp.host=10.6.1.110
+mail.smtp.debug=false
+mail.debug=false
+mail.smtp.port=25
+mail.smtp.auth=true
+mail.smtp.socketFactory.port=25

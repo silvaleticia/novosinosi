@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="templateExterna.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel id="panelInicio" styleClass="inicio panel-index">
+			<div class="row" style="text-align: center">
+				<h2>Denúncia de crimes ambientais</h2>
+
+				<a:newLine />
+				<a:newLine />
+
+				<a:newLine />
+
+
+				<div class="col-md-2">
+					<p:commandLink class="btn-index-acao"
+						action="comunicacaoSimples?faces-redirect=true" type="image"
+						src="images/desastrenatural.png" ajax="false" immediate="true">
+						DENUNCIAR
+					</p:commandLink>
+				</div>
+
+				<a:newLine />
+
+
+				<div class="col-md-2">
+					<p:commandLink class="btn-index-acao"
+						action="comunicacaoSimples?faces-redirect=true" type="image"
+						src="images/desastrenatural.png" ajax="false" immediate="true">
+						ACOMPANHAR DENUNCIA
+					</p:commandLink>
+				</div>
+				</div>
+
+
+				<a:newLine />
+				<a:newLine />
+				<a:newLine />
+				<a:newLine />
+				<a:newLine />
+				
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>

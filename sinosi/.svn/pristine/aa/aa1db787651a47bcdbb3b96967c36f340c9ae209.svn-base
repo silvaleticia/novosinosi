@@ -1,0 +1,167 @@
+package br.gov.go.secima.unidadeconservacao.util;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.Proxy;
+import java.net.URL;
+
+import org.primefaces.json.JSONException;
+import org.primefaces.json.JSONObject;
+
+import br.com.ambientinformatica.jpa.exception.ValidacaoException;
+import br.com.ambientinformatica.util.UtilLog;
+import br.gov.go.secima.unidadeconservacao.entidade.Municipio;
+import br.gov.go.secima.unidadeconservacao.persistencia.MunicipioDao;
+
+public class ViaCEP {
+
+    private String cep;
+    private String logradouro;
+    private String complemento;
+    private String bairro;
+    private String localidade;
+    private Municipio municipio;
+    private String uf;
+    private String ibge;
+    private String gia;
+    private String enderecoCompleto;
+
+    /**
+     * Constrói uma nova classe
+     */
+    public ViaCEP() {
+        this.cep = null;
+        this.logradouro = null;
+        this.complemento = null;
+        this.bairro = null;
+        this.localidade = null;
+        this.uf = null;
+        this.ibge = null;
+        this.gia = null;
+    }
+
+    /**
+     * Constrói uma nova classe e busca um cep no ViaCEP
+     *
+     * @param cep
+     * @throws viacep.ViaCEPException caso ocorra algum erro
+     * @throws JSONException 
+     */
+    public ViaCEP(String cep,String ipProxy, int portaProxy) throws ValidacaoException {
+        this.buscar(cep,ipProxy,portaProxy);
+    }
+
+    /**
+     * Busca um cep no ViaCEP
+     *
+     * @param cep
+     * @throws viacep.ViaCEPException caso ocorra algum erro
+     * @throws JSONException 
+     */
+    public final void buscar(String cep,String ipProxy, int portaProxy) throws ValidacaoException {
+        try{
+            this.cep = cep.replace(".","").replace("-", "");
+            String url = "http://viacep.com.br/ws/" + this.cep + "/json/";
+            JSONObject obj = new JSONObject(this.get(url,ipProxy,portaProxy));
+            if (!obj.has("erro")) {
+                this.cep = obj.getString("cep");
+                this.logradouro = obj.getString("logradouro");
+                this.complemento = obj.getString("complemento");
+                this.bairro = obj.getString("bairro");
+                this.localidade = obj.getString("localidade");
+                this.uf = obj.getString("uf");
+                this.ibge = obj.getString("ibge");
+                this.gia = obj.getString("gia");
+                this.enderecoCompleto = String.format("%s, %s", this.logradouro, this.bairro);
+
+                MunicipioDao municipioDao = (MunicipioDao) UtilUnidadeConservcao.getManagedBean("municipioDao");
+                this.municipio = municipioDao.municipioPorCodigoIBGE(Integer.parseInt(this.ibge));
+            }
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Procedimento para obtem dados via GET
+     *
+     * @param urlToRead endereço
+     * @return conteúdo remoto
+     * @throws viacep.ViaCEPException caso ocorra algum erro
+     * @throws IOException 
+     */
+    public final String get(String urlToRead, String ipProxy, int portaProxy) throws ViaCEPException {
+        StringBuilder result = new StringBuilder();
+        BufferedReader br = null;
+        try {
+            URL url = new URL(urlToRead);
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ipProxy,portaProxy));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+            conn.setRequestMethod("GET");
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"));
+            String line;
+            while ((line = br.readLine()) != null) {
+                result.append(line);
+            }
+        } catch (MalformedURLException | ProtocolException ex) {
+            UtilLog.getLog().error(ex.getMessage(), ex);
+        } catch (IOException ex) {
+            UtilLog.getLog().error(ex.getMessage(), ex);
+        }finally{
+            if(br != null){
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    UtilLog.getLog().error(e.getMessage(), e);
+                }
+            }
+        }
+        return result.toString();
+    }
+
+    public String getCep() {
+        return this.cep;
+    }
+
+    public String getLogradouro() {
+        return this.logradouro;
+    }
+
+    public String getComplemento() {
+        return this.complemento;
+    }
+
+    public String getBairro() {
+        return this.bairro;
+    }
+
+    public String getLocalidade() {
+        return this.localidade;
+    }
+
+    public String getUf() {
+        return this.uf;
+    }
+
+    public String getIbge() {
+        return this.ibge;
+    }
+
+    public String getGia() {
+        return this.gia;
+    }
+
+    public Municipio getMunicipio() {
+        return municipio;
+    }
+
+    public String getEnderecoCompleto() {
+        return enderecoCompleto;
+    }
+
+}

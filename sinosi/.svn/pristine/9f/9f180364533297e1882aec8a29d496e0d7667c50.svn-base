@@ -1,0 +1,31 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import br.com.ambientinformatica.util.IEnum;
+
+/**
+ * ADMIN : Usuários administrador do sistema, com permissão total;
+ * ADMIN_UNIDADE : Usuário administrador da área finalística, tem acesso aos cadastros;
+ * CONSULTA_UNIDADE : Usuário de consulta da área finalística, pode consultar todas as unidades sem editar;
+ * ATENDIMENTO : Usuário destinado ao vapt-vupt, tem acesso aos cadastro de usuário e consulta as unidades;
+ * USUÁRIO : Usuário comum, com acesso a autuação e consulta de suas propiás unidades;
+ **/
+public enum EnumPapelUsuario implements IEnum {
+
+    ADMIN("Administrador TI"),
+    ADMIN_UNIDADE("Administrador do Sistema Unidade de Conservação"),
+    CONSULTA_UNIDADE("Consultar Unidades de Conservação"),
+    ATENDIMENTO("Atendimento"),
+    USUARIO("Usuário");
+
+    private final String descricao;
+
+    private EnumPapelUsuario(String descricao) {
+        this.descricao = descricao;
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+
+}

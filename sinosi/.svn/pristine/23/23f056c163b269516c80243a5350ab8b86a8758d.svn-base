@@ -1,0 +1,22 @@
+package br.gov.go.secima.unidadeconservacao.persistencia;
+
+import java.util.List;
+
+import br.com.ambientinformatica.jpa.exception.PersistenciaException;
+import br.com.ambientinformatica.jpa.persistencia.Persistencia;
+import br.gov.go.secima.unidadeconservacao.entidade.Credenciamento;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoPessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.Pessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+
+public interface PessoaDao extends Persistencia<Pessoa>{
+
+    void validarPessoa(Pessoa pessoa, Credenciamento credenciamento) throws PersistenciaException;
+
+    List<Pessoa> listarPorNomeOuCnpj(String nome, String cnpj, Usuario usuario, EnumTipoPessoa tipoPessoa, String situacao) throws PersistenciaException;
+
+    Pessoa consultarProprietarioCredenciadaPorCpfCnpj(String cpfCnpj, Usuario usuario) throws PersistenciaException;
+
+    Pessoa consultarPorCpf(String cpfCnpj) throws PersistenciaException;
+
+}

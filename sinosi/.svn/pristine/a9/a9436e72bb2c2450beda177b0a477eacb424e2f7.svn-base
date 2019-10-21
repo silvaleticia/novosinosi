@@ -1,0 +1,208 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import br.com.ambientinformatica.util.AmbientValidator;
+import br.com.ambientinformatica.util.Entidade;
+
+@Entity
+public class Imovel extends Entidade implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(generator="imovel_seq", strategy=GenerationType.SEQUENCE)
+    @SequenceGenerator(name="imovel_seq", sequenceName="imovel_seq", allocationSize=1,initialValue=1)
+    private Integer id;
+
+    @NotEmpty(message="Informe o nome do imóvel", groups=AmbientValidator.class)
+    @Length(min=0, max=255, message="O limite do campo nome é de 255 caracteres.", groups=AmbientValidator.class)
+    @Column(length=255,nullable=false)
+    private String nome;
+
+    @Temporal(TemporalType.DATE)
+    private Date dataRegistro;
+
+    @Enumerated(EnumType.STRING)
+    private EnumTipoImovel tipoImovel = EnumTipoImovel.URBANO;
+
+    @Column(length=255)
+    @Length(min=0, max=255, message="O limite do campo comarca é de 255 caracteres.", groups=AmbientValidator.class)
+    private String comarca;
+
+    @Column(length=255)
+    @Length(min=0, max=255, message="O limite do campo número da inscrição é de 255 caracteres.", groups=AmbientValidator.class)
+    private String numeroInscricaoIncra;
+
+    @Column(length=255)
+    @Length(min=0, max=255, message="O limite do campo matrícula é de 255 caracteres.", groups=AmbientValidator.class)
+    private String matricula;
+
+    @Column(length=255)
+    @Length(min=0, max=255, message="O limite do campo livro é de 255 caracteres.", groups=AmbientValidator.class)
+    private String livro;
+
+    @Column(length=255)
+    @Length(min=0, max=255, message="O limite do campo folha é de 255 caracteres.", groups=AmbientValidator.class)
+    private String folha;
+
+    @Column(length=255)
+    @Length(min=0, max=255, message="O limite do campo número do CAR é de 255 caracteres.", groups=AmbientValidator.class)
+    private String numeroCAR;
+
+    private BigDecimal areaTotalHA;
+
+    private BigDecimal areaReservaLegalHA;
+
+    @NotEmpty(message="Informe o endereço do imóvel", groups=AmbientValidator.class)
+    @Column(nullable=false, length=255)
+    @Length(min=0, max=255, message="O limite do campo endereço é de 255 caracteres.", groups=AmbientValidator.class)
+    private String endereco;
+
+    @Column(length=255)
+    private String cep;
+
+    @NotNull(message="Informe o município do imóvel", groups=AmbientValidator.class)
+    @ManyToOne(optional=false)
+    private Municipio municipio;
+
+    public boolean isMovelRural(){
+        return this.tipoImovel.equals(EnumTipoImovel.RURAL);
+    }
+
+    public Date getDataRegistro() {
+        return dataRegistro != null ? (Date) dataRegistro.clone(): null;
+    }
+
+    public void setDataRegistro(Date dataRegistro) {
+        this.dataRegistro = dataRegistro != null ? (Date) dataRegistro.clone(): null;
+    }
+
+    public String getComarca() {
+        return comarca;
+    }
+
+    public void setComarca(String comarca) {
+        this.comarca = comarca;
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public Municipio getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(Municipio municipio) {
+        this.municipio = municipio;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+    public String getLivro() {
+        return livro;
+    }
+
+    public void setLivro(String livro) {
+        this.livro = livro;
+    }
+
+    public String getFolha() {
+        return folha;
+    }
+
+    public void setFolha(String folha) {
+        this.folha = folha;
+    }
+
+    public String getNumeroCAR() {
+        return numeroCAR;
+    }
+
+    public void setNumeroCAR(String numeroCAR) {
+        this.numeroCAR = numeroCAR;
+    }
+
+    public BigDecimal getAreaReservaLegalHA() {
+        return areaReservaLegalHA;
+    }
+
+    public void setAreaReservaLegalHA(BigDecimal areaReservaLegalHA) {
+        this.areaReservaLegalHA = areaReservaLegalHA;
+    }
+
+    public BigDecimal getAreaTotalHA() {
+        return areaTotalHA;
+    }
+
+    public void setAreaTotalHA(BigDecimal areaTotalHA) {
+        this.areaTotalHA = areaTotalHA;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public EnumTipoImovel getTipoImovel() {
+        return tipoImovel;
+    }
+
+    public void setTipoImovel(EnumTipoImovel tipoImovel) {
+        this.tipoImovel = tipoImovel;
+    }
+
+    public String getNumeroInscricaoIncra() {
+        return numeroInscricaoIncra;
+    }
+
+    public void setNumeroInscricaoIncra(String numeroInscricaoIncra) {
+        this.numeroInscricaoIncra = numeroInscricaoIncra;
+    }
+
+}

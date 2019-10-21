@@ -1,0 +1,248 @@
+package br.gov.go.secima.unidadeconservacao.persistencia;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.TypedQuery;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import br.com.ambientinformatica.jpa.exception.PersistenciaException;
+import br.com.ambientinformatica.jpa.exception.ValidacaoException;
+import br.com.ambientinformatica.jpa.persistencia.PersistenciaJpa;
+import br.com.ambientinformatica.util.UtilCpfCnpj;
+import br.com.ambientinformatica.util.UtilLog;
+import br.gov.go.secima.unidadeconservacao.entidade.Credenciamento;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoPessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.Pessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+
+@Repository("pessoaDao")
+public class PessoaDaoJpa extends PersistenciaJpa<Pessoa> implements PessoaDao{
+
+    private static final long serialVersionUID = 1L;
+
+    @Autowired
+    private CredenciamentoDao credenciamentoDao;
+
+    @Override
+    public void validarPessoa(Pessoa pessoa, Credenciamento credenciamento) throws PersistenciaException {
+
+        this.validar(pessoa);
+
+        if(pessoa.getTipo() == EnumTipoPessoa.ORGAO && credenciamento.getOficio().getConteudo() == null){
+            throw new ValidacaoException("É Necessário Anexar O ofício de credenciamento.");
+        }
+
+        if(pessoa.getId() == null){
+            Pessoa pesEmail = consultarPorEmail(pessoa.getEmail()); 
+            if(pesEmail != null && pesEmail.getEmail().equals(pessoa.getEmail())){
+                throw new ValidacaoException("Já existe uma pessoa cadastrada com este E-mail! Utilize outro e-mail.");
+            }
+
+            Pessoa pesMesmoCpfCnpj = consultarPorCpfCnpj(pessoa.getCpfCnpj());
+            if(pesMesmoCpfCnpj != null && pesMesmoCpfCnpj.getCpfCnpj() != null && pesMesmoCpfCnpj.getCpfCnpj().equals(pessoa.getCpfCnpj())){
+                throw new ValidacaoException("Já existe um pessoa cadastrada com este CNPJ.");
+            }
+        }
+    }
+
+    private Pessoa consultarPorEmail(String email) throws PersistenciaException {
+        try {
+            TypedQuery<Pessoa> query = em.createQuery("select distinct p from Pessoa p where p.email = :email", Pessoa.class);
+            query.setParameter("email", email);
+            List<Pessoa> pessoas = query.getResultList();
+
+            if(pessoas.isEmpty()){
+                return null;
+            }else{
+                return pessoas.get(0);
+            }
+        }catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException("Erro ao consultar o pessoa por e-mail.", e);
+        }
+    }
+
+    private Pessoa consultarPorCpfCnpj(String cpfCnpj) throws PersistenciaException {
+        try {
+            TypedQuery<Pessoa> query = em.createQuery("select distinct p from Pessoa p where p.cpfCnpj = :cpfCnpj", Pessoa.class);
+            query.setParameter("cpfCnpj", cpfCnpj);
+            query.setMaxResults(1);
+            List<Pessoa> pessoas = query.getResultList();
+
+            if (pessoas != null && !pessoas.isEmpty()){
+                return pessoas.get(0);
+            }else{
+                return null; 
+            }
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException("Erro ao consultar pessoa por CNPJ.", e);
+        }
+    }
+
+    @Override
+    public Pessoa consultarProprietarioCredenciadaPorCpfCnpj(String cpfCnpj, Usuario usuario) throws PersistenciaException {
+
+        if (cpfCnpj == null || cpfCnpj.isEmpty()) {
+            throw new ValidacaoException("Informe um CPF/CNPJ antes de pesquisar.");
+        }
+
+        List<Pessoa> pessoas = new ArrayList<>();
+
+        try {
+            String sql = "select distinct p from Pessoa p where p.cpfCnpj = :cpfCnpj ";
+            TypedQuery<Pessoa> query = em.createQuery(sql, Pessoa.class);
+
+            if (cpfCnpj != null && !cpfCnpj.isEmpty()) {
+                query.setParameter("cpfCnpj", cpfCnpj);
+            }
+
+            pessoas = query.getResultList();
+
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException("Erro ao consultar o Pessoa por CNPJ/Nome", e);
+        }
+
+        Credenciamento credenciamento = null;
+        Pessoa pessoa = null;
+
+        if(pessoas != null && !pessoas.isEmpty()){
+            try{
+                pessoa = pessoas.get(0);
+                if(!usuario.isAdminUnidadeConservacao()){
+                    credenciamento = credenciamentoDao.consultarPorPessoaUsuario(pessoa,usuario);
+                }else{
+                    return pessoa;
+                }
+            } catch (Exception e) {
+                UtilLog.getLog().error(e.getMessage(), e);
+                throw new PersistenciaException("Erro ao consultar o credenciamento.", e);
+            }
+        }else{
+            throw new ValidacaoException("Não existem um Orgão/Proprietário cadastrado com esse CPF/CNPJ.");
+        }
+
+        if(credenciamento != null){
+            if(credenciamento.getAprovado()){
+                return pessoa;
+            }else{
+                throw new ValidacaoException("O credenciamento do usuário ainda não foi aprovado.");
+            }
+        }else{
+            throw new ValidacaoException("Faça o credenciamento do seu usuário para este Orgão/Proprietário.");
+        }
+    }
+
+    @Override
+    public List<Pessoa> listarPorNomeOuCnpj(String nome, String cpfCnpj, Usuario usuario, EnumTipoPessoa tipoPessoa, String situacao) throws PersistenciaException {
+        try {
+            String sql = "select distinct p from Pessoa p where 1 = 1 ";
+
+            if (nome != null && !nome.isEmpty()) {
+                sql += " and upper(p.nome) like upper(:nome)";
+            }
+            if (cpfCnpj != null && !cpfCnpj.isEmpty()) {
+                sql += " and p.cpfCnpj = :cpfCnpj";
+            }
+            if(usuario != null && !usuario.isAdminUnidadeConservacao()){
+                sql += " and p.usuario = :usuario";
+            }
+            if(tipoPessoa != null){
+                sql += " and p.tipo = :tipoPessoa";
+            }
+
+            sql += " order by p.id desc";
+
+            TypedQuery<Pessoa> query = em.createQuery(sql, Pessoa.class);
+
+            if (nome != null && !nome.isEmpty()) {
+                query.setParameter("nome", "%"+ nome +"%");
+            }
+            if (cpfCnpj != null && !cpfCnpj.isEmpty()) {
+                query.setParameter("cpfCnpj", cpfCnpj);
+            }
+            if(usuario != null && !usuario.isAdminUnidadeConservacao()){
+                query.setParameter("usuario", usuario);
+            }
+            if(tipoPessoa != null){
+                query.setParameter("tipoPessoa", tipoPessoa);
+            }
+
+            List<Pessoa> pessoas  = query.getResultList();
+            List<Pessoa> pessoasFiltradas  = new ArrayList<>();
+
+            if(!"TODAS".equals(situacao)){
+                for (Pessoa pessoa : pessoas) {
+                    if(pessoa.getTipo() == EnumTipoPessoa.ORGAO){
+                        if(usuario.isAdminUnidadeConservacao()){
+                            List<Credenciamento> credenciamentos = credenciamentoDao.listarPorPessoa(pessoa);
+                            if(credenciamentos != null && !credenciamentos.isEmpty()){
+                                for (Credenciamento c : credenciamentos) {
+                                    if(!pessoasFiltradas.contains(pessoa)){
+                                        if(c.getAprovado() && "HABILITADOS".equals(situacao)){
+                                            pessoasFiltradas.add(pessoa);
+                                        }
+                                        if(!c.getAprovado() && "NAO_HABILITADOS".equals(situacao)){
+                                            pessoasFiltradas.add(pessoa);
+                                        } 
+                                    }
+                                }
+                            }
+                        }else{
+                            Credenciamento credenciamento = credenciamentoDao.consultarPorPessoaUsuario(pessoa,usuario);
+                            if(credenciamento != null){
+                                if(credenciamento.getAprovado() && "HABILITADOS".equals(situacao)){
+                                    pessoasFiltradas.add(pessoa);
+                                }
+                                if(!credenciamento.getAprovado() && "NAO_HABILITADOS".equals(situacao)){
+                                    pessoasFiltradas.add(pessoa);
+                                } 
+                            }
+                        }
+                    }else{
+                        pessoasFiltradas.add(pessoa);
+                    }
+                }
+            }else{
+                return pessoas;
+            }
+
+            return pessoasFiltradas;
+
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException("Erro ao consultar o Orgão/Proprietário por CNPJ/Nome", e);
+        }
+    }
+
+    @Override
+    public Pessoa consultarPorCpf(String cpfCnpj) throws PersistenciaException {
+        validarCpf(cpfCnpj);
+        try {
+            TypedQuery<Pessoa> query = em.createQuery("select distinct p from Pessoa p where p.cpfCnpj = :cpfCnpj", Pessoa.class);
+            query.setParameter("cpfCnpj", cpfCnpj);
+            query.setMaxResults(1);
+            List<Pessoa> pessoas = query.getResultList();
+
+            if (pessoas != null && !pessoas.isEmpty()){
+                return pessoas.get(0);
+            }else{
+                return null; 
+            }
+        } catch (Exception e) {
+            UtilLog.getLog().error(e.getMessage(), e);
+            throw new PersistenciaException("Erro ao consultar usuário por CPF.", e);
+        }
+    }
+
+    private static void validarCpf(String cpfCnpj) throws ValidacaoException {
+        if(!UtilCpfCnpj.validar(cpfCnpj)){
+            throw new ValidacaoException("CPF/CNPJ inválido!");
+        }
+    }
+
+}

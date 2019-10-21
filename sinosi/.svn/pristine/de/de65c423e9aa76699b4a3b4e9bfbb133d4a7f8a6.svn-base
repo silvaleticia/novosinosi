@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="/template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:a="http://www.ambientinformatica.com.br/jsf2" xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+		<p:panel header="Credenciamento de Usuário" id="panelPessoa" style="width:100%">
+			<p:panelGrid columns="4" style="width:800px;">
+				<f:facet name="header">
+					<b> Dados do Orgão/Proprietário</b>
+				</f:facet>
+				<b> Razão social:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.nome}" />
+				<b> CPF/CNPJ:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.cpfCnpj}" />
+				<b> Insc. estadual/RG:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.rgInscricao}" />
+				<b> Telefone:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.telefone}" />
+				<b> E-mail:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.email}" />
+				<b> Endereço:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.endereco},
+				CEP: #{PessoaListControl.pessoa.cep}" />
+				<b> Município:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.municipio}" />
+			</p:panelGrid>
+			
+			<a:newLine />
+			
+			<p:panelGrid id="pgUsuario" columns="5" style="width:800px; text-align: center">
+				<f:facet name="header">
+					<b> Usuário Responsável pelo Cadastro</b>
+				</f:facet>
+
+				<b> CPF:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.usuario.cpf}" />
+				<b> Nome:</b>
+				<p:outputLabel value="#{PessoaListControl.pessoa.usuario.nome}" />
+				<p:commandButton id="btnAbrirDialogUsuario" icon="ui-icon-shuffle" value="Alterar Usuário" onclick="PF('dlgUsuario').show();" title="Alterar usuário responsável pelo pessoa" />
+			</p:panelGrid>
+
+			<a:newLine />
+			
+			<p:dataTable id="tblCredenciais" var="credenciamento" widgetVar="credenciamento" value="#{PessoaListControl.credenciamentos }" emptyMessage="Sem registros" style="width:800px;">
+				<f:facet name="header">
+		            Credenciamentos
+		        </f:facet>
+				<p:column headerText="CPF">
+					<p:outputLabel value="#{credenciamento.usuario.cpf}" />
+				</p:column>
+				<p:column headerText="Nome">
+					<p:outputLabel value="#{credenciamento.usuario.nome}" />
+				</p:column>
+				<p:column headerText="Ofício de credenciamento">
+					<h:commandLink action="#{PessoaListControl.visualizarOficio(credenciamento)}" value="#{credenciamento.oficio.nome}" style="color:blue" target="_blank" ajax="false"
+					title="Clique aqui para visualizar documento" />
+				</p:column>
+				<p:column>
+					<p:commandButton rendered="#{!credenciamento.aprovado}" actionListener="#{PessoaListControl.credenciarUsuario(credenciamento.id)}" value="Credenciar Usuário" icon="ui-icon-check" update=":formCorpo:panelPessoa" />	
+					<p:commandButton rendered="#{credenciamento.aprovado}" actionListener="#{PessoaListControl.descredenciarUsuario(credenciamento.id)}" value="Descredenciar Usuário" icon="ui-icon-cancel" update=":formCorpo:panelPessoa" />
+				</p:column>
+			</p:dataTable>
+			
+			<a:newLine />
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Fechar" actionListener="#{MenuControl.gerenciarSessao}" action="/pessoaList?faces-redirect=true" icon="ui-icon-home" />
+			</a:field>
+
+			<a:newLine />
+			<a:newLine />
+		</p:panel>
+
+		<p:dialog id="dlgUsuario" header="Pesquisar Usuário" widgetVar="dlgUsuario" modal="true" minHeight="200">
+			<p:panel id="pnDialogUsuario">
+				<a:field label="CPF">
+					<p:inputMask mask="999.999.999-99" value="#{PessoaListControl.cpfUsuario}" style="width:150px;" />
+				</a:field>
+
+				<a:field spaceLeft="10px">
+					<p:commandButton actionListener="#{PessoaListControl.consultarUsuarioPorCPF}" icon="ui-icon-search" title="Pesquisar usuários" update=":formCorpo:pnDialogUsuario" />
+				</a:field>
+
+				<a:newLine />
+				<a:newLine />
+
+				<p:panelGrid id="pgUsuarioDialog" columns="5" rendered="#{not empty PessoaListControl.usuarioAlterar.cpf}">
+					<b> CPF:</b>
+					<p:outputLabel value="#{PessoaListControl.usuarioAlterar.cpf}" />
+					<b> Nome:</b>
+					<p:outputLabel value="#{PessoaListControl.usuarioAlterar.nome}" />
+					<p:commandButton value="Alterar" actionListener="#{PessoaListControl.alterarUsuarioResponsavel}" update=":formCorpo:pgUsuario :formCorpo:pnDialogUsuario" oncomplete="PF('dlgUsuario').hide();" />
+				</p:panelGrid>
+			</p:panel>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

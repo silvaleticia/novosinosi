@@ -1,0 +1,315 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.model.SelectItem;
+
+import org.primefaces.context.RequestContext;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.gov.go.secima.unidadeconservacao.entidade.Documento;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumBiomaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumCategoriaUnidade;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumEsferaAdministrativa;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumGrupoClassificacao;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumTipoLei;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUf;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUnidadeConservacaoTipoDocumento;
+import br.gov.go.secima.unidadeconservacao.entidade.Municipio;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacao;
+import br.gov.go.secima.unidadeconservacao.entidade.UnidadeConservacaoDocumento;
+import br.gov.go.secima.unidadeconservacao.persistencia.MunicipioDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.ParametroDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.UnidadeConservacaoDao;
+
+@Controller("UnidadeConservacaoListExternaControl")
+@Scope("conversation")
+public class UnidadeConservacaoListExternaControl {
+
+    @Autowired
+    private MunicipioDao municipioDao;
+
+    @Autowired
+    private UnidadeConservacaoDao unidadeConservacaoDao;
+
+    @Autowired
+    private ParametroDao parametroDao;
+
+    private String nome;
+    private EnumTipoLei lei;
+    private EnumCategoriaUnidade categoria;
+    private EnumGrupoClassificacao grupoClassificacao;
+    private EnumEsferaAdministrativa esferaAdministrativa;
+    private Municipio municipio;
+    private EnumBiomaUnidade bioma;
+    private String urlIframe;
+    private UnidadeConservacao unidadeConservacao;
+    private StreamedContent pdfDocumento;
+    private UnidadeConservacaoDocumento documentoAprovacao;
+    private List<UnidadeConservacao> unidadeConservacoes = new ArrayList<>();
+    private List<Municipio> municipios = new ArrayList<>();
+    private List<SelectItem> gruposClassificao = new ArrayList<>();
+    private List<SelectItem> categoriasUnidade = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        try {
+            this.municipios = municipioDao.listarPorUfNome(EnumUf.GO, null);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    private void solicitarGeo(){
+        try{
+            String urlCarcara = "//" + UtilFaces.getRequest().getHeader("Host") + parametroDao.consultarValorPorChave("URL_CARCARA");
+
+            if(unidadeConservacao.getCodigoGeometria() != null ){
+                setUrlIframe(urlCarcara + "/visualizarMapa.jsp" + "?codgeo=" + unidadeConservacao.getCodigoGeometria());
+                return;
+            }else{
+                setUrlIframe(urlCarcara + "/visualizarMapa.jsp");
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void mostrarDocumento(String documentoParametro) {
+        try {
+
+            Documento documentoVisualizacao = null; 
+
+            if("docLeiCriacao".equals(documentoParametro)){
+                documentoVisualizacao = unidadeConservacao.getDocLeiCriacao(); 
+            }else if("docEstudoCriacao".equals(documentoParametro)){
+                documentoVisualizacao = unidadeConservacao.getDocEstudoCriacao(); 
+            }else if("docConvocacaoConsultaPublica".equals(documentoParametro)){
+                documentoVisualizacao = unidadeConservacao.getDocConvocacaoConsultaPublica(); 
+            }else if("docConsultaPublica".equals(documentoParametro)){
+                documentoVisualizacao = unidadeConservacao.getDocConsultaPublica();
+            }
+
+            if (documentoParametro != null){
+                InputStream dbStream = new ByteArrayInputStream(documentoVisualizacao.getConteudo());
+                setPdfDocumento(new DefaultStreamedContent(dbStream, "application/pdf", documentoVisualizacao.getNome()));
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void mostrarDocParecerAprovacao() {
+        try {
+            if (documentoAprovacao != null){
+                InputStream dbStream = new ByteArrayInputStream(documentoAprovacao.getConteudo());
+                pdfDocumento = new DefaultStreamedContent(dbStream, "application/pdf", documentoAprovacao.getNome());
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public UnidadeConservacao getUnidadeConservacao() {
+        return unidadeConservacao;
+    }
+
+    public void setUnidadeConservacao(UnidadeConservacao unidadeConservacao) {
+        this.unidadeConservacao = unidadeConservacao;
+    }
+
+    public void consultarUnidade() {
+        try {
+            unidadeConservacoes = unidadeConservacaoDao.consultarUnidades(nome,categoria,esferaAdministrativa,municipio,bioma,lei,grupoClassificacao);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public String visualizarUnidadeConservacaoCUC(){
+        try {
+            this.unidadeConservacao = unidadeConservacaoDao.consultarPorId(this.unidadeConservacao.getId());
+            this.solicitarGeo();
+            this.documentoAprovacao = unidadeConservacaoDao.consultarDocumenotParecerUltimoTipo(this.unidadeConservacao.getId(), EnumUnidadeConservacaoTipoDocumento.APROVACAO);
+            return "unidadeConservacaoVisualiza?faces-redirect=true";
+
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+            return "";
+        }
+    }
+
+    public String baixarShapeFile(){
+        String urlShape = String.format("%s\\'%s\\'&outputFormat=shape-zip",getUrlBaseGeoServer(),this.unidadeConservacao.getCodigoGeometria()); 
+        RequestContext.getCurrentInstance().execute("window.open('" + urlShape + "');");
+        return "";
+    }
+
+    public String baixarKml(){
+        String urlKml = String.format("%s\\'%s\\'&outputFormat=application/vnd.google-earth.kml+xml",getUrlBaseGeoServer(),this.unidadeConservacao.getCodigoGeometria());
+        RequestContext.getCurrentInstance().execute("window.open('" + urlKml + "');");
+        return "";
+    }
+
+    private String getUrlBaseGeoServer(){
+        try {
+            return parametroDao.consultarValorPorChave("URL_BASE_GEOSERVER");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return "";
+    }
+
+    public void atualizarGrupoClassificacao() {
+        try {
+            this.gruposClassificao = new ArrayList<>();
+            if(this.lei != null){
+                for (EnumGrupoClassificacao valor : EnumGrupoClassificacao.values()) {
+                    if (valor.getGrupoLei() == this.lei.getGrupoLei()) {
+                        gruposClassificao.add(new SelectItem(valor, valor.getDescricao()));
+                    }
+                }
+                if(this.lei == EnumTipoLei.LEI_COMPLEMENTAR){
+                    setGrupoClassificacao(EnumGrupoClassificacao.NAO_SE_APLICA);
+                }
+            }
+            atualizarCategoriaUnidade();
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void atualizarCategoriaUnidade() {
+        try {
+            categoriasUnidade.clear();
+            if(this.grupoClassificacao != null){
+                for (EnumCategoriaUnidade valor : EnumCategoriaUnidade.values()) {
+                    if (valor.getGrupo() == this.grupoClassificacao.getGrupo()) {
+                        categoriasUnidade.add(new SelectItem(valor, valor.getDescricao()));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public List<UnidadeConservacao> getUnidadeConservacoes() {
+        return unidadeConservacoes;
+    }
+
+    public List<SelectItem> getLeis() {
+        return UtilFaces.getListEnum(EnumTipoLei.values());
+    }
+
+    public List<SelectItem> getEsferasAdministrativa() {
+        return UtilFaces.getListEnum(EnumEsferaAdministrativa.values());
+    }
+
+    public List<SelectItem> getBiomas() {
+        return UtilFaces.getListEnum(EnumBiomaUnidade.values());
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public EnumCategoriaUnidade getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(EnumCategoriaUnidade categoria) {
+        this.categoria = categoria;
+    }
+
+    public EnumEsferaAdministrativa getEsferaAdministrativa() {
+        return esferaAdministrativa;
+    }
+
+    public void setEsferaAdministrativa(
+            EnumEsferaAdministrativa esferaAdministrativa) {
+        this.esferaAdministrativa = esferaAdministrativa;
+    }
+
+    public Municipio getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(Municipio municipio) {
+        this.municipio = municipio;
+    }
+
+    public EnumBiomaUnidade getBioma() {
+        return bioma;
+    }
+
+    public void setBioma(EnumBiomaUnidade bioma) {
+        this.bioma = bioma;
+    }
+
+    public String getUrlIframe() {
+        return urlIframe;
+    }
+
+    public void setUrlIframe(String urlIframe) {
+        this.urlIframe = urlIframe;
+    }
+
+    public UnidadeConservacaoDocumento getDocumentoAprovacao() {
+        return documentoAprovacao;
+    }
+
+    public void setDocumentoAprovacao(UnidadeConservacaoDocumento documentoAprovacao) {
+        this.documentoAprovacao = documentoAprovacao;
+    }
+
+    public StreamedContent getPdfDocumento() {
+        return pdfDocumento;
+    }
+
+    public void setPdfDocumento(StreamedContent pdfDocumento) {
+        this.pdfDocumento = pdfDocumento;
+    }
+
+    public List<Municipio> getMunicipios() {
+        return municipios;
+    }
+
+    public EnumTipoLei getLei() {
+        return lei;
+    }
+
+    public void setLei(EnumTipoLei lei) {
+        this.lei = lei;
+    }
+
+    public EnumGrupoClassificacao getGrupoClassificacao() {
+        return grupoClassificacao;
+    }
+
+    public void setGrupoClassificacao(EnumGrupoClassificacao grupoClassificacao) {
+        this.grupoClassificacao = grupoClassificacao;
+    }
+
+    public List<SelectItem> getGruposClassificao() {
+        return gruposClassificao;
+    }
+
+    public List<SelectItem> getCategoriasUnidade() {
+        return categoriasUnidade;
+    }
+
+}

@@ -1,0 +1,376 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import br.com.ambientinformatica.jpa.util.CpfCnpj;
+import br.com.ambientinformatica.util.AmbientValidator;
+import br.com.ambientinformatica.util.UtilHash;
+import br.com.ambientinformatica.util.UtilHash.Algoritimo;
+import br.gov.go.secima.unidadeconservacao.util.UtilUnidadeConservcao;
+
+@Entity
+public class Usuario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(generator="usuario_seq", strategy=GenerationType.SEQUENCE)
+    @SequenceGenerator(name="usuario_seq", sequenceName="usuario_seq", allocationSize=1, initialValue=1)
+    private Integer id;
+
+    @NotEmpty(message="Informe o nome", groups=AmbientValidator.class)
+    @Length(min=0, max=255, message="O limite do campo nome é de 255 caracteres.", groups=AmbientValidator.class)
+    @Column(nullable=false, length=255)
+    private String nome;
+
+    @NotEmpty(message="Informe o CPF", groups=AmbientValidator.class)
+    @CpfCnpj(message="CPF inválido", groups=AmbientValidator.class)
+    @Column(unique=true, nullable=false)
+    private String cpf;
+
+    @Column(nullable=false)
+    @NotEmpty(message="Informe o RG", groups=AmbientValidator.class)
+    private String rg;
+
+    @Column(unique=true,nullable=false,length=255)
+    @NotEmpty(message="Informe o email", groups=AmbientValidator.class)
+    @Email(message="Informe um endereço de e-mail válido", groups=AmbientValidator.class)
+    @Length(min=0, max=255, message="O limite do campo e-mail é de 255 caracteres.", groups=AmbientValidator.class)
+    private String email;
+
+    @Temporal(TemporalType.DATE)
+    @NotNull(message="Informe a data de nascimento", groups=AmbientValidator.class)
+    private Date dataNascimento;
+
+    @NotEmpty(message="Informe o endereço", groups=AmbientValidator.class)
+    @Column(nullable=false, length=255)
+    @Length(min=0, max=255, message="O limite do campo endereço é de 255 caracteres.", groups=AmbientValidator.class)
+    private String endereco;
+
+    @ManyToOne(optional=false)
+    @NotNull(message="Informe o municipio", groups=AmbientValidator.class)
+    private Municipio municipio;
+
+    @Column(nullable=false)
+    @NotEmpty(message="Informe o CEP", groups=AmbientValidator.class)
+    private String cep;
+
+    @Column(nullable=false)
+    @NotEmpty(message="Informe o telefone", groups=AmbientValidator.class)
+    @Length(min=10, max=16, message="Informe corretamente o telefone (incluindo o prefixo)", groups=AmbientValidator.class)
+    private String telefone;
+
+    @NotEmpty(message="Informe o telefone celular", groups=AmbientValidator.class)
+    @Length(min=10, max=16, message="Informe corretamente o celular (incluindo o prefixo)", groups=AmbientValidator.class)
+    private String celular;
+
+    @NotEmpty(message="Erro: Informe o Senha!", groups=AmbientValidator.class)
+    @Length(min=0, max=255, message="O limite do campo senha é de 255 caracteres.", groups=AmbientValidator.class)
+    private String senha;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAlteracaoSenha = new Date();
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCriacao = new Date();
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataUltimoAcesso = new Date();
+
+    private boolean alterarSenha;
+
+    private boolean confirmado;
+
+    @Length(min=0, max=255, message="O limite do campo token é de 255 caracteres.", groups=AmbientValidator.class)
+    private String token;
+
+    @ElementCollection(targetClass = EnumPapelUsuario.class,fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<EnumPapelUsuario> papeis = new HashSet<>();
+
+    public boolean isAdminUnidadeConservacao(){
+        return (this.papeis.contains(EnumPapelUsuario.ADMIN_UNIDADE) || this.papeis.contains(EnumPapelUsuario.ADMIN)) ? true : false;
+    }
+
+    public boolean isPodeConsultarUnidades(){
+        return (this.papeis.contains(EnumPapelUsuario.ADMIN) 
+                || this.papeis.contains(EnumPapelUsuario.ADMIN_UNIDADE)
+                || this.papeis.contains(EnumPapelUsuario.ATENDIMENTO)
+                || this.papeis.contains(EnumPapelUsuario.CONSULTA_UNIDADE)
+                ) ? true : false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cpf == null) ? 0 : cpf.hashCode());
+        result = prime * result + ((dataNascimento == null) ? 0 : dataNascimento.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+        result = prime * result + ((rg == null) ? 0 : rg.hashCode());
+        result = prime * result + ((senha == null) ? 0 : senha.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Usuario other = (Usuario) obj;
+        if (cpf == null) {
+            if (other.cpf != null)
+                return false;
+        } else if (!cpf.equals(other.cpf))
+            return false;
+        if (dataNascimento == null) {
+            if (other.dataNascimento != null)
+                return false;
+        } else if (!dataNascimento.equals(other.dataNascimento))
+            return false;
+        if (email == null) {
+            if (other.email != null)
+                return false;
+        } else if (!email.equals(other.email))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (nome == null) {
+            if (other.nome != null)
+                return false;
+        } else if (!nome.equals(other.nome))
+            return false;
+        if (rg == null) {
+            if (other.rg != null)
+                return false;
+        } else if (!rg.equals(other.rg))
+            return false;
+        if (senha == null) {
+            if (other.senha != null)
+                return false;
+        } else if (!senha.equals(other.senha))
+            return false;
+        return true;
+    }
+
+    public List<EnumPapelUsuario> getPapeisList(){
+        return new ArrayList<>(this.papeis);
+    }
+
+    public void setSenhaNaoCriptografada(String senha) {
+        this.senha = UtilHash.gerarStringHash(senha, Algoritimo.MD5);
+    }
+
+    public void addPapel(EnumPapelUsuario papel){
+        if(!this.isContemPapel(papel)){
+            this.papeis.add(papel);
+        }
+    }
+
+    public void removerPapel(EnumPapelUsuario papel) {
+        if(this.isContemPapel(papel)){
+            this.papeis.remove(papel);
+        }
+    }
+
+    public boolean isContemPapel(EnumPapelUsuario papel){
+        if(papeis != null){
+            return papeis.contains(papel);
+        }else{
+            return false;
+        }
+    }
+
+    public boolean isSenhaValida(String confirmarSenha){
+        if(!this.getSenha().equals(confirmarSenha)){
+            return true;
+        }
+        return false;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getDataCriacao() {
+        return dataCriacao != null ? (Date) dataCriacao.clone(): null;
+    }
+
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao != null ? (Date) dataCriacao.clone(): null;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public Municipio getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(Municipio municipio) {
+        this.municipio = municipio;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public String getCelular() {
+        return celular;
+    }
+
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    public Date getDataNascimento() {
+        return dataNascimento != null ? (Date) dataNascimento.clone(): null;
+    }
+
+    public void setDataNascimento(Date dataNascimento) {
+        this.dataNascimento = dataNascimento != null ? (Date) dataNascimento.clone(): null;
+    }
+
+    public Date getDataAlteracaoSenha() {
+        return dataAlteracaoSenha != null ? (Date) dataAlteracaoSenha.clone(): null;
+    }
+
+    public void setDataAlteracaoSenha(Date dataAlteracaoSenha) {
+        this.dataAlteracaoSenha = dataAlteracaoSenha != null ? (Date) dataAlteracaoSenha.clone(): null;
+    }
+
+    public Date getDataUltimoAcesso() {
+        return dataUltimoAcesso != null ? (Date) dataUltimoAcesso.clone(): null;
+    }
+
+    public void setDataUltimoAcesso(Date dataUltimoAcesso) {
+        this.dataUltimoAcesso = dataUltimoAcesso != null ? (Date) dataUltimoAcesso.clone(): null;
+    }
+
+    public boolean isAlterarSenha() {
+        return alterarSenha;
+    }
+
+    public void setAlterarSenha(boolean alterarSenha) {
+        this.alterarSenha = alterarSenha;
+    }
+
+    public boolean isConfirmado() {
+        return confirmado;
+    }
+
+    public void setConfirmado(boolean confirmado) {
+        this.confirmado = confirmado;
+    }
+
+    public Set<EnumPapelUsuario> getPapeis() {
+        return papeis;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void gerarToken() {
+        setToken(UtilUnidadeConservcao.gerarCodigoAleatorio(20, this.id));
+    }
+
+    @Override
+    public String toString() {
+        return nome + " (" + cpf +")";
+    }
+
+}

@@ -1,0 +1,69 @@
+/*css map leaflet tela solicitacaoDadosPropriedade */
+.centered {
+	position: absolute;
+	height: 100px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	text-align:
+}
+
+.titulo_a_field {
+	color: #006600;
+	font-weight: bold;
+}
+
+.ui-menu .ui-menu-parent .ui-menu-child {
+   width: 300px !important; /* exagerated !! */
+}
+
+.ui-selectonemenu .ui-selectonemenu-trigger{
+	width: 23px !important;
+}
+
+.obrigatorioAutoComplete input {
+ 	border-left-color:red !important;
+ 	border-left-width: 2px !important;
+}
+
+.obrigatorio {
+ 	border-left-color:red !important;
+ 	border-left-width: 2px !important;
+}
+
+#map {
+	height: 600px;
+}
+
+<!-- Retirar borda do componente de upload -->
+.ui-fileupload-buttonbar {
+	background: none;
+	border: none;
+}
+
+.ui-fileupload-content {
+	background-color: transparent !important;
+	border: none !important;
+}
+
+.rowColor {
+	background-color: #EBEBEB;
+}
+
+.ANALISE {
+	background-color: #faffd7!important;
+	background-image: none !important;
+	color: #000000 !important;
+}
+
+.CANCELADA {
+	background-color: #ffcccc!important;
+	background-image: none !important;
+	color: #000000 !important;
+}
+
+.APROVADA {
+	background-color: #a9e1fc!important;
+	background-image: none !important;
+	color: #000000 !important;
+}

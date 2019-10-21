@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="templateExterna.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2" xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel header="Consultar Unidades de Conservação" id="panel">
+			<a:field label="Nome da Unidade de Conservação">
+				<p:inputText id="idNome" value="#{UnidadeConservacaoListExternaControl.nome }" style="width:610px" placeholder="Digite o nome parte dele"/>
+			</a:field>
+
+			<a:newLine />
+			
+			<a:field label="Enquadramento">
+				<p:selectOneMenu id="soLei"
+					value="#{UnidadeConservacaoListExternaControl.lei }"
+					style="width:610px;">
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems value="#{UnidadeConservacaoListExternaControl.leis}" />
+					<p:ajax update="grupoclass categoria"
+						listener="#{UnidadeConservacaoListExternaControl.atualizarGrupoClassificacao }" />
+				</p:selectOneMenu>
+			</a:field>
+			
+			<a:newLine />
+
+			<a:field label="Grupo Classificação">
+				<p:selectOneMenu id="grupoclass"
+					value="#{UnidadeConservacaoListExternaControl.grupoClassificacao }"
+					style="width:300px;">
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems
+						value="#{UnidadeConservacaoListExternaControl.gruposClassificao}" />
+					<p:ajax update="categoria"
+						listener="#{UnidadeConservacaoListExternaControl.atualizarCategoriaUnidade }" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field label="Categoria" spaceLeft="10px;">
+				<p:selectOneMenu
+					value="#{UnidadeConservacaoListExternaControl.categoria}"
+					id="categoria" style="width:300px;" immediate="true">
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems
+						value="#{UnidadeConservacaoListExternaControl.categoriasUnidade }" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Esfera Administrativa">
+				<p:selectOneMenu value="#{UnidadeConservacaoListExternaControl.esferaAdministrativa }" style="width: 300px;">
+					<f:selectItem itemLabel="Selecione"></f:selectItem>
+					<f:selectItems value="#{UnidadeConservacaoListExternaControl.esferasAdministrativa }"></f:selectItems>
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field label="Bioma" spaceLeft="10px">
+				<p:selectOneMenu value="#{UnidadeConservacaoListExternaControl.bioma }" converter="objectConverter" style="width:300px;">
+					<f:selectItem itemLabel="Selecione"></f:selectItem>
+					<f:selectItems value="#{UnidadeConservacaoListExternaControl.biomas }"></f:selectItems>
+				</p:selectOneMenu>
+			</a:field>
+			
+			<a:newLine />
+
+			<a:field label="Município">
+				<p:selectOneMenu value="#{UnidadeConservacaoListExternaControl.municipio }" filter="true" filterMatchMode="contains" converter="objectConverter" style="width:610px;">
+					<f:selectItem itemLabel="Selecione"></f:selectItem>
+					<f:selectItems value="#{UnidadeConservacaoListExternaControl.municipios }"></f:selectItems>
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field>
+				<p:commandButton value="Consultar" icon="ui-icon-search" update="unidades" ajax="false"	actionListener="#{UnidadeConservacaoListExternaControl.consultarUnidade}" />
+			</a:field>
+			
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Limpar" actionListener="#{MenuControl.gerenciarSessao}" ajax="false" action="unidadeConsListExterna?faces-redirect=true" icon="ui-icon ui-icon-trash" />
+			</a:field>
+			
+			<a:field spaceLeft="10px">
+				<p:button value="Inicio" href="login.jsp" />
+			</a:field>
+
+			<a:newLine/>
+			<a:newLine />
+
+			<p:dataTable
+				paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rows="30" rowsPerPageTemplate="30,50,80,100,120,150"
+				value="#{UnidadeConservacaoListExternaControl.unidadeConservacoes }" var="unidCons" id="unidades"  emptyMessage="Sem registros">
+
+				<f:facet name="header">  
+		           	Unidade(s) de Conservação  
+		       	</f:facet>
+
+				<p:column headerText="Nome da Unidade">
+					<p:outputLabel value="#{unidCons.nomeUnidade }" />
+				</p:column>
+				<p:column headerText="Orgão/Proprietário">
+					<p:outputLabel value="#{unidCons.orgaoOuProprietario.cpfCnpj}" />
+					<p:spacer width="5px;" />
+					<p:outputLabel value="#{unidCons.orgaoOuProprietario.nome}" />
+				</p:column>
+				<p:column headerText="Município sede">
+					<p:outputLabel value="#{unidCons.municipio }" />
+				</p:column>
+				<p:column headerText="Grupo" >
+					<p:outputLabel value="#{unidCons.grupoClassificacao.descricao}" />
+				</p:column>
+				<p:column headerText="Categoria">
+					<p:outputLabel value="#{unidCons.categoriaUnidade.descricao}" />
+				</p:column>
+				<p:column headerText="Município(s) Abrangido(s)">
+					<p:dataGrid var="item" value="#{unidCons.municipios}" columns="1" emptyMessage="Sem registros...">
+						<p:outputLabel value="#{item.descricao} - #{item.uf}" />
+					</p:dataGrid>
+				</p:column>
+				<p:column headerText="Visualizar" style="text-align:center; width:120px;">
+					<p:commandButton action="#{UnidadeConservacaoListExternaControl.visualizarUnidadeConservacaoCUC}" icon="ui-icon-search">
+						<f:setPropertyActionListener value="#{unidCons}" target="#{UnidadeConservacaoListExternaControl.unidadeConservacao}" />
+					</p:commandButton>
+				</p:column>
+				
+				<f:facet name="footer">  
+	          		#{fn:length(UnidadeConservacaoListExternaControl.unidadeConservacoes)} Unidade(s) de Conservação Encontrada(s)
+	      		</f:facet>
+
+			</p:dataTable>
+
+			<a:newLine />
+
+		</p:panel>
+
+	</ui:define>
+</ui:composition>

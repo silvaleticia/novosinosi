@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<ui:define name="corpo">
+		<a:newLine />
+
+		<p:panel header="Cadastro de usuários" style="height:500px;"
+			id="pnCadastroUsuario">
+
+			<a:field label="CPF">
+				<p:inputMask styleClass="obrigatorio" mask="999.999.999-99"
+					value="#{UsuarioControl.usuario.cpf}" style="width:210px;" />
+			</a:field>
+
+			<a:field label="RG" spaceLeft="10px">
+				<p:inputText styleClass="obrigatorio"
+					value="#{UsuarioControl.usuario.rg}" style="width:210px;" />
+			</a:field>
+
+			<a:field label="Data de nascimento" spaceLeft="10px">
+				<p:inputMask styleClass="obrigatorio"
+					value="#{UsuarioControl.usuario.dataNascimento }"
+					style="width:210px;" mask="99/99/9999">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputMask>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Nome">
+				<p:inputText styleClass="obrigatorio"
+					value="#{UsuarioControl.usuario.nome}" style="width:670px;" />
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="E-mail">
+				<p:inputText styleClass="obrigatorio"
+					value="#{UsuarioControl.usuario.email}" style="width:350px;" />
+			</a:field>
+
+			<a:field label="Telefone" spaceLeft="10px">
+				<p:inputText styleClass="obrigatorio" mask="(999)999-9999? x99999"
+					value="#{UsuarioControl.usuario.telefone}" style="width:300px;" />
+			</a:field>
+			<a:newLine />
+
+			<p:outputPanel id="opEndereco">
+
+				<a:field label="CEP">
+					<p:inputMask styleClass="obrigatorio" mask="99.999-999"
+						value="#{UsuarioControl.usuario.cep}" style="width:120px;" />
+				</a:field>
+
+				<a:field spaceLeft="10px">
+					<p:commandButton title="Clique aqui para pesquisar o cep"
+						icon="ui-icon-search" ajax="false"
+						actionListener="#{UsuarioControl.cep}"
+						update=":formCorpo:opEndereco" />
+				</a:field>
+
+				<a:field label="Endereço" spaceLeft="7px">
+					<p:inputText styleClass="obrigatorio"
+						value="#{UsuarioControl.usuario.endereco}" style="width:490px;" />
+				</a:field>
+
+				<a:newLine />
+
+				<a:field label="Estado">
+					<p:selectOneMenu id="estado" styleClass="obrigatorio"
+						converter="objectConverter" value="#{UsuarioControl.uf}"
+						style="width:160px;">
+						<f:selectItems value="#{UsuarioControl.ufs }" var="uf"
+							itemLabel="#{uf.descricao}" itemValue="#{uf}" />
+						<p:ajax event="change"
+							listener="#{UsuarioControl.listaMunicipiosPorUfs}"
+							update="estado municipio" />
+					</p:selectOneMenu>
+				</a:field>
+
+				<a:field label="Município" spaceLeft="10px">
+					<p:selectOneMenu id="municipio" styleClass="obrigatorio"
+						converter="objectConverter"
+						value="#{UsuarioControl.usuario.municipio}" style="width:450px"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Selecione o município"
+							noSelectionOption="true" />
+						<f:selectItems value="#{UsuarioControl.municipios}"
+							var="municipio" itemLabel="#{municipio.descricao}"
+							itemValue="#{municipio}" />
+					</p:selectOneMenu>
+				</a:field>
+				<a:newLine />
+
+				<a:field label="Login">
+					<p:inputText styleClass="obrigatorio"
+						value="#{UsuarioControl.usuario.login}" style="width:200px;" />
+				</a:field>
+
+				<a:field label="Senha" spaceLeft="10px;">
+					<p:password styleClass="obrigatorio" id="senha"
+						value="#{UsuarioControl.usuario.senha}" style="width:100px" />
+				</a:field>
+				<a:field label="Confirme a Senha" spaceLeft="10px;">
+					<p:password styleClass="obrigatorio" id="confereSenha"
+						value="#{UsuarioControl.confereSenha}" style="width:100px" />
+				</a:field>
+				<a:newLine />
+				<a:newLine />
+
+				<a:field>
+					<p:commandButton actionListener="#{UsuarioControl.confirmar}"
+						value="Salvar" ajax="false" icon="ui-icon-disk" />
+				</a:field>
+				<a:field spaceLeft="10px">
+					<p:commandButton value="Limpar"
+						actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
+						action="usuario?faces-redirect=true" icon="ui-icon ui-icon-trash" />
+				</a:field>
+				<a:field spaceLeft="10px">
+					<p:commandButton id="btnFecharUsuario" value="Fechar"
+						action="usuarioList?faces-redirect=true" icon="ui-icon-close"
+						immediate="true" />
+				</a:field>
+			</p:outputPanel>
+
+			<a:newLine />
+			<a:newLine />
+		</p:panel>
+
+
+
+	</ui:define>
+</ui:composition>

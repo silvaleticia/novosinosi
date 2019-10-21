@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="/template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:a="http://www.ambientinformatica.com.br/jsf2" xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+		<p:panel header="Cadastro de Orgãos/Proprietários" id="panelPessoa" style="width:100%">
+			<p:outputPanel id="opPesquisa">
+				<a:field label="Tipo de pessoa">
+					<p:selectOneMenu id="tipoPessoa" disabled="#{PessoaControl.habilitarCampos }" value="#{PessoaControl.pessoa.tipo }" style="width:350px;" styleClass="obrigatorio">
+						<f:selectItem itemValue="#{null}" itemLabel="Selecione" noSelectionOption="true" />
+						<f:selectItem itemLabel="Pessoa Física" itemValue="PF" />
+						<f:selectItem itemLabel="Pessoa Jurídica - Empresa Privada" itemValue="PJ" />
+						<f:selectItem itemLabel="Orgão Público" itemValue="ORGAO" />
+						<f:ajax event="change" render=":formCorpo:opPesquisa" immediate="true" />
+					</p:selectOneMenu>
+				</a:field>
+
+				<a:field label="CPF" rendered="#{PessoaControl.pessoa.tipo == 'PF'}" spaceLeft="10px">
+					<p:inputMask disabled="#{PessoaControl.habilitarCampos }" mask="999.999.999-99" styleClass="obrigatorio" id="cpfPessoa" value="#{PessoaControl.pessoa.cpfCnpj}"
+						style="width:200px" />
+				</a:field>
+
+				<a:field label="CNPJ" rendered="#{PessoaControl.pessoa.tipo != 'PF'}" spaceLeft="10px">
+					<p:inputMask disabled="#{PessoaControl.habilitarCampos }" mask="99.999.999/9999-99" styleClass="obrigatorio" id="cnpjPessoa" value="#{PessoaControl.pessoa.cpfCnpj}"
+						style="width:200px" />
+				</a:field>
+
+				<a:field spaceLeft="10px">
+					<p:commandButton disabled="#{PessoaControl.habilitarCampos }" title="Clique aqui para pesquisar" icon="ui-icon-search" ajax="false"
+						actionListener="#{PessoaControl.consultarPessoa}" update=":formCorpo:panelGeral" />
+				</a:field>
+
+			</p:outputPanel>
+			
+			<a:newLine />
+
+			<p:outputPanel id="opDadosGerador" rendered="#{PessoaControl.habilitarCampos}">
+
+				<a:field label="Nome/Razão social">
+					<p:inputText styleClass="obrigatorio" value="#{PessoaControl.pessoa.nome}" style="width:640px;" />
+				</a:field>
+
+				<a:newLine />
+
+				<a:field label="Inscrição Estadual" rendered="#{PessoaControl.pessoa.tipo != 'PF'}">
+					<p:inputText id="inscricaoEstadual" styleClass="obrigatorio" value="#{PessoaControl.pessoa.inscricaoEstadual}" style="width:180px;" />
+				</a:field>
+
+				<a:field label="RG" rendered="#{PessoaControl.pessoa.tipo == 'PF'}">
+					<p:inputText id="rgPessoa" styleClass="obrigatorio" value="#{PessoaControl.pessoa.rg}" style="width:180px;" />
+				</a:field>
+
+				<a:field label="Telefone" spaceLeft="10px">
+					<p:inputText styleClass="obrigatorio" onkeydown="mascaraTelefone(this);" value="#{PessoaControl.pessoa.telefone}" style="width:150px;" />
+				</a:field>
+
+				<a:field label="E-mail" spaceLeft="10px">
+					<p:inputText styleClass="obrigatorio" value="#{PessoaControl.pessoa.email}" style="width:290px;" />
+				</a:field>
+
+				<a:newLine />
+
+				<p:outputPanel id="opEndereco">
+
+					<a:field label="CEP">
+						<p:inputMask styleClass="obrigatorio" mask="99.999-999" value="#{PessoaControl.pessoa.cep }" style="width:180px;" />
+					</a:field>
+
+					<a:field spaceLeft="10px">
+						<p:commandButton title="Clique aqui para pesquisar o cep" icon="ui-icon-search" ajax="false" actionListener="#{PessoaControl.consultarCep}" update=":formCorpo:opEndereco" />
+					</a:field>
+
+					<a:field label="Endereço" spaceLeft="10px;">
+						<p:inputText styleClass="obrigatorio" value="#{PessoaControl.pessoa.endereco}" style="width:405px;" />
+					</a:field>
+
+					<a:newLine />
+
+					<a:field label="Estado">
+						<p:selectOneMenu id="estado" styleClass="obrigatorio" value="#{PessoaControl.uf}" style="width:180px;">
+							<f:selectItems value="#{PessoaControl.ufs }" />
+							<p:ajax event="change" listener="#{PessoaControl.listaMunicipiosPorUfs}" update="estado municipio" />
+						</p:selectOneMenu>
+					</a:field>
+
+					<a:field label="Município" spaceLeft="10px">
+						<p:selectOneMenu id="municipio" styleClass="obrigatorio" converter="objectConverter" value="#{PessoaControl.pessoa.municipio}" style="width:460px" filter="true" filterMatchMode="contains">
+							<f:selectItem itemLabel="Selecione o município" noSelectionOption="true" />
+							<f:selectItems value="#{PessoaControl.municipios}" var="municipio" itemLabel="#{municipio.descricao}" itemValue="#{municipio}" />
+						</p:selectOneMenu>
+					</a:field>
+					
+					<a:newLine />
+					<a:newLine />
+					
+					<p:panelGrid columns="2" id="opOficioCredenciamento" style="width: 650px;" rendered="#{PessoaControl.pessoa.tipo == 'ORGAO'}">
+						<p:outputLabel value="Anexar ofício de credenciamento" />
+						<p:outputLabel value="Nome do arquivo adicionado." />
+						<p:fileUpload id="fuOficioCredenciamento" mode="advanced" ajax="false" auto="true" label="#{not empty PessoaControl.credenciamento.oficio.nome ? 'Alterar arquivo' : 'Selecionar arquivo'}"
+							allowTypes="/(\.|\/)(pdf)$/" invalidFileMessage="Formato de arquivo inválido." invalidSizeMessage="Tamanho do arquivo ultrapassou os 70MB" dragDropSupport="true" sizeLimit="73400320"
+							fileUploadListener="#{PessoaControl.anexarOficio }" multiple="true" update=":formCorpo:opOficioCredenciamento">
+						</p:fileUpload>
+						<h:commandLink action="#{PessoaControl.visualizarDocumento}" value="#{PessoaControl.credenciamento.oficio.nome}" style="color:blue" target="_blank" ajax="false"
+							title="Clique aqui para visualizar documento" />
+					</p:panelGrid>
+
+				</p:outputPanel>
+
+				<a:newLine />
+
+				<a:field>
+					<p:commandButton id="btnSalvarEmpreendedor" actionListener="#{PessoaControl.confirmar}" value="Salvar" icon="ui-icon-disk" update="panelPessoa" />
+				</a:field>
+
+				<a:field spaceLeft="10px">
+					<p:commandButton id="btnLimparEmpreendedor" actionListener="#{MenuControl.gerenciarSessao}" action="pessoa?faces-redirect=true" value="Limpar" icon="ui-icon-trash" ajax="false" />
+				</a:field>
+
+				<a:field spaceLeft="10px">
+					<p:commandButton value="Fechar" actionListener="#{MenuControl.gerenciarSessao}" action="/inicio?faces-redirect=true" icon="ui-icon-home" />
+				</a:field>
+			</p:outputPanel>
+
+			<a:newLine />
+			<a:newLine />
+		</p:panel>
+
+	</ui:define>
+</ui:composition>

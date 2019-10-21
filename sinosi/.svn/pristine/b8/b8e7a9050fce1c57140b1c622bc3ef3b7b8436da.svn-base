@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="templateExterna.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+		<p:panel>
+			<h:panelGroup layout="block" style="margin-top:1em; width:750px;"
+				id="painel">
+				<p align="center" style="font-size: 12px; font-weight: bold;">
+					<img src="#{request.contextPath}/resources/imagens/brasao.png"
+						border="none" style="width: 60px;" /> <BR /> <BR /> ESTADO DE
+					GOIÁS <BR /> SECRETARIA DE ESTADO DE MEIO AMBIENTE, RECURSOS
+					HÍDRICOS, INFRAESTRUTURA, CIDADES E ASSUNTOS METROPOLITANOS<BR />
+					<BR />
+				</p>
+
+				<h3>Unidade de Conservação</h3>
+
+				<h4>I - Identificação</h4>
+
+				<p:panelGrid columns="2" styleClass="documentoGrid"
+					style="width: 100%;">
+					<h:outputText style="font-weight:bold;" value="Nome: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.nomeUnidade }"
+						style="width:665px" maxlength="255"></h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="Esfera Administrativa: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.esferaAdministrativa.descricao }"
+						style="width:665px" maxlength="255"></h:outputText>
+
+					<h:outputText style="font-weight:bold;" value="Atos Legais: "></h:outputText>
+					<h:outputText
+						rendered="#{not empty UnidadeConservacaoListExternaControl.unidadeConservacao.atosLegais }"
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.atosLegais }"
+						style="width:665px" maxlength="255"></h:outputText>
+					<h:outputText
+						rendered="#{empty UnidadeConservacaoListExternaControl.unidadeConservacao.atosLegais }"
+						value="Não Possui!"></h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="Situação Fundiaria: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.situacaoFundiaria }"
+						style="width:665px" maxlength="255"></h:outputText>
+
+					<h:outputText style="font-weight:bold;" value="Endereço: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.endereco }"
+						style="width:665px" maxlength="255"></h:outputText>
+
+					<h:outputText style="font-weight:bold;" value="Município: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.municipio }"
+						style="width:665px" maxlength="255"></h:outputText>
+
+					<h:outputText style="font-weight:bold;" value="Cep: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.cep }"
+						style="width:665px" maxlength="255"></h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="Telefone da Unidade: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.telefone }"
+						style="width:665px" maxlength="255"></h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="E-mail da Unidade de Conservação: "></h:outputText>
+					<h:outputText
+						rendered="#{not empty UnidadeConservacaoListExternaControl.unidadeConservacao.email }"
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.email }"
+						style="width:665px" maxlength="255"></h:outputText>
+					<h:outputText
+						rendered="#{empty UnidadeConservacaoListExternaControl.unidadeConservacao.email }"
+						value="Informação não cadastrada até o momento!"></h:outputText>
+				</p:panelGrid>
+				<p:dataList
+					rendered="#{ not empty UnidadeConservacaoListExternaControl.unidadeConservacao.municipios }"
+					value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.municipios }"
+					var="muni" emptyMessage="Sem registros" id="tbmunicipios"
+					style="width:800px;">
+					<f:facet name="header">
+						  Municípios Abrangidos
+						</f:facet>
+					<h:outputText value="#{muni.descricao } - #{muni.uf }" />
+				</p:dataList>
+
+				<h4>II - Documentos</h4>
+
+				<p:panelGrid id="pnlDocumentosObrigatorios"
+					styleClass="documentoGrid" columns="2" style="width: 100%;">
+					<h:outputText value="Lei de Criação:" style="font-weight:bold;" />
+					<p:outputLabel id="lbLeiCriacao" value="Pendente"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docLeiCriacao == null}" />
+					<p:commandLink
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docLeiCriacao.nome}"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docLeiCriacao != null}"
+						title="Visualizar documento" style="color:blue" ajax="false"
+						actionListener="#{UnidadeConservacaoListExternaControl.mostrarDocumento('docLeiCriacao')}">
+						<p:fileDownload
+							value="#{UnidadeConservacaoListExternaControl.pdfDocumento}" />
+					</p:commandLink>
+
+					<h:outputText value="Estudo de Criação:" style="font-weight:bold;"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docEstudoCriacao.conteudo != null}" />
+					<p:commandLink
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docEstudoCriacao.nome}"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docEstudoCriacao != null}"
+						title="Visualizar documento" ajax="false" style="color:blue"
+						actionListener="#{UnidadeConservacaoListExternaControl.mostrarDocumento('docEstudoCriacao')}">
+						<p:fileDownload
+							value="#{UnidadeConservacaoListExternaControl.pdfDocumento}" />
+					</p:commandLink>
+
+					<h:outputText value="Convocação Pública:" style="font-weight:bold;"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docConvocacaoConsultaPublica.conteudo != null}" />
+					<p:outputLabel value="Pendente"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docConvocacaoConsultaPublica.conteudo == null}" />
+					<p:commandLink
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docConvocacaoConsultaPublica.nome}"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docConvocacaoConsultaPublica != null}"
+						title="Visualizar documento" ajax="false" style="color:blue"
+						actionListener="#{UnidadeConservacaoListExternaControl.mostrarDocumento('docConvocacaoConsultaPublica')}">
+						<p:fileDownload
+							value="#{UnidadeConservacaoListExternaControl.pdfDocumento}" />
+					</p:commandLink>
+
+					<h:outputText value="Consulta Pública:" style="font-weight:bold;"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docConsultaPublica.conteudo != null}" />
+					<p:outputLabel id="lbConsultaPublica" value="Pendente"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docConsultaPublica.conteudo == null}" />
+					<p:commandLink
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docConsultaPublica.nome}"
+						rendered="#{UnidadeConservacaoListExternaControl.unidadeConservacao.docConsultaPublica != null}"
+						title="Visualizar documento" ajax="false" style="color:blue"
+						actionListener="#{UnidadeConservacaoListExternaControl.mostrarDocumento('docConsultaPublica')}">
+						<p:fileDownload
+							value="#{UnidadeConservacaoListExternaControl.pdfDocumento}" />
+					</p:commandLink>
+
+					<h:outputText value="Parecer de Aprovação:"
+						style="font-weight:bold;" />
+					<p:outputLabel value="Pendente"
+						rendered="#{ UnidadeConservacaoListExternaControl.documentoAprovacao  == null}" />
+					<p:commandLink
+						value="#{UnidadeConservacaoListExternaControl.documentoAprovacao.nome}"
+						style="color:blue"
+						rendered="#{UnidadeConservacaoListExternaControl.documentoAprovacao != null}"
+						title="Visualizar documento" ajax="false"
+						actionListener="#{UnidadeConservacaoListExternaControl.mostrarDocParecerAprovacao}">
+						<p:fileDownload
+							value="#{UnidadeConservacaoListExternaControl.pdfDocumento}" />
+					</p:commandLink>
+
+				</p:panelGrid>
+
+				<a:newLine />
+
+				<h4>III - Características e Objetivos</h4>
+
+				<p:panelGrid columns="2" styleClass="documentoGrid"
+					style="width: 100%;">
+					<h:outputText
+						rendered="#{empty UnidadeConservacaoListExternaControl.unidadeConservacao.municipios }"
+						style="font-weight:bold;" value="Municipio(s) Abrangido(s): "></h:outputText>
+					<h:outputText
+						rendered="#{empty UnidadeConservacaoListExternaControl.unidadeConservacao.municipios }"
+						value="O polígono não apresenta precisão suficiente para análise espacial dos municípios abrangidos!"></h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="Grupo Classificação: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.grupoClassificacao.descricao }"></h:outputText>
+
+					<h:outputText style="font-weight:bold;" value="Categoria: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.categoriaUnidade.descricao }"></h:outputText>
+
+					<h:outputText style="font-weight:bold;" value="Bioma: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.bioma }"></h:outputText>
+
+					<h:outputText style="font-weight:bold;" value="Área (hectares): "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.areaHectares }">
+						<f:convertNumber pattern="#,###,##0.00" locale="pt_BR" />
+					</h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="Características Físicas: "></h:outputText>
+					<h:outputText
+						rendered="#{not empty UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaFisica }"
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaFisica }"></h:outputText>
+					<h:outputText
+						rendered="#{empty UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaFisica }"
+						value="Informação não cadastrada até o momento!"></h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="Características Biológicas: "></h:outputText>
+					<h:outputText
+						rendered="#{not empty UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaBiologica }"
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaBiologica }"></h:outputText>
+					<h:outputText
+						rendered="#{empty UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaBiologica }"
+						value="Informação não cadastrada até o momento!"></h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="Características Turísticas: "></h:outputText>
+					<h:outputText
+						rendered="#{not empty UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaTuristica }"
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaTuristica }"></h:outputText>
+					<h:outputText
+						rendered="#{empty UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaTuristica }"
+						value="Informação não cadastrada até o momento!"></h:outputText>
+
+					<h:outputText style="font-weight:bold;"
+						value="Características Gerenciais: "></h:outputText>
+					<h:outputText
+						rendered="#{not empty UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaGerencial }"
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaGerencial }"></h:outputText>
+					<h:outputText
+						rendered="#{empty UnidadeConservacaoListExternaControl.unidadeConservacao.caracteristicaGerencial }"
+						value="Informação não cadastrada até o momento!"></h:outputText>
+
+					<h:outputText style="font-weight:bold;" value="Objetivos: "></h:outputText>
+					<h:outputText
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.objetivos }"></h:outputText>
+
+					<h:outputText
+						rendered="#{ not empty UnidadeConservacaoListExternaControl.unidadeConservacao.observacoes }"
+						style="font-weight:bold;" value="Observações: "></h:outputText>
+					<h:outputText
+						rendered="#{ not empty UnidadeConservacaoListExternaControl.unidadeConservacao.observacoes }"
+						value="#{UnidadeConservacaoListExternaControl.unidadeConservacao.observacoes }"></h:outputText>
+				</p:panelGrid>
+
+				<a:newLine />
+
+				<h4>MAPA</h4>
+				<iframe id="frameCarcara"
+					src="#{UnidadeConservacaoListExternaControl.urlIframe}"
+					style="overflow: hidden; height: 400px; width: 100%; position: relative;"
+					frameBorder="0" height="400px" width="100%" />
+
+			</h:panelGroup>
+
+			<a:field spaceLeft="150px">
+				<p:commandButton value="Imprimir" type="button" icon="ui-icon-print">
+					<p:printer target="painel" />
+				</p:commandButton>
+			</a:field>
+
+			<a:field spaceLeft="20px">
+				<p:splitButton value="Download" icon="ui-icon-arrowthickstop-1-s">
+					<p:menuitem value="Shapefile"
+						action="#{UnidadeConservacaoListExternaControl.baixarShapeFile}"
+						icon=" ui-icon-suitcase" />
+					<p:menuitem value="KML"
+						action="#{UnidadeConservacaoListExternaControl.baixarKml}"
+						icon="ui-icon-document" />
+				</p:splitButton>
+			</a:field>
+
+			<a:field spaceLeft="20px">
+				<p:commandButton value="Voltar"
+					actionListener="#{MenuControl.gerenciarSessao}" ajax="false"
+					action="unidadeConsListExterna?faces-redirect=true"
+					icon="ui-icon-arrowreturnthick-1-s" />
+			</a:field>
+
+			<a:newLine />
+			<a:newLine />
+		</p:panel>
+	</ui:define>
+</ui:composition>

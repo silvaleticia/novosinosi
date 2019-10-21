@@ -1,0 +1,31 @@
+--> Tabela usuario:
+select DISTINCT '(' || p.id || ',' || false || ',''' || p.telefonecelular || ''',''' || p.cep || ''',' || true || ',''' || p.cpfcnpj || ''',''' || usu.dataalteracaosenha || ''',''' || usu.datacriacao || ''',''' ||
+p.datanascimento || ''',''' || usu.dataultimoacesso || ''',''' || usu.login || ''',''' || p.endereco || ''',''' || p.nome || ''',''' || 'Corrigir' || ''',''' || usu.senha || ''','''|| p.telefoneresidencial || ''',''' || 'token' || ''',' || p.municipio_id
+|| ')' from pessoa as p 
+left outer join usuario as usu on p.usuario_login = usu.login
+where exists (select * from unidadeconservacao as u where u.pessoaautorizadora_id = p.id);
+
+
+--Usuários
+select DISTINCT '(' || p.id || ',' || false || ',''' || p.telefonecelular || ''',''' || p.cep || ''',' || true || ',''' || rp.cpf || ''',''' || usu.dataalteracaosenha || ''',''' || usu.datacriacao || ''',''' ||
+p.datanascimento || ''',''' || usu.dataultimoacesso || ''',''' || usu.login || ''',''' || p.endereco || ''',''' || rp.nome || ''',''' || rp.rg || ''',''' || usu.senha || ''','''|| p.telefoneresidencial || ''',''' || 'token' || ''',' || p.municipio_id
+|| ')' from pessoa as p 
+inner join representante as rp on p.representante_id = rp.id
+inner join usuario as usu on p.usuario_login = usu.login
+inner join papelusuario as ppu on ppu.usuario_id = usu.login
+where ppu.papel = 'USERUNICON';
+
+
+--> Tabela Pessoa:
+select DISTINCT 
+'(' || p.id || ',''' || p.cep || ''',''' || p.cpfcnpj || ''',''' || p.dataregistro || ''',''' || p.email || ''',''' || p.endereco || ''',''' || 'Corrigir' || ''',''' || p.nome || ''',''' || 'Corrigir' || ''',''' || p.telefoneresidencial || ''',''' || 'ORGAO' || ''',' || p.municipio_id || ',''' || rp.cpf || ''',' ||
+'null' || ')' from pessoa as p 
+inner join representante as rp on p.representante_id = rp.id
+inner join usuario as usu on p.usuario_login = usu.login
+inner join papelusuario as ppu on ppu.usuario_id = usu.login
+where ppu.papel = 'USERUNICON';
+
+
+
+
+

@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<ui:insert name="cabecalho">
+			<style type="text/css">
+.ui-wizard-step-title {
+	font-size: 15px !important;
+}
+
+.firstTab {
+	line-height: 25px;
+	text-align: center;
+	height: 40px;
+	width: 190px;
+	-webkit-clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
+	clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%);
+}
+
+.middleTab {
+	line-height: 25px;
+	text-align: center;
+	margin-left: -20px !important;
+	height: 40px;
+	width: 190px;
+	-webkit-clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
+	clip-path: polygon(90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%, 0% 0%);
+}
+
+.lastTab {
+	line-height: 25px;
+	text-align: right;
+	margin-left: -38px !important;
+	height: 40px;
+	width: 190px;
+	-webkit-clip-path: polygon(25% 0%, 100% 1%, 100% 100%, 25% 100%, 55% 50%);
+	clip-path: polygon(10% 0%, 100% 0%, 100% 100%, 10% 100%, 20% 50%);
+}
+
+.dialog-licencas.ui-dialog {
+	width: 1000px !important;
+	/* 	height: 670px !important; */
+}
+
+.dialog-licencas .ui-datatable-scrollable-body {
+	height: 310px !important;
+}
+
+.ui-fileupload-buttonbar {
+	background: none;
+	border: none;
+	padding-left: 0px
+}
+
+.ui-fileupload-content {
+	display: none
+}
+</style>
+		</ui:insert>
+
+
+		<p:panel id="panelGeral"
+			header=" CADASTRO DE NOTIFICAÇÃO E DENUNCIAS DE CRIMES AMBIENTAIS"
+			style="width:100%;">
+
+			<p:growl id="growl" sticky="true" showDetail="true" />
+
+			<p:wizard flowListener="#{NotificacaoControl.onFlowProcess}">
+				<p:tab id="tabLocalizacao" title="LOCALIZAÇÃO"
+					titleStyleClass="firstTab">
+
+					<a:fieldset id="fsLocalizacao" legend="Dados da Localização">
+						<p:outputPanel id="opEndereco">
+							<a:field label="Estado">
+								<p:selectOneMenu id="estado" styleClass="obrigatorio"
+									converter="objectConverter" value="#{NotificacaoControl.uf}"
+									style="width:180px;">
+									<f:selectItems value="#{NotificacaoControl.ufs }" var="uf"
+										itemLabel="#{uf.descricao}" itemValue="#{uf}" />
+									<p:ajax event="change"
+										listener="#{NotificacaoControl.listaMunicipiosPorUfs}"
+										update="estado municipio" />
+								</p:selectOneMenu>
+							</a:field>
+							<a:field label="Município" spaceLeft="10px">
+								<p:selectOneMenu id="municipio" styleClass="obrigatorio"
+									converter="objectConverter"
+									value="#{NotificacaoControl.notificacao.localAcidente.municipio}"
+									style="width:200px" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Selecione o município"
+										noSelectionOption="true" />
+									<f:selectItems value="#{NotificacaoControl.municipios}"
+										var="municipio" itemLabel="#{municipio.descricao}"
+										itemValue="#{municipio}" />
+								</p:selectOneMenu>
+							</a:field>
+
+							<a:field label="CEP" spaceLeft="10px">
+								<p:inputMask mask="99.999-999"
+									value="#{NotificacaoControl.notificacao.localAcidente.cep}"
+									style="width:130px;" />
+							</a:field>
+							<a:newLine />
+
+							<a:field label="Endereço">
+								<p:inputText
+									value="#{NotificacaoControl.notificacao.localAcidente.endereco}"
+									style="width:380px;" />
+							</a:field>
+
+							<a:field label="Latitude" spaceLeft="10px;">
+								<p:inputMask  mask="-99.999999"
+									value="#{NotificacaoControl.notificacao.localAcidente.latitude}"
+									style="width:100px;" />
+							</a:field>
+							<a:field label="Longitude" spaceLeft="10px;">
+								<p:inputMask mask="-99.999999"
+									value="#{NotificacaoControl.notificacao.localAcidente.longitude}"
+									style="width:100px;" />
+							</a:field>
+
+							<a:newLine />
+							<a:newLine />
+						</p:outputPanel>
+						<a:newLine />
+						<a:newLine />
+
+						<p:outputPanel id="opOrigemAcidente">
+							<a:field label="Origem Acidente">
+								<p:selectOneMenu id="origem" converter="objectConverter"
+									ajax="false"
+									value="#{NotificacaoControl.origemAcidenteSelecionado}"
+									style="width:500px" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Selecione uma origem do acidente"
+										noSelectionOption="true" />
+									<f:selectItems value="#{NotificacaoControl.origens}"
+										var="origem" itemLabel="#{origem.descricao}"
+										itemValue="#{origem}" />
+								</p:selectOneMenu>
+							</a:field>
+
+							<a:field spaceLeft="10px">
+								<p:commandButton
+									actionListener="#{NotificacaoControl.adicionarOrigem}"
+									update=":formCorpo:opOrigemAcidente"
+									process=":formCorpo:opOrigemAcidente" icon="ui-icon-plus"
+									value="Adicionar Origem" />
+							</a:field>
+							<a:newLine />
+							<a:newLine />
+							<a:newLine />
+
+							<p:dataTable id="tblorigensAdicionadas"
+								value="#{NotificacaoControl.notificacao.origemAcidentes}"
+								var="origem" emptyMessage="Sem registros"
+								paginatorAlwaysVisible="false" paginator="true" rows="10"
+								style="width:700px">
+								<f:facet name="header"> Origem Acidente</f:facet>
+
+								<p:column headerText="Descrição" style="text-align: center">
+									<p:outputLabel value="#{origem.descricao}" />
+								</p:column>
+
+								<p:column style="width:80px; text-align:center"
+									headerText="Excluir">
+									<p:commandButton id="btnConfirmarExclusaoOrigem"
+										icon="ui-icon-trash"
+										onclick="PF('confirmacaoExclusaoOrigem').show();"
+										title="Clique aqui para remover da lista" process="@this"
+										immediate="true">
+										<f:setPropertyActionListener value="#{origem}"
+											target="#{NotificacaoControl.origemAcidenteRemover}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+							<a:newLine />
+							<a:newLine />
+
+							<a:field label="Obrservação a respeito do Local">
+								<p:inputTextarea rows="3" style="width:600px;max-height:150px;"
+									id="inpObservacao" counter="counterObservacao"
+									counterTemplate="{0} caracteres restantes." maxlength="512"
+									value="#{NotificacaoControl.notificacao.observacaoOrigem}" />
+							</a:field>
+
+							<a:newLine />
+							<h:outputText styleClass="text-input" id="counterObservacao" />
+						</p:outputPanel>
+
+					</a:fieldset>
+					<a:newLine />
+
+				</p:tab>
+
+				<p:tab id="tabAcidente" title="ACIDENTE" titleStyleClass="middleTab">
+					<a:fieldset id="fsAcidente" legend="Dados do acidente">
+						<a:newLine />
+
+						<p:outputPanel id="opEvento">
+							<a:field label="Eventos Ocorridos">
+								<p:selectOneMenu id="eventos" converter="objectConverter"
+									ajax="false" value="#{NotificacaoControl.eventoSelecionado}"
+									style="width:500px" filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Selecione um Evento Ocorrido"
+										noSelectionOption="true" />
+									<f:selectItems value="#{NotificacaoControl.eventos}"
+										var="evento" itemLabel="#{evento.descricao}"
+										itemValue="#{evento}" />
+								</p:selectOneMenu>
+							</a:field>
+
+
+							<a:field spaceLeft="10px">
+								<p:commandButton
+									actionListener="#{NotificacaoControl.adicionarEvento}"
+									update=":formCorpo:opEvento" process=":formCorpo:opEvento"
+									icon="ui-icon-plus" value="Adicionar Evento" />
+							</a:field>
+							<a:newLine />
+							<a:newLine />
+							<a:newLine />
+
+							<p:dataTable id="tblEvento"
+								value="#{NotificacaoControl.notificacao.eventos}" var="evento"
+								emptyMessage="Sem registros" paginatorAlwaysVisible="false"
+								paginator="true" rows="10" style="width:700px">
+								<f:facet name="header"> Eventos ocorridos</f:facet>
+
+								<p:column headerText="Descrição" style="text-align: center">
+									<p:outputLabel value="#{evento.descricao}" />
+								</p:column>
+
+								<p:column style="width:80px; text-align:center"
+									headerText="Excluir">
+									<p:commandButton id="btnConfirmarExclusaoEvento"
+										icon="ui-icon-trash"
+										onclick="PF('confirmacaoExclusaoEvento').show();"
+										title="Clique aqui para remover da lista" process="@this"
+										immediate="true">
+										<f:setPropertyActionListener value="#{evento}"
+											target="#{NotificacaoControl.eventoRemover}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+							<a:newLine />
+							<a:newLine />
+						</p:outputPanel>
+						<a:newLine />
+						<a:newLine />
+
+
+						<p:panel id="pnAcidente" header="Produtos Envolvidos no Acidente">
+
+							<p:outputPanel id="opProdutos">
+								<p:selectOneRadio
+									value="#{NotificacaoControl.produtoAcidente.onu}">
+									<f:selectItem itemLabel="Produto ONU" itemValue="true" />
+									<f:selectItem itemLabel="Produto NâO ONU" itemValue="false" />
+									<p:ajax update="opProdutos" />
+
+								</p:selectOneRadio>
+
+								<a:field label="Produto Onu">
+									<p:selectOneMenu id="onu" converter="objectConverter"
+										ajax="false"
+										rendered="#{NotificacaoControl.produtoAcidente.onu}"
+										value="#{NotificacaoControl.produtoAcidente.produtoOnu}"
+										style="width:500px" filter="true" filterMatchMode="contains">
+										<f:selectItem itemLabel="Selecione um Produto ONU"
+											noSelectionOption="true" />
+										<f:selectItems value="#{NotificacaoControl.produtosOnu}"
+											var="onu" itemLabel="#{onu.descricao}" />
+									</p:selectOneMenu>
+
+									<p:inputText
+										rendered="#{not NotificacaoControl.produtoAcidente.onu}"
+										value="#{NotificacaoControl.produtoAcidente.produtoNaoOnu}"
+										style="width:500px" />
+								</a:field>
+
+								<a:field label="Quantidade" spaceLeft="7px">
+									<p:inputText
+										value="#{NotificacaoControl.produtoAcidente.quantidadeProduto}"
+										style="width:70px;" />
+								</a:field>
+
+								<a:field label="Unidade de medida" spaceLeft="10px">
+									<p:selectOneMenu id="unidadeMedida" styleClass="obrigatorio"
+										value="#{NotificacaoControl.produtoAcidente.unidadeMedida}"
+										style="width:150px;">
+										<f:selectItem itemLabel="Selecione a unidade de medida"
+											noSelectionOption="true" />
+										<f:selectItems value="#{NotificacaoControl.unidadesDeMedida}"
+											var="unidade" itemLabel="#{unidade.descricao }" />
+									</p:selectOneMenu>
+								</a:field>
+								<a:field spaceLeft="10px">
+									<p:commandButton
+										actionListener="#{NotificacaoControl.adicionarProdutoAcidente}"
+										update=":formCorpo:opProdutos" process=":formCorpo:opProdutos"
+										icon="ui-icon-plus" value="Adicionar Produto" />
+								</a:field>
+								<a:newLine />
+								<a:newLine />
+								<a:newLine />
+
+								<p:dataTable id="tblProdutosAdicionadas"
+									value="#{NotificacaoControl.notificacao.produtosAcidente}"
+									var="produto" emptyMessage="Sem registros"
+									paginatorAlwaysVisible="false" paginator="true" rows="10"
+									style="width:700px">
+									<f:facet name="header">
+									Produtos relacionados ao acidente
+									</f:facet>
+
+									<p:column headerText="Número ONU" style="text-align: center">
+										<p:outputLabel value="#{produto.produtoOnu.numeroOnu}"
+											rendered="#{produto.onu }" />
+									</p:column>
+									<p:column headerText="Descrição" style="text-align: center">
+										<p:outputLabel
+											value="#{produto.onu ? produto.produtoOnu.descricao : produto.produtoNaoOnu}" />
+									</p:column>
+									<p:column headerText="Quantidade" style="text-align: center">
+										<p:outputLabel value="#{produto.quantidadeProduto}" />
+									</p:column>
+									<p:column headerText="Unidade de medida"
+										style="text-align: center">
+										<p:outputLabel value="#{produto.unidadeMedida}" />
+									</p:column>
+
+									<p:column style="width:80px; text-align:center"
+										headerText="Excluir">
+										<p:commandButton id="btnConfirmarExclusaoProduto"
+											icon="ui-icon-trash"
+											onclick="PF('confirmacaoExclusaoProduto').show();"
+											title="Clique aqui para remover da lista" process="@this"
+											immediate="true">
+											<f:setPropertyActionListener value="#{produto}"
+												target="#{NotificacaoControl.produtoAcidenteRemover}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+								<a:newLine />
+								<a:newLine />
+
+
+								<a:newLine />
+								<a:newLine />
+
+							</p:outputPanel>
+							<a:field label="Descrição a respeito do Acidente Ocorrido">
+								<p:inputTextarea rows="3" style="width:600px;max-height:150px;"
+									id="inpAcidente" counter="counterAcidente"
+									counterTemplate="{0} caracteres restantes." maxlength="512"
+									value="#{NotificacaoControl.notificacao.descricaoAcidente}" />
+							</a:field>
+							<a:newLine />
+							<h:outputText styleClass="text-input" id="counterAcidente" />
+							<a:newLine />
+
+						</p:panel>
+
+					</a:fieldset>
+				</p:tab>
+
+				<p:tab id="tabDanos" title="DANOS" titleStyleClass="middleTab">
+					<a:fieldset id="afDanos">
+
+						<p:outputPanel id="opAmbiente">
+							<a:field label="Ambientes ou Danos Ocorridos">
+								<p:selectOneMenu id="danos" converter="objectConverter"
+									ajax="false" value="#{NotificacaoControl.ambienteSelecionado}"
+									style="width:500px" filter="true" filterMatchMode="contains">
+									<f:selectItem
+										itemLabel="Selecione um Ambiente ou Dano Ocorrido"
+										noSelectionOption="true" />
+									<f:selectItems value="#{NotificacaoControl.ambientes}"
+										var="ambiente" itemLabel="#{ambiente.descricao}"
+										itemValue="#{ambiente}" />
+								</p:selectOneMenu>
+							</a:field>
+
+							<a:field spaceLeft="10px">
+								<p:commandButton
+									actionListener="#{NotificacaoControl.adicionarAmbiente}"
+									update=":formCorpo:opAmbiente" process=":formCorpo:opAmbiente"
+									icon="ui-icon-plus" value="Adicionar Ambiente" />
+							</a:field>
+							<a:newLine />
+							<a:newLine />
+							<a:newLine />
+
+							<p:dataTable id="tblAmbiente"
+								value="#{NotificacaoControl.notificacao.ambientes}"
+								var="ambiente" emptyMessage="Sem registros"
+								paginatorAlwaysVisible="false" paginator="true" rows="10"
+								style="width:700px">
+								<f:facet name="header"> Ambientes ou Danos</f:facet>
+
+								<p:column headerText="Descrição" style="text-align: center">
+									<p:outputLabel value="#{ambiente.descricao}" />
+								</p:column>
+
+								<p:column style="width:80px; text-align:center"
+									headerText="Excluir">
+									<p:commandButton id="btnConfirmarExclusaoAmbiente"
+										icon="ui-icon-trash"
+										onclick="PF('confirmacaoExclusaoAmbiente').show();"
+										title="Clique aqui para remover da lista" process="@this"
+										immediate="true">
+										<f:setPropertyActionListener value="#{ambiente}"
+											target="#{NotificacaoControl.ambienteRemover}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+							<a:newLine />
+							<a:newLine />
+
+							<a:field label="Procedimentos Iniciais já adotados">
+								<p:inputTextarea rows="3" style="width:600px;max-height:150px;"
+									id="inpProcedimentos" counter="counterProcedimentos"
+									counterTemplate="{0} caracteres restantes." maxlength="512"
+									value="#{NotificacaoControl.notificacao.procedimentosIniciais}" />
+							</a:field>
+
+							<a:newLine />
+							<h:outputText styleClass="text-input" id="counterProcedimentos" />
+
+							<a:newLine />
+						</p:outputPanel>
+					</a:fieldset>
+				</p:tab>
+
+				<p:tab id="tabIdentificacao" title="IDENTIFICACAO"
+					titleStyleClass="middleTab">
+					<a:fieldset id="fsEmpresa"
+						legend="Identificação da Empresa Responsável">
+						<a:field label="Nome">
+							<p:inputText
+								value="#{NotificacaoControl.notificacao.empresaResponsavel}"
+								style="width:610px;" />
+						</a:field>
+						<a:newLine />
+
+						<a:field label="Telefone">
+							<p:inputText id="telefone" onkeydown="mascaraTelefone(this);"
+								value="#{NotificacaoControl.notificacao.telefoneEmpresa}"
+								style="width:190px;" />
+						</a:field>
+
+						<a:field label="E-mail" spaceLeft="10px">
+							<p:inputText id="email"
+								value="#{NotificacaoControl.notificacao.emailEmpresa}"
+								style="width:400px;" />
+						</a:field>
+						<a:newLine />
+					</a:fieldset>
+					<a:newLine />
+					<a:newLine />
+
+					<a:fieldset id="fsUsuario"
+						legend="Deseja se Identificar? se sim, preencha os dados abaixo.">
+						<a:field label="Nome">
+							<p:inputText
+								value="#{NotificacaoControl.notificacao.nomeUsuario}"
+								style="width:610px;" />
+						</a:field>
+						<a:newLine />
+
+						<a:field label="Telefone">
+							<p:inputText id="telefoneUsuario"
+								onkeydown="mascaraTelefone(this);"
+								value="#{NotificacaoControl.notificacao.telefoneUsuario}"
+								style="width:190px;" />
+						</a:field>
+
+						<a:field label="E-mail" spaceLeft="10px">
+							<p:inputText id="emailUsuario"
+								value="#{NotificacaoControl.notificacao.emailUsuario}"
+								style="width:400px;" />
+						</a:field>
+						<a:newLine />
+
+					</a:fieldset>
+
+				</p:tab>
+
+				<p:tab id="tabOrgaos" title="ÓRGÃOS" titleStyleClass="middleTab">
+					<a:fieldset id="afsOrgao">
+						<p:outputPanel id="opOrgaos">
+							<a:field label="Órgãos já atuando no local">
+								<p:selectOneMenu id="orgaos" converter="objectConverter"
+									ajax="false" value="#{NotificacaoControl.orgaoSelecionado}"
+									style="width:500px" filter="true" filterMatchMode="contains">
+									<f:selectItem
+										itemLabel="Selecione um órgão que ja esteja no local"
+										noSelectionOption="true" />
+									<f:selectItems value="#{NotificacaoControl.orgaos}" var="orgao"
+										itemLabel="#{orgao.descricao}" itemValue="#{orgao}" />
+								</p:selectOneMenu>
+							</a:field>
+
+							<a:field spaceLeft="10px">
+								<p:commandButton
+									actionListener="#{NotificacaoControl.adicionarOrgao}"
+									update=":formCorpo:opOrgaos" process=":formCorpo:opOrgaos"
+									icon="ui-icon-plus" value="Adicionar um órgão" />
+							</a:field>
+							<a:newLine />
+							<a:newLine />
+							<a:newLine />
+
+							<p:dataTable id="tblOrgao"
+								value="#{NotificacaoControl.notificacao.orgaosNoLocalOcorrido}"
+								var="orgao" emptyMessage="Sem registros"
+								paginatorAlwaysVisible="false" paginator="true" rows="10"
+								style="width:700px">
+								<f:facet name="header"> Órgãos no local ocorrido</f:facet>
+
+								<p:column headerText="Descrição" style="text-align: center">
+									<p:outputLabel value="#{orgao.descricao}" />
+								</p:column>
+
+								<p:column style="width:80px; text-align:center"
+									headerText="Excluir">
+									<p:commandButton id="btnConfirmacaoExclusaoOrgao"
+										icon="ui-icon-trash"
+										onclick="PF('confirmacaoExclusaoOrgao').show();"
+										title="Clique aqui para remover da lista" process="@this"
+										immediate="true">
+										<f:setPropertyActionListener value="#{orgao}"
+											target="#{NotificacaoControl.orgaoRemover}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+							<a:newLine />
+							<a:newLine />
+
+							<a:field label="Deseja acrescentar mais alguma informação?">
+								<p:inputTextarea rows="3" style="width:600px;max-height:150px;"
+									id="inpInformacao" counter="counterInformacao"
+									counterTemplate="{0} caracteres restantes." maxlength="512"
+									value="#{NotificacaoControl.notificacao.informacaoAdicional}" />
+							</a:field>
+
+							<a:newLine />
+							<h:outputText styleClass="text-input" id="counterInformacao" />
+
+							<a:newLine />
+						</p:outputPanel>
+					</a:fieldset>
+
+				</p:tab>
+
+				<p:tab id="tabConclusao" title="CONCLUSÃO" titleStyleClass="lastTab">
+					<h3 style="color: red; text-align: center; width: 900px;">Confira
+						os dados abaixo com atenção, pois caso haja algum erro, você não
+						poderá corrigi-los após a conclusão do cadastro.</h3>
+					<a:fieldset id="afsLocalizacao" legend="Local do Acidente"
+						style="width:900px;">
+						<p:panelGrid columns="4" style="width:900px;">
+							<b>Endereco:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.localAcidente.endereco}" />
+							<b>Cep:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.localAcidente.cep}" />
+							<b>Município: </b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.localAcidente.municipio}" />
+							<b>Complemento: </b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.localAcidente.complemento}" />
+							<b>Latitude:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.localAcidente.latitude}" />
+							<b>Longitude:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.localAcidente.longitude}" />
+						</p:panelGrid>
+						<a:newLine />
+						<a:field id="fsOrigens">
+							<p:dataTable style="width:900px;"
+								value="#{NotificacaoControl.notificacao.origemAcidentes}"
+								var="origem">
+								<p:column headerText="Origens do acidente"
+									style="width: 50px; text-align: center">
+									<p:outputLabel value="#{origem.descricao}" />
+								</p:column>
+							</p:dataTable>
+						</a:field>
+					</a:fieldset>
+					<a:newLine />
+
+					<a:fieldset id="afsAcidente" legend="Acidente" style="width:900px;">
+						<p:panelGrid columns="4" style="width:900px;">
+							<b>Descrição do Acidente:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.descricaoAcidente}" />
+						</p:panelGrid>
+						<a:newLine />
+						<a:field id="fsEventos">
+							<p:dataTable style="width:900px;"
+								value="#{NotificacaoControl.notificacao.eventos}" var="evento">
+								<p:column headerText="Eventos Ocorridos do acidente"
+									style="width: 50px; text-align: center">
+									<p:outputLabel value="#{evento.descricao}" />
+								</p:column>
+							</p:dataTable>
+						</a:field>
+						<a:newLine />
+						<a:field id="fsProdutos">
+							<p:dataTable style="width:900px;"
+								value="#{NotificacaoControl.notificacao.produtosAcidente}"
+								var="produto">
+								<p:column headerText="Número ONU" style="text-align: center">
+									<p:outputLabel value="#{produto.produtoOnu.numeroOnu}"
+										rendered="#{produto.onu }" />
+								</p:column>
+								<p:column headerText="Descrição" style="text-align: center">
+									<p:outputLabel
+										value="#{produto.onu ? produto.produtoOnu.descricao : produto.produtoNaoOnu}" />
+								</p:column>
+								<p:column headerText="Quantidade"
+									style="width: 50px; text-align: center">
+									<p:outputLabel value="#{produto.quantidadeProduto}" />
+								</p:column>
+								<p:column headerText="Unidade de Medida"
+									style="width: 50px; text-align: center">
+									<p:outputLabel value="#{produto.unidadeMedida}" />
+								</p:column>
+							</p:dataTable>
+						</a:field>
+
+					</a:fieldset>
+					<a:newLine />
+					<a:fieldset id="afsAmbiente" legend="Danos causados no Ambiente"
+						style="width:900px;">
+						<p:panelGrid columns="4" style="width:900px;">
+							<b>Procedimentos já adotados:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.procedimentosIniciais}" />
+						</p:panelGrid>
+						<a:field id="fsDanos">
+							<p:dataTable style="width:900px;"
+								value="#{NotificacaoControl.notificacao.ambientes}"
+								var="ambiente">
+								<p:column headerText="Danos causados no ambiente"
+									style="width: 50px; text-align: center">
+									<p:outputLabel value="#{ambiente.descricao}" />
+								</p:column>
+							</p:dataTable>
+						</a:field>
+						<a:newLine />
+					</a:fieldset>
+					<a:newLine />
+					<a:fieldset id="afsIdentificacao" legend="Empresa responsável"
+						style="width:900px;">
+						<p:panelGrid columns="4" style="width:900px;">
+							<b>Nome:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.empresaResponsavel}" />
+							<b>Telefone:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.telefoneEmpresa}" />
+							<b>Email: </b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.emailEmpresa}" />
+
+						</p:panelGrid>
+					</a:fieldset>
+					<a:fieldset id="afsUsuario" legend="Usuário" style="width:900px;">
+						<p:panelGrid columns="4" style="width:900px;">
+							<b>Nome:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.nomeUsuario}" />
+							<b>Telefone:</b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.telefoneUsuario}" />
+							<b>Email: </b>
+							<p:outputLabel
+								value="#{NotificacaoControl.notificacao.emailUsuario}" />
+						</p:panelGrid>
+					</a:fieldset>
+					<a:newLine />
+					<a:fieldset id="afsOrgaos" legend="Òrgãos no local"
+						style="width:900px;">
+						<a:field id="fsOrgao">
+							<p:panelGrid columns="4" style="width:900px;">
+								<b>Procedimentos já adotados:</b>
+								<p:outputLabel
+									value="#{NotificacaoControl.notificacao.informacaoAdicional}" />
+							</p:panelGrid>
+							<p:dataTable style="width:900px;"
+								value="#{NotificacaoControl.notificacao.orgaosNoLocalOcorrido}"
+								var="orgao">
+								<p:column headerText="Òrgãos já atuando no local"
+									style="width: 50px; text-align: center">
+									<p:outputLabel value="#{orgao.descricao}" />
+								</p:column>
+							</p:dataTable>
+						</a:field>
+
+					</a:fieldset>
+
+					<a:newLine />
+					<a:newLine />
+					<a:field>
+						<p:commandButton id="btnSalvar"
+							actionListener="#{NotificacaoControl.confirmar }"
+							icon="ui-icon-disk" value="Salvar" update=":formCorpo:panelGeral" />
+					</a:field>
+
+					<a:field spaceLeft="10px">
+						<p:commandButton immediate="true" action="NotificacaoList"
+							value="Fechar" ajax="false" icon="ui-icon ui-icon-close" />
+					</a:field>
+					<a:newLine />
+					<a:newLine />
+
+
+				</p:tab>
+
+
+			</p:wizard>
+
+		</p:panel>
+
+		<p:confirmDialog
+			message="Deseja remover essa Origem da lista de adiciondas?"
+			showEffect="slide" hideEffect="explode"
+			header="Confirmação de exclusão" severity="alert"
+			widgetVar="confirmacaoExclusaoOrigem">
+			<p:commandButton id="btnSimOrigem" value="Sim"
+				oncomplete="PF('confirmacaoExclusaoOrigem').hide();"
+				actionListener="#{NotificacaoControl.removerOrigemAcidente}"
+				update=":formCorpo:tblorigensAdicionadas" process="@this" />
+			<p:commandButton id="btnNaoOrigem" value="Não"
+				onclick="PF('confirmacaoExclusaoOrigem').hide();" type="button" />
+		</p:confirmDialog>
+
+		<p:confirmDialog
+			message="Deseja remover esse Produto da lista de adiciondas?"
+			showEffect="slide" hideEffect="explode"
+			header="Confirmação de exclusão" severity="alert"
+			widgetVar="confirmacaoExclusaoProduto">
+			<p:commandButton id="btnSimProduto" value="Sim"
+				oncomplete="PF('confirmacaoExclusaoProduto').hide();"
+				actionListener="#{NotificacaoControl.removerProdutoAcidente}"
+				update=":formCorpo:opProdutos" process="@this" />
+			<p:commandButton id="btnNaoProduto" value="Não"
+				onclick="PF('confirmacaoExclusaoProduto').hide();" type="button" />
+		</p:confirmDialog>
+
+		<p:confirmDialog
+			message="Deseja remover esse Ambiente/Dano da lista de adiciondas?"
+			showEffect="slide" hideEffect="explode"
+			header="Confirmação de exclusão" severity="alert"
+			widgetVar="confirmacaoExclusaoAmbiente">
+			<p:commandButton id="btnSimAmbiente" value="Sim"
+				oncomplete="PF('confirmacaoExclusaoAmbiente').hide();"
+				actionListener="#{NotificacaoControl.removerAmbiente}"
+				update=":formCorpo:tblAmbiente" process="@this" />
+			<p:commandButton id="btnNaoAmbiente" value="Não"
+				onclick="PF('confirmacaoExclusaoAmbiente').hide();" type="button" />
+		</p:confirmDialog>
+
+		<p:confirmDialog
+			message="Deseja remover esse esse òrgão da lista de adicionados?"
+			showEffect="slide" hideEffect="explode"
+			header="Confirmação de exclusão" severity="alert"
+			widgetVar="confirmacaoExclusaoOrgao">
+			<p:commandButton id="btnSimOrgao" value="Sim"
+				oncomplete="PF('confirmacaoExclusaoOrgao').hide();"
+				actionListener="#{NotificacaoControl.removerOrgao}"
+				update=":formCorpo:tblOrgao" process="@this" />
+			<p:commandButton id="btnNaoOrgao" value="Não"
+				onclick="PF('confirmacaoExclusaoOrgao').hide();" type="button" />
+		</p:confirmDialog>
+
+		<p:confirmDialog
+			message="Deseja remover esse esse Evento da lista de adicionados?"
+			showEffect="slide" hideEffect="explode"
+			header="Confirmação de exclusão" severity="alert"
+			widgetVar="confirmacaoExclusaoEvento">
+			<p:commandButton id="btnSimEvento" value="Sim"
+				oncomplete="PF('confirmacaoExclusaoEvento').hide();"
+				actionListener="#{NotificacaoControl.removerEvento}"
+				update=":formCorpo:tblEvento" process="@this" />
+			<p:commandButton id="btnNaoEvento" value="Não"
+				onclick="PF('confirmacaoExclusaoEvento').hide();" type="button" />
+		</p:confirmDialog>
+
+	</ui:define>
+</ui:composition>

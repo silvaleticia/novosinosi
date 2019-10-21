@@ -1,0 +1,19 @@
+package br.gov.go.secima.unidadeconservacao.persistencia;
+
+import java.util.List;
+
+import br.com.ambientinformatica.jpa.exception.PersistenciaException;
+import br.com.ambientinformatica.jpa.persistencia.Persistencia;
+import br.gov.go.secima.unidadeconservacao.entidade.Credenciamento;
+import br.gov.go.secima.unidadeconservacao.entidade.Pessoa;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+
+public interface CredenciamentoDao extends Persistencia<Credenciamento>{
+
+    Credenciamento consultarPorPessoaUsuario(Pessoa pessoa, Usuario usuario) throws PersistenciaException;
+
+    List<Credenciamento> listarPorPessoa(Pessoa pessoa) throws PersistenciaException;
+
+    void enviarEmail(Credenciamento credenciamento);
+
+}

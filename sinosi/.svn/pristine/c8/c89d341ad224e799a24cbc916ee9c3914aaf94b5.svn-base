@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2" xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<ui:define name="corpo">
+		<p:panel widgetVar="panel" id="panelPessoaList" header="Pesquisar Orgãos/Proprietários">
+
+			<a:field label="CPF/CNPJ">
+				<p:inputText id="cpfCnpjEmpreendedor" onkeypress="MascaraCPF_CNPJ(this , event);" value="#{PessoaListControl.cpfCnpj}" style="width:180px" />
+			</a:field>
+
+			<a:field label="Nome/Razão Social" spaceLeft="10px">
+				<p:inputText id="inpNome" value="#{PessoaListControl.nome}" style="width:300px;" />
+			</a:field>
+			
+			<a:field label="Tipo de pessoa" spaceLeft="10px">
+					<p:selectOneMenu id="tipoPessoa" value="#{PessoaListControl.tipoPessoa }" style="width:280px;">
+						<f:selectItem itemLabel="Todas" itemValue="#{null}"/>
+						<f:selectItem itemLabel="Pessoa Física" itemValue="PF" />
+						<f:selectItem itemLabel="Pessoa Jurídica - Empresa Privada" itemValue="PJ" />
+						<f:selectItem itemLabel="Orgão Público" itemValue="ORGAO" />
+					</p:selectOneMenu>
+				</a:field>
+
+			<a:field label="Situação" spaceLeft="10px">
+				<p:selectOneMenu id="situacao" value="#{PessoaListControl.situacao}" style="width:150px;">
+					<f:selectItem itemLabel="Todas" itemValue="TODAS" />
+					<f:selectItem itemLabel="Habilitados" itemValue="HABILITADOS" />
+					<f:selectItem itemLabel="Não Habilitados" itemValue="NAO_HABILITADOS" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field spaceLeft="10px;">
+				<p:commandButton actionListener="#{PessoaListControl.listarPessoas}" value="Pesquisar" ajax="false" icon="ui-icon ui-icon-search" update="tblPessoas" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Cadastrar" actionListener="#{MenuControl.gerenciarSessao}" ajax="false" action="/pessoa?faces-redirect=true" icon="ui-icon ui-icon-disk" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Limpar" actionListener="#{MenuControl.gerenciarSessao}" ajax="false" action="/pessoaList?faces-redirect=true" icon="ui-icon ui-icon-trash" />
+			</a:field>
+			<a:newLine />
+		</p:panel>
+
+		<p:dataTable id="tblPessoas" var="pessoa" widgetVar="pessoa" value="#{PessoaListControl.pessoas }" emptyMessage="Sem registros" paginator="true"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rows="50" rowsPerPageTemplate="25,50,100,150,200">
+			<f:facet name="header">
+		        Listagem de pessoas (#{fn:length(PessoaListControl.pessoas)})
+		    </f:facet>
+			<p:column style="width:100px;text-align:center" headerText="Código">
+				<p:outputLabel value="#{pessoa.id }" />
+			</p:column>
+			<p:column headerText="Data criação" style="width:150px;text-align:center">
+				<p:outputLabel value="#{pessoa.datacriacao}">
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+				</p:outputLabel>
+			</p:column>
+			<p:column style="width:200px;text-align:center" headerText="CNPJ">
+				<p:outputLabel value="#{pessoa.cpfCnpj}" />
+			</p:column>
+			<p:column headerText="Nome/Razão social">
+				<p:outputLabel value="#{pessoa.nome}" />
+			</p:column>
+			<p:column headerText="Telefone">
+				<p:outputLabel value="#{pessoa.telefone}" />
+			</p:column>
+			<p:column headerText="Tipo">
+				<p:outputLabel value="#{pessoa.tipo.descricao}" />
+			</p:column>
+			<p:column headerText="Usuário Cadastro">
+				<p:outputLabel value="#{pessoa.usuario.cpf}" />
+				<p:spacer width="2px;" />
+				<h:outputLabel value="-" />
+				<p:spacer width="2px;" />
+				<p:outputLabel value="#{pessoa.usuario.nome}" />
+			</p:column>
+			<p:column headerText="Ações" style="width:250px;text-align:center">
+				<p:commandButton value="Habilitar" action="/credenciarUsuario?faces-redirect=true" ajax="false" icon="ui-icon-circle-check" title="Clique aqui para habilitar esse cadastro"
+					rendered="#{UsuarioLogadoControl.usuario.adminUnidadeConservacao and pessoa.tipo eq 'ORGAO' }">
+					<f:setPropertyActionListener target="#{PessoaListControl.pessoa}" value="#{pessoa }" />
+				</p:commandButton>
+				<p:spacer width="5px;" />
+				<p:commandButton value="Editar" action="/pessoa?faces-redirect=true" ajax="false" icon="ui-icon-pencil" title="Clique aqui para editar esse cadastro"
+					rendered="#{UsuarioLogadoControl.usuario.adminUnidadeConservacao or UsuarioLogadoControl.usuario.cpf eq pessoa.usuario.cpf}">
+					<f:setPropertyActionListener target="#{PessoaControl.pessoa}" value="#{pessoa }" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+		<a:newLine />
+	</ui:define>
+</ui:composition>

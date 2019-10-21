@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2" xmlns:p="http://primefaces.prime.com.tr/ui">
+	<ui:composition template="template.xhtml">
+		<ui:define name="corpo">
+			<!-- page content -->
+			<div class="col-md-12">
+				<div class="col-middle">
+					<div class="text-center text-center">
+						<h1 class="error-number">403</h1>
+						<h2>Acesso negado</h2>
+						<p>
+							Você não possuí acesso a essa funcionalidade. <a href="https://portal.meioambiente.go.gov.br/weblicencas/faq.secima" style="color: #0066FF !important;"> Deseja reportar isso?</a>
+						</p>
+						<div class="mid_center"></div>
+					</div>
+				</div>
+			</div>
+			<!-- /page content -->
+		</ui:define>
+	</ui:composition>
+</jsp:root>

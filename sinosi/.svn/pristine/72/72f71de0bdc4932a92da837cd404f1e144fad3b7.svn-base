@@ -1,0 +1,146 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.model.SelectItem;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.com.ambientinformatica.util.UtilHash;
+import br.com.ambientinformatica.util.UtilHash.Algoritimo;
+import br.gov.go.secima.unidadeconservacao.entidade.EnumUf;
+import br.gov.go.secima.unidadeconservacao.entidade.Municipio;
+import br.gov.go.secima.unidadeconservacao.entidade.Usuario;
+import br.gov.go.secima.unidadeconservacao.persistencia.MunicipioDao;
+import br.gov.go.secima.unidadeconservacao.persistencia.UsuarioDao;
+
+@Controller("UsuarioControl")
+@Scope("conversation")
+public class UsuarioControl {
+
+    private Usuario usuario;
+
+    private String senha1;
+
+    private String senha2;
+
+    private String confirmarSenha;
+
+    private EnumUf uf;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
+
+    @Autowired
+    private MunicipioDao municipioDao;
+
+    @Autowired
+    private UsuarioLogadoControl usuarioLogadoControl;
+
+    private List<Municipio> municipios = new ArrayList<>();
+
+    public String verificarUsuarioLogado(){ 
+        try {
+            this.usuario = usuarioLogadoControl.getUsuario();
+            if(this.usuario != null && this.usuario.getMunicipio() != null){
+                this.uf = this.usuario.getMunicipio().getUf();
+            }else{
+                this.uf = EnumUf.GO;
+            }
+            listaMunicipiosPorUfs();
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+        return "/atualizarDados?faces-redirect=true";
+    }
+
+    public void listaMunicipiosPorUfs() {
+        try {
+            municipios = municipioDao.listarPorUfNome(this.uf, null);
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void confirmar(){
+        try {
+            this.usuario = usuarioDao.alterar(this.usuario);
+            UtilFaces.addMensagemFaces("Cadastro salvo com sucesso!");
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public void alterarSenha() {
+        try {
+            String senhaAtualCripto = UtilHash.gerarStringHash(confirmarSenha, Algoritimo.MD5);
+            if (senhaAtualCripto.equals(this.usuario.getSenha())) {
+                if (senha1 != null && senha1.equals(senha2)) {
+                    this.usuario.setSenhaNaoCriptografada(senha1);
+                    this.usuario.setAlterarSenha(false);
+                    this.usuario = usuarioDao.alterar(this.usuario);
+                    UtilFaces.addMensagemFaces("Senha alterada com sucesso!");
+                } else {
+                    UtilFaces.addMensagemFaces("Senhas diferentes!", FacesMessage.SEVERITY_ERROR);
+                }
+            } else {
+                UtilFaces.addMensagemFaces("Senha atual incorreta!", FacesMessage.SEVERITY_ERROR);
+            }
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public List<SelectItem> getUfs(){
+        return UtilFaces.getListEnum(EnumUf.values());
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getConfirmarSenha() {
+        return confirmarSenha;
+    }
+
+    public void setConfirmarSenha(String confirmarSenha) {
+        this.confirmarSenha = confirmarSenha;
+    }
+
+    public String getSenha1() {
+        return senha1;
+    }
+
+    public void setSenha1(String senha1) {
+        this.senha1 = senha1;
+    }
+
+    public String getSenha2() {
+        return senha2;
+    }
+
+    public void setSenha2(String senha2) {
+        this.senha2 = senha2;
+    }
+
+    public List<Municipio> getMunicipios() {
+        return municipios;
+    }
+
+    public EnumUf getUf() {
+        return uf;
+    }
+
+    public void setUf(EnumUf uf) {
+        this.uf = uf;
+    }
+}

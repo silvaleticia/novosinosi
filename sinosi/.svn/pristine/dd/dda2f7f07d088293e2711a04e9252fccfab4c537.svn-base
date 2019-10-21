@@ -1,0 +1,48 @@
+package br.gov.go.secima.unidadeconservacao.controle;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import br.com.ambientinformatica.ambientjsf.util.UtilFaces;
+import br.gov.go.secima.unidadeconservacao.persistencia.UsuarioDao;
+
+@Controller("RecuperarSenhaControl")
+@Scope("request")
+public class RecuperarSenhaControl {
+
+    private String email;
+
+    private String cpf;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
+
+    public void recuperarSenha(){
+        try{
+            usuarioDao.recuperarSenha(cpf, email);
+            UtilFaces.addMensagemFaces("Enviamos um link de redefinição de senha para o seu email " + email);
+            this.email = "";
+            this.cpf= "";
+        } catch (Exception e) {
+            UtilFaces.addMensagemFaces(e);
+        }
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+}

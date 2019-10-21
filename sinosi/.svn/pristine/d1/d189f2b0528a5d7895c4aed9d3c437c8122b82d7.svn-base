@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<ui:define name="corpo">
+		<style>
+.ui-datalist-content .ui-widget-content {
+	width: 400px;
+}
+
+#tblAvisos {
+	width: 400px;
+}
+</style>
+		<p:panel styleClass="inicio">
+			<div class="row" style="text-align: center">
+				<h2>ACESSO RÁPIDO</h2>
+			</div>
+			<div class="col-xs-12" style="text-align: center">
+				<div class="row" style="text-align: center">
+					<div class="col-lg-1"></div>
+					<div class="col-lg-12">
+						<div class="col-lg-4 col-md-6 col-sm-12">
+							<p:commandLink
+								action="#{UnidadeConservacaoControl.novaUnidadeConservacao}"
+								actionListener="#{MenuControl.gerenciarSessao}" ajax="false">
+								<div class="panel panel-primary">
+									<div class="panel-heading">
+										<div class="row">
+											<div class="col-xs-2">
+												<i class="fa fa-leaf fa-5x"></i>
+											</div>
+											<div class="col-xs-10 text-right">
+												<div class="huge">Cadastro</div>
+												<div>Cadastrar Unidades de Conservação</div>
+												<div>Cadastrar RPPNs</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
+						<div class="col-lg-4 col-md-6 col-sm-12">
+							<p:commandLink
+								action="unidadeConservacaoList?faces-redirect=true"
+								actionListener="#{MenuControl.gerenciarSessao}" ajax="false">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<div class="row">
+											<div class="col-xs-2">
+												<i class="fa fa-search fa-5x"></i>
+											</div>
+											<div class="col-xs-10 text-right">
+												<div class="huge">Consulta</div>
+												<div>Consultar Unidades de Conservação</div>
+												<div>Consultar RPPNs</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
+						<div class="col-lg-4 col-md-6 col-sm-12">
+							<div class="panel panel-yellow">
+								<div class="panel-heading">
+									<div class="row">
+										<div class="col-xs-2">
+											<i class="fa fa-question fa-5x"></i>
+										</div>
+										<div class="col-xs-10 text-right">
+											<div class="huge">Ajuda</div>
+											<div>
+												<a
+													href="#{request.contextPath}/documentos/Manual_Cadastro_UCs_2017.pdf"
+													target="blank" style="color: #fff"> Manual de Cadrastro
+													de UCs </a>
+											</div>
+											<div>
+												<a
+													href="#{request.contextPath}/documentos/instrucao_normativa_n_008-2016.pdf"
+													target="blank" style="color: #fff"> Instrução Normativa
+													nº 008-2016</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-1"></div>
+				</div>
+				<a:newLine />
+			</div>
+			<a:newLine />
+		</p:panel>
+	</ui:define>
+</ui:composition>

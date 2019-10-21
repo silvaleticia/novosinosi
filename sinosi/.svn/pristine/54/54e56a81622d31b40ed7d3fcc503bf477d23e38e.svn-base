@@ -1,0 +1,93 @@
+package br.gov.go.secima.unidadeconservacao.entidade;
+
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+
+import br.com.ambientinformatica.util.AmbientValidator;
+
+@Entity
+public class Credenciamento {
+
+    @Id
+    @GeneratedValue(generator="credenciamento_seq", strategy=GenerationType.SEQUENCE)
+    @SequenceGenerator(name="credenciamento_seq", sequenceName="credenciamento_seq", allocationSize=1, initialValue=1)
+    private Integer id;
+
+    @ManyToOne(optional=false)
+    @JoinColumn(name="pessoa_id")
+    private Pessoa pessoa;
+
+    @ManyToOne(optional=false)
+    @JoinColumn(name="usuario_id")
+    private Usuario usuario;
+
+    @NotNull(message="É Necessário Anexar o Ofício de credenciamento.", groups=AmbientValidator.class)
+    @JoinColumn(name="oficio_id")
+    @ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    private Documento oficio = new Documento();
+
+    @Column(nullable=false)
+    private Boolean aprovado = false;
+
+    @Column(nullable=false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date data = new Date();
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Documento getOficio() {
+        return oficio;
+    }
+
+    public void setOficio(Documento oficio) {
+        this.oficio = oficio;
+    }
+
+    public Boolean getAprovado() {
+        return aprovado;
+    }
+
+    public void setAprovado(Boolean aprovado) {
+        this.aprovado = aprovado;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+}

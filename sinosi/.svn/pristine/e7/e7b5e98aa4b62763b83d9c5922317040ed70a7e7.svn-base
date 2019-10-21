@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel header="Consultar Unidades de Conservação"
+			id="panelEscolheUnidade" styleClass="fullscreen">
+
+			<a:field label="CPF/CNPJ Orgão/Proprietário">
+				<p:inputText id="cpfCnpjEmpreendedor"
+					onkeypress="MascaraCPF_CNPJ(this , event);"
+					value="#{UnidadeConservacaoListControl.cpfCnpj}"
+					style="width:220px" />
+			</a:field>
+
+			<a:field spaceLeft="10px" label="Nome da Unidade de Conservação">
+				<p:inputText id="idNome"
+					value="#{UnidadeConservacaoListControl.nome}" style="width:340px"
+					placeholder="Digite o nome parte dele" />
+			</a:field>
+
+			<a:field label="Esfera Administrativa" spaceLeft="10px">
+				<p:selectOneMenu id="esfera"
+					value="#{UnidadeConservacaoListControl.esferaAdministrativa }"
+					style="width:350px;">
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems value="#{UnidadeConservacaoListControl.esferas}" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field label="Enquadramento">
+				<p:selectOneMenu id="soLei"
+					value="#{UnidadeConservacaoListControl.lei }" style="width:360px;">
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems value="#{UnidadeConservacaoListControl.leis}" />
+					<p:ajax update="grupoclass categoria"
+						listener="#{UnidadeConservacaoListControl.atualizarGrupoClassificacao }" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field label="Grupo Classificação" spaceLeft="10px;">
+				<p:selectOneMenu id="grupoclass"
+					value="#{UnidadeConservacaoListControl.grupoClassificacao }"
+					style="width:200px;">
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems
+						value="#{UnidadeConservacaoListControl.gruposClassificao}" />
+					<p:ajax update="categoria"
+						listener="#{UnidadeConservacaoListControl.atualizarCategoriaUnidade }" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field label="Categoria" spaceLeft="10px;">
+				<p:selectOneMenu
+					value="#{UnidadeConservacaoListControl.categoriaUnidade }"
+					id="categoria" style="width:350px;" immediate="true">
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems
+						value="#{UnidadeConservacaoListControl.categoriasUnidade }" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:newLine />
+			<a:newLine />
+
+			<a:field label="Situação" spaceLeft="10px;">
+				<p:selectOneRadio id="opcoes"
+					value="#{UnidadeConservacaoListControl.status}">
+					<f:selectItem itemLabel="Todas" itemValue="TODAS" />
+					<f:selectItem itemLabel="Pendentes" itemValue="PENDENTE" />
+					<f:selectItem itemLabel="Aprovadas" itemValue="APROVADA" />
+					<f:selectItem itemLabel="Canceladas" itemValue="CANCELADA" />
+					<f:selectItem itemLabel="Em Analise" itemValue="ANALISE" />
+					<f:ajax event="change" immediate="true" />
+				</p:selectOneRadio>
+			</a:field>
+
+			<a:newLine />
+
+			<a:field>
+				<p:commandButton value="Pesquisar" icon="ui-icon-search"
+					update="unidades" ajax="false"
+					action="#{UnidadeConservacaoListControl.listarUnidade}" />
+			</a:field>
+
+			<a:field spaceLeft="15px">
+				<p:commandButton value="Limpar"
+					actionListener="#{MenuControl.gerenciarSessao}" ajax="false"
+					action="unidadeConsevacaoList?faces-redirect=true"
+					icon="ui-icon ui-icon-trash" />
+			</a:field>
+
+			<a:field spaceLeft="15px">
+				<p:commandButton value="Imprimir"
+					actionListener="#{UnidadeConservacaoListControl.imprimirRelatorio}"
+					ajax="false" icon="ui-icon ui-icon-print" />
+			</a:field>
+
+			<a:field spaceLeft="15px">
+				<p:commandButton id="novoCadastro" icon="ui-icon-circle-plus"
+					value="Cadastrar Uma Nova Unidade de Conservação"
+					action="#{UnidadeConservacaoControl.novaUnidadeConservacao }" />
+			</a:field>
+
+			<a:newLine />
+			<a:newLine />
+
+			<p:dataTable paginator="true"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rows="30" rowsPerPageTemplate="30,50,80,100,120,150"
+				value="#{UnidadeConservacaoListControl.unidadeConservacoes }"
+				var="unidCons" id="unidades" emptyMessage="Sem registros"
+				rowStyleClass="#{unidCons.statusRow}">
+
+				<f:facet name="header">Unidades de Conservação Encontradas</f:facet>
+				<p:column headerText="Nome da Unidade de Conservação">
+					<p:outputLabel value="#{unidCons.nomeUnidade }" />
+				</p:column>
+				<p:column headerText="CPF/CNPJ do Orgão/Proprietário">
+					<p:outputLabel value="#{unidCons.orgaoOuProprietario.cpfCnpj}" />
+				</p:column>
+				<p:column headerText="Nome/Razão Social do Orgão/Proprietário">
+					<p:outputLabel value="#{unidCons.orgaoOuProprietario.nome}" />
+				</p:column>
+				<p:column headerText="Município sede"
+					style="white-space: normal; width:300px;">
+					<p:outputLabel value="#{unidCons.municipio }" />
+				</p:column>
+				<p:column headerText="Grupo">
+					<p:outputLabel value="#{unidCons.grupoClassificacao.descricao}" />
+				</p:column>
+				<p:column headerText="Categoria">
+					<p:outputLabel value="#{unidCons.categoriaUnidade.descricao}" />
+				</p:column>
+				<p:column headerText="Status" style="width:110px;">
+					<p:outputLabel value="#{unidCons.status.descricao}" />
+				</p:column>
+				<p:column headerText="Usuário">
+					<p:outputLabel value="#{unidCons.usuario.nome}" />
+					<p:spacer width="2px;" />
+					<h:outputLabel value="-" />
+					<p:spacer width="2px;" />
+					<p:outputLabel value="#{unidCons.usuario.cpf}" />
+				</p:column>
+				<p:column headerText="Data do Registro"
+					style="width:150px;text-align:center">
+					<p:outputLabel value="#{unidCons.dataRegistro}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+					</p:outputLabel>
+				</p:column>
+				<p:column style="width:150px;">
+					<p:commandButton value="Visualizar" icon="ui-icon-search"
+						action="#{UnidadeConservacaoControl.visualizarUnidadeConservacao }"
+						ajax="false">
+						<f:setPropertyActionListener value="#{unidCons}"
+							target="#{UnidadeConservacaoControl.unidadeConservacao}" />
+					</p:commandButton>
+				</p:column>
+				<p:column style="width:150px;">
+					<p:commandButton value="Pareceres"
+						action="#{UnidadeConservacaoControl.visualizarPareceres}"
+						id="visualizarParecer" ajax="false" icon="ui-icon-search">
+						<f:setPropertyActionListener value="#{unidCons}"
+							target="#{UnidadeConservacaoControl.unidadeConservacao}" />
+					</p:commandButton>
+				</p:column>
+				<p:column style="width:150px;">
+					<p:commandButton value="Corrigir" icon="ui-icon-pencil"
+						id="editarUnidade" ajax="false"
+						rendered="#{UnidadeConservacaoListControl.usuarioAdminUnidade}"
+						action="#{UnidadeConservacaoControl.editarUnidadeConservacao }"
+						actionListener="#{MenuControl.gerenciarSessao}">
+						<f:setPropertyActionListener value="#{unidCons}"
+							target="#{UnidadeConservacaoControl.unidadeConservacao}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">  
+          			#{fn:length(UnidadeConservacaoListControl.unidadeConservacoes)} Unidade(s) de Conservação
+	       		</f:facet>
+			</p:dataTable>
+
+			<a:newLine />
+			<a:newLine />
+		</p:panel>
+	</ui:define>
+</ui:composition>
