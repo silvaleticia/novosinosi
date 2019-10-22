@@ -16,13 +16,12 @@
 			<p:menuitem icon="fa fa-home" value="Início"
 				action="/inicio?faces-redirect=true" ajax="false" />
 
-			<p:submenu  label = " Cadastro "  icon = " ui-icon-plus " >
-				<p:menuitem  value = " Usuário "  action = " usuarioList? faces-redirect = true "
-					icon = " ui-icon-search " />
-				<p:menuitem  value = " Denúncias "  action = " eventoList? faces-redirect = true "
-					icon = " ui-icon-search " />
+			<p:submenu  label = "Cadastro"  icon = "ui-icon-plus" >
+				<p:menuitem  value = "Usuário"  action = "usuarioList?faces-redirect=true"
+					icon = "ui-icon-search" />
+				
 				<p:menuitem  value = " Denúncias List "
-					action = " denunciaList? faces-redirect = true "  icon = " ui-icon-search " />
+					action="denunciaList?faces-redirect=true" icon = "ui-icon-search" />
 
 			</p:submenu >
 

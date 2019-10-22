@@ -33,7 +33,7 @@
 						itemValue="#{municipio}" />
 				</p:selectOneMenu>
 			</a:field>
-			
+
 			<a:field label="Categorias" spaceLeft="10px">
 				<p:selectOneMenu id="slcStatus"
 					value="#{DenunciaListControl.categoria}" autoWidth="false"
@@ -63,8 +63,8 @@
 					<f:convertDateTime pattern="dd/MM/yyyy" />
 				</p:inputMask>
 			</a:field>
-			
-			
+
+
 
 			<a:newLine />
 			<a:field spaceLeft="10px;">
@@ -76,7 +76,7 @@
 			</a:field>
 			<a:field spaceLeft="10px">
 				<p:commandButton ajax="false"
-					action="descolherCategoria?faces-redirect=true" value="Cadastrar"
+					action="escolherCategoria?faces-redirect=true" value="Cadastrar"
 					icon="ui-icon-plus" immediate="true" />
 			</a:field>
 
@@ -116,12 +116,11 @@
 			</p:column>
 			<p:column headerText="Visualizar" style="text-align:center"
 				exportable="false">
-				<p:commandButton id="btnVisualizar" icon="ui-icon-search"
-					action="visualizarDenuncia?faces-redirect=true" ajax="false"
-					title="Clique aqui para visualizar os dados dessa denúncia">
-					<f:setPropertyActionListener value="#{denuncia}"
-						target="#{DenunciaControl.denuncia}" />
-				</p:commandButton>
+				<p:commandButton value="Visualizar" icon="ui-icon-search"
+					actionListener="#{VisualizarDenunciaControl.visualizarDenuncia(denuncia)}"
+					action="visualizarDenuncia?faces-redirect=true"
+					title="Clique aqui para visualizar os dados dessa denúncia."
+					style="width: 120px" />
 			</p:column>
 
 		</p:dataTable>

@@ -12,12 +12,8 @@ import br.com.sinosi.entidade.Municipio;
 
 public interface DenunciaDao extends Persistencia<Denuncia> {
 
-	List<Denuncia> listarPorUfMunicipioDataSolicitacaoEmailCategoria(EnumUf uf, Municipio municipio, Date dataDenuncia, Date dataFim, String emailUsuario, EnumCategoria categoria)
-			throws PersistenciaException;
-	
-	
-	
-	
+	List<Denuncia> listarPorUfMunicipioDataSolicitacaoEmailCategoria(EnumUf uf, Municipio municipio, Date dataDenuncia,
+			Date dataFim, String emailUsuario, EnumCategoria categoria) throws PersistenciaException;
 
 	Denuncia consultarPorId(Integer id) throws PersistenciaException;
 

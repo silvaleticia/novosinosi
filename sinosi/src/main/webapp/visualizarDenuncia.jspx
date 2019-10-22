@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="templateExterna.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel id="panelGeral"
+			header=" CADASTRO SIMPLES DE COMUNICAÇÃO E DENUNCIAS DE CRIMES AMBIENTAIS"
+			style="width:100%;">
+
+			<a:fieldset id="afsAcidente" legend="Acidente" style="width:680px;">
+
+				<a:newLine />
+				<p:panelGrid columns="2" style="width:680px;">
+						<b>Endereco:</b>
+						<p:outputLabel
+							value="#{VisualizarDenunciaControl.denuncia.localAcidente.endereco}" />
+						<b>Cep:</b>
+						<p:outputLabel
+							value="#{VisualizarDenunciaControl.denuncia.localAcidente.cep}" />
+						<b>Município: </b>
+						<p:outputLabel
+							value="#{VisualizarDenunciaControl.denuncia.localAcidente.municipio}" />
+						<b>Latitude:</b>
+						<p:outputLabel
+							value="#{VisualizarDenunciaControl.denuncia.localAcidente.latitude}" />
+						<b>Longitude:</b>
+						<p:outputLabel
+							value="#{VisualizarDenunciaControl.denuncia.localAcidente.longitude}" />
+					</p:panelGrid>
+				</a:fieldset>
+
+				<a:fieldset id="afsDescricao" style="width:680px;" legend="Acidente">
+					<p:panelGrid columns="2" style="width:680px;">
+						<b>Categoria:</b>
+						<p:outputLabel
+							value="#{VisualizarDenunciaControl.denuncia.categoria.descricao}" />
+						<b>Descrição da Denuncia:</b>
+						<p:outputLabel
+							value="#{VisualizarDenunciaControl.denuncia.descricaoDenuncia}" />
+					</p:panelGrid>
+				</a:fieldset>
+
+				<a:fieldset id="afsUsuario" legend="Usuário" style="width:680px;">
+					<p:panelGrid columns="2" style="width:680px;">
+						<b>Nome:</b>
+						<p:outputLabel value="#{VisualizarDenunciaControl.denuncia.nomeUsuario}" />
+						<b>Telefone:</b>
+						<p:outputLabel value="#{VisualizarDenunciaControl.denuncia.telefoneUsuario}" />
+						<b>Email: </b>
+						<p:outputLabel value="#{VisualizarDenunciaControl.denuncia.emailUsuario}" />
+					</p:panelGrid>
+				</a:fieldset>
+			</p:panel>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton immediate="true"
+					action="denunciaList?faces-redirect=true" value="Fechar" ajax="false"
+					icon="ui-icon ui-icon-close" />
+			</a:field>
+			<a:newLine />
+			<a:newLine />
+
+
+	</ui:define>
+</ui:composition>
