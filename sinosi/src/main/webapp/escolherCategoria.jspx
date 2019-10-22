@@ -7,100 +7,128 @@
 	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
 	xmlns:p="http://primefaces.org/ui">
 	<ui:define name="corpo">
+			<style>
+.ui-datalist-content .ui-widget-content {
+	width: 400px;
+}
 
-		<p:panel id="panelInicio" styleClass="inicio panel-index">
+#tblAvisos {
+	width: 400px;
+}
+</style>
+			<p:panel styleClass="inicio interno">
+				<div class="col-xs-12" style="text-align: center">
+					<div class="row" style="text-align: center">
+
+						<div class="col-lg-1"></div>
+						<div class="col-lg-12"></div>
+						<div class="huge">Informe uma categoria</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-12">
+							<p:commandLink action="denuncia?faces-redirect=true"
+								actionListener="#{DenunciaControl.iniciarDenuncia('VEGETACAO')}"
+								ajax="false">
+								<div class="panel panel-primary ">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Vegetação</div>
+										
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-12">
+							<p:commandLink action="denuncia?faces-redirect=true"
+								actionListener="#{DenunciaControl.iniciarDenuncia('FAUNA')}"
+								ajax="false">
+								<div class="panel panel-green ">
+									<div class="panel-heading panel-acessorapido">
+									
+										<div class="huge">Fauna</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-12">
+							<p:commandLink action="denuncia?faces-redirect=true" type="image"
+								actionListener="#{DenunciaControl.iniciarDenuncia('AR')}"
+								ajax="false">
+								<div class="panel panel-primary ">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Ar</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
 
 
+						<div class="col-lg-6 col-md-6 col-sm-12">
+							<p:commandLink action="denuncia?faces-redirect=true"
+								actionListener="#{DenunciaControl.iniciarDenuncia('SOLO')}"
+								ajax="false">
+								<div class="panel panel-green">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Solo</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
 
-			<div class="row" style="text-align: center">
-				<h2>Escolha uma categoria</h2>
-				<a:newLine />
-				<a:newLine />
+						<div class="col-lg-6 col-md-6 col-sm-12">
+							<p:commandLink action="denuncia?faces-redirect=true"
+								actionListener="#{DenunciaControl.iniciarDenuncia('RUIDO')}"
+								ajax="false">
+								<div class="panel panel-primary ">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Ruído</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
 
-				<div class="col-lg-4 col-md-6 col-sm-12">
-					<p:commandLink class="btn-index-acao"
-						action="denuncia?faces-redirect=true" type="image"
-						src="images/desastrenatural.png"
-						actionListener="#{DenunciaControl.iniciarDenuncia('VEGETACAO')}"
-						ajax="false" immediate="true">
-						Vegetação
-					</p:commandLink>
+						<div class="col-lg-6 col-md-6 col-sm-12">
+							<p:commandLink action="denuncia?faces-redirect=true"
+								actionListener="#{DenunciaControl.iniciarDenuncia('FOGO')}"
+								ajax="false">
+								<div class="panel panel-green ">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Fogo</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-12">
+							<p:commandLink action="denuncia?faces-redirect=true"
+								actionListener="#{DenunciaControl.iniciarDenuncia('AGUA')}"
+								ajax="false">
+								<div class="panel panel-primary ">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Água</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-12">
+							<p:commandLink action="denuncia?faces-redirect=true"
+								actionListener="#{DenunciaControl.iniciarDenuncia('OUTROS')}"
+								ajax="false">
+								<div class="panel panel-green ">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Outros</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
+
+
+					</div>
 				</div>
+		<a:newLine/>
+			</p:panel>
 
-				<div class="col-lg-4 col-md-6 col-sm-12">
-					<p:commandLink class="btn-index-acao"
-						action="denuncia?faces-redirect=true" type="image"
-						src="images/desastrenatural.png"
-						actionListener="#{DenunciaControl.iniciarDenuncia('FAUNA')}"
-						ajax="false" immediate="true">
-						Fauna
-					</p:commandLink>
-				</div>
-
-				<div class="col-lg-4 col-md-6 col-sm-12">
-					<p:commandLink class="btn-index-acao"
-						action="denuncia?faces-redirect=true" type="image"
-						src="images/desastrenatural.png"
-						actionListener="#{DenunciaControl.iniciarDenuncia('AR')}"
-						ajax="false" immediate="true">
-						Ar
-					</p:commandLink>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-12">
-					<p:commandLink class="btn-index-acao"
-						action="denuncia?faces-redirect=true" type="image"
-						src="images/desastrenatural.png"
-						actionListener="#{DenunciaControl.iniciarDenuncia('SOLO')}"
-						ajax="false" immediate="true">
-						Solo
-					</p:commandLink>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-12">
-					<p:commandLink class="btn-index-acao"
-						action="denuncia?faces-redirect=true" type="image"
-						src="images/desastrenatural.png"
-						actionListener="#{DenunciaControl.iniciarDenuncia('RUIDO')}"
-						ajax="false" immediate="true">
-						Ruído
-					</p:commandLink>
-
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-12">
-					<p:commandLink class="btn-index-acao"
-						action="denuncia?faces-redirect=true" type="image"
-						src="images/desastrenatural.png"
-						actionListener="#{DenunciaControl.iniciarDenuncia('FOGO')}"
-						ajax="false" immediate="true">
-						Fogo
-					</p:commandLink>
-				</div>
-				<div class="col-lg-4 col-md-6 col-sm-12">
-					<p:commandLink class="btn-index-acao"
-						action="denuncia?faces-redirect=true" type="image"
-						src="images/desastrenatural.png"
-						actionListener="#{DenunciaControl.iniciarDenuncia('AGUA')}"
-						ajax="false" immediate="true">
-						Água
-					</p:commandLink>
-				</div>
-
-				<div class="col-lg-4 col-md-6 col-sm-12">
-					<p:commandLink class="btn-index-acao"
-						action="denuncia?faces-redirect=true" type="image"
-						src="images/desastrenatural.png"
-						actionListener="#{DenunciaControl.iniciarDenuncia('OUTROS')}"
-						ajax="false" immediate="true"> 
-						Outros
-					</p:commandLink>
-				</div>
-
-			</div>
-			<a:newLine />
-
-
-
-		</p:panel>
-
-	</ui:define>
+		</ui:define>
 
 </ui:composition>
+

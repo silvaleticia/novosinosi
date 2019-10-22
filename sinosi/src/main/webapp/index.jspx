@@ -7,8 +7,16 @@
 	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
 	xmlns:p="http://primefaces.org/ui">
 	<ui:define name="corpo">
+		<style>
+.ui-datalist-content .ui-widget-content {
+	width: 400px;
+}
 
-		<p:panel id="panelInicio" styleClass="inicio panel-index">
+#tblAvisos {
+	width: 400px;
+}
+</style>
+		<p:panel styleClass="inicio interno">
 			<div class="row" style="text-align: center">
 				<h2>Denúncias de crimes ambientais</h2>
 
@@ -21,24 +29,38 @@
 					sociais e econômicas, também devem ser comunicados, assim como o
 					rompimento de barragens de água, resíduos e rejeitos.</div>
 			</div>
+			<a:newLine />
 
-			<div class="row">
-				<div class="col-md-6">
-					<p:commandLink class="btn-index-acao"
-						action="escolherCategoria?faces-redirect=true"
-						actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
-						immediate="true">
-						 Registrar Denúncia 
-					</p:commandLink>
-				</div>
-				<div class="col-md-6">
-					<div class="float-right">
-						<p:commandLink class="btn-index-acao"
-							action="consultarDenuncia?faces-redirect=true"
-							actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
-							immediate="true">
-							 Acompanhar Denúncia
-						</p:commandLink>
+
+
+			<div class="col-xs-12" style="text-align: center">
+
+
+				<div class="row" style="text-align: center">
+					<div class="col-lg-1"></div>
+					<div class="col-lg-12">
+						<div class="col-lg-4 col-md-4 col-sm-12">
+							<p:commandLink action="escolherCategoria?faces-redirect=true"
+								actionListener="#{MenuControlador.gerenciarSessao}" ajax="false">
+								<div class="panel panel-primary ">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Registrar Denúncia</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-12"></div>
+
+						<div class="col-lg-4 col-md-4 col-sm-12">
+							<p:commandLink action="consultarDenuncia?faces-redirect=true"
+								actionListener="#{MenuControlador.gerenciarSessao}" ajax="false">
+								<div class="panel panel-green ">
+									<div class="panel-heading panel-acessorapido">
+										<div class="huge">Acompanhar Denúncia</div>
+									</div>
+								</div>
+							</p:commandLink>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -47,5 +69,7 @@
 		</p:panel>
 
 	</ui:define>
+
+
 
 </ui:composition>

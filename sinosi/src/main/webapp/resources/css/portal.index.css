@@ -1,0 +1,185 @@
+html {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+body {
+	background-color: #3c763d;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	letter-spacing: 0.2pt;
+}
+
+h6, h5, h4, h3, h2, h1, label {
+	color: #fff;
+}
+
+
+
+.no-padding-right {
+    padding-right: 0px;
+}
+.no-padding-left {
+    padding-left: 0px;
+}
+
+.titulo-pagina {
+ 	padding-top: 0px;
+    font-size: 1.2em;
+    margin-top: -20px;
+    display: flex;
+    width: 300px;
+    float: left;
+}
+.titulo-pagina h1 {
+	border-left: 1px dashed #fff;
+    padding-left: 20px;
+    padding-top: 30px;
+    padding-bottom: 20px;
+    /* margin-left: 30px; */
+    /* left: 120px; */
+    /* float: right; */
+    /* position: absolute; */
+   
+}
+
+.header-topo-container {
+	padding-top: 20px;
+}
+    
+
+/* com logo dentro do h1 */
+.logo-governo.right h1 { 
+   border-right: 1px dashed #fff;
+    padding-right: 17px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    /* margin-left: 30px; */
+    left: 20px;
+    float: left;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+
+#main-content.externo {
+	padding-bottom: 200px;
+    padding-top: 5em;
+}
+
+.footer-externo {
+	background-color: #0a5e1b !important;
+}
+.footer-externo .footer-container {
+    padding-top: 3em;
+    padding-bottom: 3em;
+    height: 100%;
+}
+
+
+.user-info .ui-overlaypanel {
+    background: #3c763d;
+    border: 1px dashed #693;
+    padding: 10px;
+    padding-bottom: 30px;
+}
+.user-info .ui-panel .ui-widget-header {
+    border-bottom: 1px dashed #fff;
+    /* border-style: dashed; */
+}
+
+.user-info .ui-panel-title {
+    color: #FFF;
+    font-size: 0.9em;
+}
+.info-text {
+    color: #fff;
+    /* margin-left: 10px; */
+    font-size: 0.9em;
+}
+
+
+.login-container * {
+    font-size: 8pt;
+    color: #fff;
+}
+
+.login-container a {
+    color: #c8a700;
+}
+
+
+.login-container {
+    background: #5e9f3c54;
+    display: block;
+    width: 320px;
+    border-radius: 1em;
+    float: right;	
+}
+
+.login-container.index {
+    background: #f5f5f50f;
+    display: block;
+    width: 320px;
+    border-radius: 1em;
+    float: right;	
+    text-align:left;
+}
+
+.login-icon-container .titulo * {
+    color: #fff;
+     font-size: 2.4em;
+    letter-spacing: 0px;
+    font-weight: bold;
+}
+.login-icon-container .titulo a {
+	color: #c8a700!important;	
+}
+.login-icon-container .titulo {
+    font-size: 0.8em;
+    padding-top: 2px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #c8a700;
+    padding-bottom: 15px;
+}
+
+
+
+/**
+ * dashboard sistemas
+ */
+.i-sistema {
+  min-height: 100px;
+    /* border-radius: 0.5em; */
+    /* border-right: 1px solid #669933; */
+    margin: 0px auto;
+    text-align: center;
+    height: 100px;
+    /* display: block; */
+    display: block;
+    border-bottom: 3px dashed #669933;
+    /* float: right; */
+    
+}
+.i-sistema a {
+	color: #fff;
+}
+.i-sistema a:hover {
+	color: #C8A700;
+}
+.i-sistema h1,
+.i-sistema h2,
+.i-sistema h3 {
+    font-weight: bold;
+    letter-spacing: 0px;
+    vertical-align: middle;
+    display: grid;
+    font-size: 2em;
+    padding-top: 20px;
+}

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel id="panelGeral" header="Pesquisar denúncias cadastradas">
+
+			<a:field label="Estado" spaceLeft="10px">
+				<p:selectOneMenu id="estado" value="#{DenunciaListControl.uf}"
+					style="width: 190px" filter="true" filterMatchMode="contains">
+					<f:selectItem itemValue="" itemLabel="Todos" />
+					<f:selectItems value="#{DenunciaListControl.ufs}" />
+					<f:ajax event="change"
+						listener="#{DenunciaListControl.filtrarMunicipios}"
+						render="municipio" />
+				</p:selectOneMenu>
+			</a:field>
+
+			<a:field label="Município" spaceLeft="10px">
+				<p:selectOneMenu id="municipio" styleClass="obrigatorio"
+					converter="objectConverter"
+					value="#{DenunciaListControl.municipio}" style="width:200px"
+					filter="true" filterMatchMode="contains">
+					<f:selectItem itemLabel="Selecione o município"
+						noSelectionOption="true" />
+					<f:selectItems value="#{DenunciaListControl.municipios}"
+						var="municipio" itemLabel="#{municipio.descricao}"
+						itemValue="#{municipio}" />
+				</p:selectOneMenu>
+			</a:field>
+			
+			<a:field label="Categorias" spaceLeft="10px">
+				<p:selectOneMenu id="slcStatus"
+					value="#{DenunciaListControl.categoria}" autoWidth="false"
+					style="width:200px" filter="true" filterMatchMode="contains">
+					<f:selectItem itemLabel="Selecione a Categoria" itemValue="#{null}"
+						noSelectionOption="true" />
+					<f:selectItems value="#{DenunciaListControl.tiposCategorias}"
+						var="status" itemLabel="#{categoria.descricao}" />
+				</p:selectOneMenu>
+			</a:field>
+
+
+
+			<a:field spaceLeft="20px" label="Data de Cadastramento">
+				<p:outputLabel value="Inicial" />
+				<p:spacer width="5px" />
+				<p:inputMask value="#{DenunciaListControl.dataInicio}"
+					style="width: 110px" mask="99/99/9999">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputMask>
+
+				<p:spacer width="10px" />
+				<p:outputLabel value="Final" />
+				<p:spacer width="5px" />
+				<p:inputMask value="#{DenunciaListControl.dataFim}"
+					style="width: 110px" mask="99/99/9999">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputMask>
+			</a:field>
+			
+			
+
+			<a:newLine />
+			<a:field spaceLeft="10px;">
+				<p:commandButton
+					actionListener="#{DenunciaListControl.listarDenuncias}"
+					value="Pesquisar" icon="ui-icon ui-icon-search"
+					update="tblNotSimples" ajax="false" />
+
+			</a:field>
+			<a:field spaceLeft="10px">
+				<p:commandButton ajax="false"
+					action="descolherCategoria?faces-redirect=true" value="Cadastrar"
+					icon="ui-icon-plus" immediate="true" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Limpar" ajax="false"
+					action="denunciaListList?faces-redirect=true"
+					icon="ui-icon ui-icon-trash" immediate="true" />
+			</a:field>
+
+			<a:newLine />
+		</p:panel>
+
+		<p:dataTable id="tblNotSimples"
+			value="#{DenunciaListControl.denuncias}" var="denuncia"
+			emptyMessage="Sem registros">
+			<f:facet name="header">
+				<h:outputText value="Denúncias cadastradas" />
+			</f:facet>
+			<p:column style="text-align:center" headerText="Número">
+				<p:outputLabel value="#{denuncia.id}" />
+			</p:column>
+			<p:column style="text-align:center" headerText="Email do Usuário">
+				<p:outputLabel value="#{denuncia.emailUsuario}" />
+			</p:column>
+			<p:column style="text-align:center" headerText="Tipo de Evento">
+				<p:outputLabel value="#{denuncia.categoria.descricao}" />
+			</p:column>
+			<p:column style="text-align:center" headerText="Município">
+				<p:outputLabel value="#{denuncia.localAcidente.municipio}" />
+			</p:column>
+
+			<p:column style="text-align:center" headerText="Data da denúncia">
+				<p:outputLabel value="#{denuncia.dataDenuncia}">
+					<f:convertDateTime pattern="dd/MM/yyyy " />
+				</p:outputLabel>
+
+			</p:column>
+			<p:column headerText="Visualizar" style="text-align:center"
+				exportable="false">
+				<p:commandButton id="btnVisualizar" icon="ui-icon-search"
+					action="visualizarDenuncia?faces-redirect=true" ajax="false"
+					title="Clique aqui para visualizar os dados dessa denúncia">
+					<f:setPropertyActionListener value="#{denuncia}"
+						target="#{DenunciaControl.denuncia}" />
+				</p:commandButton>
+			</p:column>
+
+		</p:dataTable>
+
+	</ui:define>
+
+
+</ui:composition>

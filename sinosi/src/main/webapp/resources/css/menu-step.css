@@ -1,0 +1,65 @@
+.ui-steps .ui-steps-item {
+	width: 20%;
+}
+
+.ui-state-highlight {
+	text-shadow: none !important;
+}
+
+.ui-steps.custom {
+	margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+	height: 15px;
+	width: 100% !important;
+	padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+	background-color: #0081c2;
+	color: #FFFFFF;
+	display: inline-block;
+	width: 20%;
+	border-radius: 10px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+}
+
+.ui-steps.custom .ui-steps-item.ui-state-highlight .ui-steps-title {
+	color: #555;
+}
+
+.ui-state-pristine {
+	text-shadow: none !important;
+}
+
+/** 
+				correcao
+			*/
+.ui-steps ul li.ui-steps-item.active {
+	background-color: #0081c2;
+	background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+	background-position: 0 center;
+	background-repeat: repeat-x;
+	color: #ffffff;
+	text-decoration: none;
+	background: rgba(0, 0, 0, 0)
+		linear-gradient(to bottom, #669933 0%, #669933 60%, #669933 100%)
+		repeat scroll 0 0;
+}
+
+.ui-steps.ui-widget.ui-helper-clearfix.custom ul li.ui-steps-item.ui-state-highlight.ui-corner-all.default
+	{
+	background-color: #0081c2 !important;
+	background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+	background-position: 0 center;
+	background-repeat: repeat-x;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.ui-steps.ui-widget.ui-helper-clearfix.custom ul li.ui-steps-item.ui-state-default.ui-corner-all a#formCorpo:steps1.ui-menuitem-link.ui-corner-all.default
+	{
+	background-color: #669933;
+}

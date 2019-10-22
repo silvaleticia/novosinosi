@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="utf-8" ?>
 <ui:composition template="templateExterna.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
@@ -196,7 +197,7 @@
 				</a:field>
 
 				<a:field spaceLeft="10px">
-					<p:commandButton immediate="true" action="/index" value="Fechar"
+					<p:commandButton immediate="true" action="index?faces-redirect=true" value="Fechar"
 						ajax="false" icon="ui-icon ui-icon-close" />
 				</a:field>
 			</a:fieldset>

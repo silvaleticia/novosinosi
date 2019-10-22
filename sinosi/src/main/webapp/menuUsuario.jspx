@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:sticky id="stickyMenu" target=":formMenuUsuario:menubar" />
+	<p:growl autoUpdate="true" id="growl" showDetail="true" sticky="true" />
+	<p:messages autoUpdate="true" closable="true" />
+
+	<h:form id="formMenuUsuario">
+		<p:menubar id="menubar" autoDisplay="true">
+
+			<p:menuitem icon="fa fa-home" value="Início"
+				action="/inicio?faces-redirect=true" ajax="false" />
+
+			<p:submenu  label = " Cadastro "  icon = " ui-icon-plus " >
+				<p:menuitem  value = " Usuário "  action = " usuarioList? faces-redirect = true "
+					icon = " ui-icon-search " />
+				<p:menuitem  value = " Denúncias "  action = " eventoList? faces-redirect = true "
+					icon = " ui-icon-search " />
+				<p:menuitem  value = " Denúncias List "
+					action = " denunciaList? faces-redirect = true "  icon = " ui-icon-search " />
+
+			</p:submenu >
+
+			
+
+			<p:submenu label="Configurações" icon="fa fa-gear"
+				rendered="#{securityScope.userInRole['ADMIN,GERENTE,ATENDIMENTO']}">
+
+				<p:menuitem icon="fa fa-user" value="Usuários"
+					actionListener="#{MenuControl.gerenciarSessao}"
+					action="usuarioList?faces-redirect=true" ajax="false" />
+			</p:submenu>
+
+
+			<p:menuitem value="Sair" icon="fa fa-power-off"
+				onclick="document.location.href='/sinosi/sair.jsp'" immediate="true" />
+		</p:menubar>
+	</h:form>
+</ui:composition>

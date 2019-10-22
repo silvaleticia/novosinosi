@@ -70,7 +70,7 @@ public class Denuncia extends Entidade implements Serializable {
 
 	
 	@PrePersist
-	private void insereDataNotificacao() {
+	private void insereDatadataDenuncia() {
 		setDataDenuncia(new Date());
 
 	}

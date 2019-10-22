@@ -9,15 +9,23 @@
 	<ui:define name="corpo">
 
 		<p:panel header="Confirmação de Denúncia" id="panel">
-		   <h:outputText value="Prezado(a), vocë pode consultar sua denúncia pelo email caso tenha cadastrado ou pelo número:" />
-		   <a:newLine />
+			<h:outputText
+				value="Prezado(a), vocë pode consultar sua denúncia pelo email caso tenha cadastrado ou pelo número:" />
+			<a:newLine />
 			<a:newLine />
 			<b><h:outputText value="#{DenunciaControl.denuncia.id}" /></b>
 			<a:newLine />
 			<a:newLine />
-			<h:outputLink value="/index.jsp" style="color: blue">
-				<h:outputText value="OK" />
-			</h:outputLink>
+			
+			<a:field spaceLeft="10px">
+					<p:commandButton immediate="true" action="index?faces-redirect=true" value="Fechar"
+						ajax="false" icon="ui-icon ui-icon-close" />
+				</a:field>
+				
+				
+			<a:newLine />
+
+
 		</p:panel>
 
 	</ui:define>

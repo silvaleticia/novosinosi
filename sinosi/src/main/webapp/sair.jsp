@@ -11,7 +11,7 @@
 	      session.removeAttribute(values.nextElement().toString());
 	   }
 	   session.invalidate();
-	   response.sendRedirect("inicio.jsf");
+	   response.sendRedirect("index.jsf");
 	%>
 	SAINDO DO SISTEMA ... AGUARDE ...
 </body>

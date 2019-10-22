@@ -12,6 +12,7 @@ import br.com.ambientinformatica.jpa.exception.PersistenciaException;
 import br.com.ambientinformatica.jpa.persistencia.PersistenciaJpa;
 import br.com.ambientinformatica.util.UtilLog;
 import br.com.sinosi.entidade.Denuncia;
+import br.com.sinosi.entidade.EnumCategoria;
 import br.com.sinosi.entidade.EnumUf;
 import br.com.sinosi.entidade.Municipio;
 
@@ -21,21 +22,28 @@ public class DenunciaDaoJpa extends PersistenciaJpa<Denuncia> implements Denunci
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public List<Denuncia> listarPorUfMunicipioDataSolicitacao(EnumUf uf, Municipio municipio, Date dataInicio,
-			Date dataFim) throws PersistenciaException {
+	public List<Denuncia> listarPorUfMunicipioDataSolicitacaoEmailCategoria(EnumUf uf, Municipio municipio, Date dataInicio,
+			Date dataFim, String emailUsuario, EnumCategoria categoria) throws PersistenciaException {
 		try {
 
-			String sql = "select distinct d from Denuncia d where 1=1";
+			String sql = "select distinct d from Denuncia d where 1=1 ";
 
 			if (uf != null) {
-				sql += " and c.localAcidente.municipio.uf = :uf";
+				sql += " and d.localAcidente.municipio.uf = :uf";
 			}
 			if (municipio != null) {
-				sql += " and c.localAcidente.municipio = :municipio";
+				sql += " and d.localAcidente.municipio = :municipio";
 			}
 			if (dataInicio != null && dataFim != null) {
-				sql += " and c.dataDaDenuncia between :dataInicio and :dataFim";
+				sql += " and d.dataDaDenuncia between :dataInicio and :dataFim";
 			}
+			if(emailUsuario != null && !emailUsuario.isEmpty()){
+                sql += " and upper(d.emailUsuario) like upper(:emailUsuario)";
+            }
+			if(categoria != null){
+                sql += " and d.categoria = :categoria";
+            }
+			
 			TypedQuery<Denuncia> query = em.createQuery(sql, Denuncia.class);
 
 			if (uf != null) {
@@ -47,6 +55,12 @@ public class DenunciaDaoJpa extends PersistenciaJpa<Denuncia> implements Denunci
 			if (dataInicio != null && dataFim != null) {
 				query.setParameter("dataInicio", dataInicio);
 				query.setParameter("dataFim", dataFim);
+			}
+			if(emailUsuario != null && !emailUsuario.isEmpty()){
+                query.setParameter("emailUsuario", "%" + emailUsuario + "%");
+            }
+			if (categoria != null) {
+				query.setParameter("categoria", categoria);
 			}
 
 			return query.getResultList();

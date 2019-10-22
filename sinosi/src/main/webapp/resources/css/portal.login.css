@@ -1,0 +1,58 @@
+.ps-whole-header {
+	display: block !important;
+}
+html {
+  font-size: 12px;
+    
+}
+main {
+    padding-top: 200px;
+    display: grid;
+}
+.login-container {
+	float: unset;
+    display: flex;
+    clear: both;
+    display: table;
+    margin: 0px auto;
+}
+.login-page {
+    position: absolute;
+    /* margin: 0px auto; */
+    width: 100%;
+}
+
+.login-page .login-container {
+    z-index: 999999;
+    top: 7%;
+    /* position: absolute; */
+    /* display: contents; */
+    margin: 0px auto;
+}
+
+.login-container .msg-error {
+    text-align: center;
+    /* width: 100%; */
+    display: block;
+    padding: 10px;
+    margin-top: 30px;
+    color: #fde7e7;
+    text-decoration: blink;
+    /* text-decoration-line: underline; */
+    /* text-decoration-style: dashed; */
+    border: 1px dashed #48a549;
+    margin-left: 20px;
+    margin-right: 20px;
+    background-color: #66993345;
+}
+
+.footer-externo {
+    position: fixed;
+    bottom: 0px;
+}
+
+.container.corpo {
+    padding-bottom: 20px;
+    float: none;
+    clear: both;
+}

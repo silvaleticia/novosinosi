@@ -1,24 +1,20 @@
+@CHARSET "UTF-8";
+
+/* Html puro */
 html {
 	height: 100%;
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
 	overflow-y: auto;
-	box-sizing: border-box;
 }
 
 body {
-	position: relative;
-	margin: 0;
-	padding-bottom: 6rem;
-	min-height: 100%;
 	background-color: #cfe7b8;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 	letter-spacing: 0.2pt;
-}
-
-#pagewrapper {
-	min-height: 100%;
-	position: relative;
 }
 
 h1, .h1 {
@@ -41,22 +37,90 @@ h5, .h5 {
 	font-size: 1.1em;
 }
 
-/* Login */
-.login-container {
-	background-color: #AFB42B;
+h4, h3, h2, h1, label {
+	color: #51752D;
 }
 
-/* common */
+/* Primefaces hacks */
+
+.ui-widget {
+	font-size: 14px !important;
+}
+.ui-menu .ui-menu-parent .ui-menu-child {
+	width: 300px !important; /* exagerated !! */
+}
+
+.header-topo-nav-links {
+	display: block;
+	width: 100%;
+	height: 25px;
+	min-height: 25px;
+	padding: 5px;
+	margin-bottom: 0px;
+	color: #fff;
+	text-transform: uppercase;
+	background-color: #669933;
+}
+
+
+/* Estilos Criados */
+#pagewrapper {
+	min-height: 100%;
+	position: relative;
+}
+#main-content {
+	padding-bottom: 110px;
+}
+
+.detalhes .ui-panel-content {
+	padding: 0;
+}
+.detalhes .ui-widget-content {
+	padding: 0;
+}
+.obrigatorioAutoComplete input {
+	border-left-color: #ff0000 !important;
+	border-left-width: 2px !important;
+}
+.obrigatorio {
+	border-left-color: #ff0000 !important;
+	border-left-width: 2px !important;
+}
+
+/*css map leaflet tela solicitacaoDadosPropriedade */
+#map {
+	height: 600px;
+}
+.centered {
+	position: absolute;
+	height: 100px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	text-align:
+}
+.titulo_a_field {
+	color: #006600;
+	font-weight: bold;
+}
+
+/* Ambiente jsf */
 fieldset {
 	margin-top: 10px;
 }
-
 fieldset legend {
 	color: #51752D;
 	margin-bottom: 10px;
 	font-size: 1.1em;
 	font-weight: bold;
 }
+label{
+	display: inline;
+}
+legend {
+	font-size: 1.1em;
+}
+
 /* header */
 .header-topo {
 	height: 120px;
@@ -64,9 +128,8 @@ fieldset legend {
 	padding-left: 0px;
 	padding-right: 0px;
 	padding-bottom: 30px;
-	background: #9BCC81
-		url("#{request.contextPath}/resources/imagens/topo-pattern.png")
-		repeat-y top left;
+	margin-bottom: 5px;
+	background: #9BCC81 url("#{request.contextPath}/resources/imagens/topo-pattern.png") repeat-y top left;
 	border-bottom: 1px solid #669933;
 }
 
@@ -125,22 +188,24 @@ fieldset legend {
 	margin-left: 5px;
 }
 
-/* main content */
-#main-content {
-	padding-bottom: 120px;
-}
-
 /* footer */
 #footer {
 	position: absolute;
-	right: 0;
-	bottom: 0;
-	left: 0;
+	bottom: 0px;
+	left: 0px;
 	width: 100%;
-	padding-top: 10px;
-	padding-bottom: 10px;
+	height: 90px;
+	max-height: 90px;
+/* 	padding-top: 5px;
+	padding-bottom: 5px; */
 	background-color: #658A2D;
 	border-top: 1px solid #3F561C;
+}
+
+.footer-externo .footer-container {
+	padding-top: 3em;
+	padding-bottom: 5px;
+	height: 100%;
 }
 
 .footer-container {
@@ -177,9 +242,6 @@ fieldset legend {
 	text-transform: uppercase;
 	font-weight: bold;
 }
-/**
-BOOSTRAP
-*/
 
 /* PRIMEFACES and forms*/
 .ui-widget {
@@ -194,7 +256,7 @@ BOOSTRAP
 /* ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all */
 .ui-widget-header {
 	background-color: #9BCC81;
-	color: #fff;
+	color: #658a2d;
 }
 
 .ui-panel .ui-panel-title {
@@ -206,10 +268,6 @@ BOOSTRAP
 	margin-right: 10px;
 }
 
-h4, h3, h2, h1, label {
-	color: #51752D;
-}
-
 /* primefaces menubar */
 
 /*
@@ -218,13 +276,9 @@ ul.ui-menu-list  > li:nth-child(1)
 	margin-left: -10px;			
 }
 */
-label {
-	font-weight: normal;
-}
 
 .ui-menu.ui-menubar {
 	/* background: #E3F2FD; */
-	
 }
 
 .ui-helper-clearfix {
@@ -252,68 +306,55 @@ label {
 
 .ui-menu.ui-sticky {
 	padding-left: 80px;
-	background: #E3F2FD
-		url("#{request.contextPath}/resources/imagens/logo-sinosi.png")
-		no-repeat 10px 10px;
+	background: #E3F2FD url("#{request.contextPath}/resources/imagens/logo-dof.png") no-repeat 10px 10px;
 	background-size: 75px;
 	border-top: 2px solid #669933;
+	width: 110%;
 }
 
-/* primefaces tables 
+/* primefaces tables */
 .ui-datatable-header.ui-widget-header {
 	background: none;
 }
+
 .ui-datatable-header.ui-widget-header.ui-corner-top {
 	border: none;
 }
-*/
 .ui-datatable-data label {
 	/*color:	#000;*/
-	
 }
 
-.ui-selectonemenu .ui-selectonemenu-trigger {
+.ui-selectonemenu .ui-selectonemenu-trigger{
 	width: 23px !important;
 }
 
-.ui-selectonemenu-trigger .ui-state-default .ui-corner-right {
+.ui-selectonemenu-trigger .ui-state-default .ui-corner-right{
 	width: 23px !important;
 }
 
-.ui-selectonemenu  .ui-state-default, .ui-selectonemenu .ui-widget-content .ui-state-default,
-	.ui-selectonemenu .ui-widget-header .ui-state-default {
+.ui-selectonemenu  .ui-state-default, .ui-selectonemenu .ui-widget-content .ui-state-default, .ui-selectonemenu .ui-widget-header .ui-state-default {
 	background: none;
 	background: #669933; /* Old browsers */
-	background: -moz-linear-gradient(top, #669933 0%, #669933 60%, #669933 100%);
-	/* FF3.6-15 */
-	background: -webkit-linear-gradient(top, #669933 0%, #669933 60%, #669933 100%);
-	/* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom, #669933 0%, #669933 60%, #669933 100%);
-	/* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#71a938',
-		endColorstr='#669933', GradientType=0); /* IE6-9 */
+	background: -moz-linear-gradient(top, #669933 0%, #669933 60%, #669933 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #669933 0%, #669933 60%, #669933 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #669933 0%, #669933 60%, #669933 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#71a938', endColorstr='#669933', GradientType=0); /* IE6-9 */
 }
 
-.ui-datatable  .ui-state-default, .ui-datatable .ui-widget-content .ui-state-default,
-	.ui-datatable .ui-widget-header .ui-state-default {
+.ui-datatable  .ui-state-default, .ui-datatable .ui-widget-content .ui-state-default, .ui-datatable .ui-widget-header .ui-state-default {
 	color: #669933;
 	border: 1px solid #669933;
 	background: none;
 	background-color: #e2f2da;
 }
 
-.ui-widget-content .ui-selectonemenu.ui-state-focus, .ui-selectonemenu .ui-state-focus,
-	.ui-widget-content .ui-inputfield.ui-state-focus, .ui-inputfield.ui-state-focus
-	{
+.ui-widget-content .ui-selectonemenu.ui-state-focus, .ui-selectonemenu .ui-state-focus, .ui-widget-content .ui-inputfield.ui-state-focus, .ui-inputfield.ui-state-focus {
 	border-color: rgba(5, 149, 79, 0.8);
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px
-		rgba(126, 239, 104, 0.6);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(126, 239, 104, 0.6);
 	outline: 0 none;
 }
 
-.ui-state-default, .ui-widget-content .ui-button .ui-state-default,
-	.ui-widget-header .ui-button .ui-state-default, .ui-button, .ui-button .ui-widget .ui-state-default
-	{
+.ui-state-default, .ui-widget-content .ui-button .ui-state-default, .ui-widget-header .ui-button .ui-state-default, .ui-button, .ui-button .ui-widget .ui-state-default {
 	background: none;
 	background-color: #FF7F2A;
 	background: #669933;
@@ -331,25 +372,16 @@ label {
 	background: -moz-linear-gradient(top, #669933 0%, #669933 60%, #669933 100%);
 	background: -webkit-linear-gradient(top, #669933 0%, #669933 60%, #669933 100%);
 	background: linear-gradient(to bottom, #669933 0%, #669933 60%, #669933 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#71a938',
-		endColorstr='#669933', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#71a938', endColorstr='#669933', GradientType=0);
 }
 
 /** BS */
-textarea:focus, input[type="text"]:focus, input[type="password"]:focus,
-	input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus,
-	input[type="month"]:focus, input[type="time"]:focus, input[type="week"]:focus,
-	input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus,
-	input[type="search"]:focus, input[type="tel"]:focus, input[type="color"]:focus,
+textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus, input[type="month"]:focus, input[type="time"]:focus,
+	input[type="week"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="color"]:focus,
 	.uneditable-input:focus {
 	border-color: rgba(5, 149, 79, 0.8);
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px
-		rgba(126, 239, 104, 0.6);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(126, 239, 104, 0.6);
 	outline: 0 none;
-}
-
-legend {
-	font-size: 1.1em;
 }
 
 .wrapper {
@@ -436,16 +468,14 @@ legend {
 	border-bottom-color: transparent;
 }
 
-.header .nav li.dropdown.open .caret, .header .nav li.dropdown.open.active .caret,
-	.header .nav li.dropdown.open a:hover .caret {
+.header .nav li.dropdown.open .caret, .header .nav li.dropdown.open.active .caret, .header .nav li.dropdown.open a:hover .caret {
 	border-top-color: white;
 	border-bottom-color: white;
 	opacity: 1;
 	filter: alpha(opacity = 100);
 }
 
-.header .nav-tabs .dropdown-toggle .caret, .header .nav-pills .dropdown-toggle .caret
-	{
+.header .nav-tabs .dropdown-toggle .caret, .header .nav-pills .dropdown-toggle .caret {
 	margin-top: 6px;
 	border-top-color: #fff;
 	border-bottom-color: #fff;
@@ -516,19 +546,6 @@ legend {
 	margin-top: 10px;
 }
 
-.footer .span12 {
-	border-top: 1px solid #e0e0e0;
-	padding: 15px 0;
-}
-
-.footer p {
-	color: #999;
-}
-
-.footer p {
-	color: #999;
-}
-
 .ui-datatable tbody td  .noborder  *  td {
 	border: none;
 }
@@ -556,13 +573,30 @@ legend {
 }
 
 /*dialogs*/
-.ui-dialog.ui-widget-content .ui-dialog-titlebar {
+.ui-dialog.ui-widget-content .ui-dialog-titlebar{
 	background-color: #9bcc81;
 }
 
-.ui-inputswitch {
-	height: 30px !important;
+.EDICAO, .PENDENTE, .CORRIGIR_PENDENCIA {
+	background-color: #ffe6cc !important;
+	background-image: none !important;
+	color: #000000 !important;
 }
-.ui-inputswitch .ui-inputswitch-on, .ui-inputswitch .ui-inputswitch-off {
-	height: 30px !important;
+
+.SUBSTITUIDO {
+	background-color: #ffcacd !important;
+	background-image: none !important;
+	color: #000000 !important;
+}
+
+.INDEFERIDO, .NAO_ATENDE {
+	background-color: #ffe8e9 !important;
+	background-image: none !important;
+	color: #000000 !important;
+}
+
+.DEFERIDO, .ATENDE{
+	background-color: #ddfff4 !important;
+	background-image: none !important;
+	color: #000000 !important;
 }
