@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="templateExterna.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+
+		<p:panel header="Pagina de Consulta" id="panelGeral">
+
+			<p style="color: red; font-weight: bold;">AVISO LEGAL :</p>
+			<p style="text-align: justify;">Informamos que este site é para
+				uso humano, não sendo permitido o uso de ferramentas automatizadas
+				de consulta.</p>
+
+			<a:newLine />
+
+			<a:field label="Código da denuncia">
+				<p:inputText style="width:300px;"
+					value="#{AcompanharDenunciaControl.codigoDenuncia}" />
+			</a:field>
+
+			<a:field spaceLeft="10px;">
+				<p:commandButton value="Verificar" icon="ui-icon-check"
+					actionListener="#{AcompanharDenunciaControl.consultarDenuncia}"
+					update="panelDenuncia" ajax="false" />
+			</a:field>
+
+			<a:newLine />
+			<a:newLine />
+
+			<p:panel header="Denúncia Consultada" id="panelDenuncia" 
+				rendered="#{AcompanharDenunciaControl.denuncia != null}" >
+				<a:fieldset id="afsAcidente" legend="Denúncia" style="width:680px;">
+
+					<a:newLine />
+					<p:panelGrid columns="2" style="width:680px;">
+						<b>Endereco:</b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.localAcidente.endereco}" />
+						<b>Cep:</b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.localAcidente.cep}" />
+						<b>Município: </b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.localAcidente.municipio}" />
+						<b>Latitude:</b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.localAcidente.latitude}" />
+						<b>Longitude:</b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.localAcidente.longitude}" />
+					</p:panelGrid>
+				</a:fieldset>
+
+				<a:fieldset id="afsDescricao" style="width:680px;" legend="Acidente">
+					<p:panelGrid columns="2" style="width:680px;">
+						<b>Categoria:</b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.categoria.descricao}" />
+						<b>Descrição da Denuncia:</b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.descricaoDenuncia}" />
+					</p:panelGrid>
+				</a:fieldset>
+
+				<a:fieldset id="afsUsuario" legend="Usuário" style="width:680px;">
+					<p:panelGrid columns="2" style="width:680px;">
+						<b>Nome:</b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.nomeUsuario}" />
+						<b>Telefone:</b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.telefoneUsuario}" />
+						<b>Email: </b>
+						<p:outputLabel
+							value="#{AcompanharDenunciaControl.denuncia.emailUsuario}" />
+					</p:panelGrid>
+				</a:fieldset>
+			</p:panel>
+
+
+		</p:panel>
+
+		<a:field spaceLeft="10px;">
+				<p:commandButton value="Limpar" icon="ui-icon-check"
+					actionListener="#{AcompanharDenunciaControl.limparCampos}"
+					update=":formCorpo:panelGeral" ajax="false" />
+			</a:field>
+		
+		<a:field spaceLeft="10px">
+					<p:commandButton immediate="true"
+						action="index?faces-redirect=true" value="Fechar" ajax="false"
+						icon="ui-icon ui-icon-close" />
+				</a:field>
+				
+				
+
+
+
+		<a:newLine />
+	</ui:define>
+
+
+</ui:composition>

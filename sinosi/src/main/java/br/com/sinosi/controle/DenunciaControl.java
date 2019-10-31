@@ -116,7 +116,5 @@ public class DenunciaControl {
 	public void setDenuncia(Denuncia denuncia) {
 		this.denuncia = denuncia;
 	}
-	
-	
 
 }
