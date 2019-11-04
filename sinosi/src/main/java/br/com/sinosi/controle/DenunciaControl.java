@@ -35,7 +35,8 @@ public class DenunciaControl {
 	private List<Municipio> municipios = new ArrayList<>();
 
 	@PostConstruct
-	public void init() {
+	public void init() { 
+		this.uf = EnumUf.GO;
 		listaMunicipiosPorUfs();
 	}
 
@@ -47,7 +48,7 @@ public class DenunciaControl {
 		case FAUNA:
 		case AR:
 		case SOLO:
-		case FOGO:
+		case FOGO:  
 		case AGUA:
 		case OUTROS:
 			break;

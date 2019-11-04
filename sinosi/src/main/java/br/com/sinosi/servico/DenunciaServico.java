@@ -9,15 +9,11 @@ import org.springframework.stereotype.Service;
 import br.com.ambientinformatica.jpa.exception.PersistenciaException;
 import br.com.sinosi.entidade.Denuncia;
 import br.com.sinosi.persistencia.DenunciaDao;
-import br.com.sinosi.persistencia.MunicipioDao;
 
 @Service
 public class DenunciaServico implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	@Autowired
-	private MunicipioDao municipioDao;
 
 	@Autowired
 	private DenunciaDao denunciaDao;

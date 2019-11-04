@@ -16,19 +16,16 @@ import org.springframework.stereotype.Component;
 
 import br.com.ambientinformatica.jpa.exception.PersistenciaException;
 import br.com.sinosi.entidade.Denuncia;
-import br.com.sinosi.persistencia.MunicipioDao;
 import br.com.sinosi.servico.DenunciaServico;
 
 @Component
 @Path("/denuncias")
-public class SinosiRestController implements Serializable {
+public class DenunciaRestController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
 	private DenunciaServico denunciaServico;
-	@Autowired
-	private MunicipioDao municipioDao;
 
 	@GET
 	@Path("/{id}")
@@ -37,8 +34,6 @@ public class SinosiRestController implements Serializable {
 		return Response.status(200).entity(denunciaServico.consultar(id)).build();
 	}
 
-
-	
 	@GET
 	@Produces("application/json")
 	public Response getDenuncia() throws PersistenciaException {
@@ -53,13 +48,5 @@ public class SinosiRestController implements Serializable {
 		denunciaServico.inserir(denuncia);
 		return Response.status(201).build();
 	}
-
-//	@GET
-//	@Path("/municipioList")
-//	@Produces("application/json")
-//	public Response getMunicipios() throws PersistenciaException {
-//		return Response.status(200).entity(municipioDao.listar()).build();
-//	}
-
 
 }
