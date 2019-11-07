@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+	
+	<p:panel widgetVar="panel" id="panelGeral" header="Pesquisar Gerencias">
+			<a:field label="Descrição">
+				<p:inputText value="#{GerenciaListControl.descricao}"
+					style="width:300px" />
+			</a:field>
+			<a:field spaceLeft="10px">
+				<p:commandButton actionListener="#{GerenciaListControl.listar}"
+					value="Pesquisar" icon="ui-icon ui-icon-search"
+					update=":formCorpo:tblGerencias" />
+			</a:field>
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Cadastrar"
+					actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
+					action="gerencia?faces-redirect=true" icon="ui-icon-plus"
+					immediate="true" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Limpar"
+					actionListener="#{MenuControlador.gerenciarSessao}"
+					action="gerenciaList?faces-redirect=true" icon="ui-icon-trash"
+					immediate="true" />
+			</a:field>
+			<a:newLine />
+		</p:panel>
+
+		<p:dataTable emptyMessage="Sem registros"
+			value="#{GerenciaListControl.gerencias }" var="gerencia" id="tblGerencias"
+			paginator="true"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rows="50" rowsPerPageTemplate="25,50,100,150,200">
+
+
+			<p:column headerText="ID" style="width: 100px;" sortBy="#{gerencia.id}">
+				<h:outputLabel value="#{gerencia.id}" />
+			</p:column>
+			<p:column headerText="Descrição">
+				<h:outputLabel value="#{gerencia.descricao}" />
+			</p:column>
+			<p:column headerText="Editar" style="width: 80px;text-align: center;">
+				<p:commandButton id="btnEditar" icon="ui-icon-pencil"
+					action="gerencia?faces-redirect=true"
+					actionListener="#{MenuControlador.gerenciarSessao}">
+					<f:setPropertyActionListener value="#{gerencia}"
+						target="#{GerenciaControl.gerencia}" />
+				</p:commandButton>
+			</p:column>
+			<p:column style="width:80px;text-align:center" headerText="Excluir">
+				<p:commandButton id="btnConfirmarExclusao"
+					onclick="PF('dlgConfirmacaoExclusao').show();" icon="ui-icon-trash">
+					<f:setPropertyActionListener value="#{gerencia}"
+						target="#{GerenciaListControl.gerenciaExcluir}" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+		
+		<a:newLine />
+
+		<p:confirmDialog message="Confirma a exclusão deste registro?"
+			showEffect="slide" hideEffect="explode"
+			header="Confirmação de exclusão" severity="alert"
+			widgetVar="dlgConfirmacaoExclusao">
+			<p:spacer width="10" />
+			<p:commandButton id="btnSim" value="Sim"
+				oncomplete="PF('dlgConfirmacaoExclusao').hide();"
+				actionListener="#{GerenciaListControl.excluir}"
+				update=":formCorpo:tblGerencias" />
+			<p:spacer width="6" />
+			<p:commandButton id="btnNao" value="Não"
+				onclick="PF('dlgConfirmacaoExclusao').hide();" type="button" />
+		</p:confirmDialog>
+
+
+
+	</ui:define>
+
+</ui:composition>

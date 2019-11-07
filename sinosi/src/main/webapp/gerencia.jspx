@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo">
+		<p:panel id="panelGeral" header="Cadastro de Gerencia">
+
+			<a:field label="Descrição">
+				<p:inputTextarea placeholder="Ex: Fauna"
+					id="textDescricao" counter="showTextDescricao" maxlength="100"
+					style="width:600px;" counterTemplate="{0} caracteres restantes."
+					value="#{GerenciaControl.gerencia.descricao}" rows="2"
+					styleClass="obrigatorio" />
+			</a:field>
+			<a:newLine />
+			<p:outputLabel id="showTextDescricao" />
+
+			<a:newLine />
+
+			<a:field>
+				<p:commandButton icon="ui-icon-disk" value="Confirmar" ajax="false"
+					actionListener="#{GerenciaControl.confirmar}" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Limpar"
+					actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
+					action="gerencia?faces-redirect=true" icon="ui-icon-trash"
+					immediate="true" />
+			</a:field>
+
+			<a:field spaceLeft="10px">
+				<p:commandButton value="Fechar"
+					actionListener="#{MenuControlador.gerenciarSessao}" ajax="false"
+					action="gerenciaList?faces-redirect=true" icon="ui-icon-close"
+					immediate="true" />
+			</a:field>
+
+			<a:newLine />
+			<a:newLine />
+		</p:panel>
+	</ui:define>
+
+</ui:composition>

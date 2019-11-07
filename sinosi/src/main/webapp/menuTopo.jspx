@@ -12,7 +12,7 @@
 			<div class="header-topo-container">
 				<div class="col-md-8" style="padding-top: -10px;">
 					<p:commandLink action="/inicio?faces-redirect=true"
-						actionListener="#{MenuControl.gerenciarSessao}">
+						actionListener="#{MenuControlador.gerenciarSessao}">
 						<img
 							src="#{request.contextPath}/resources/imagens/logo-sinosi.png"
 							alt="Sinosi" width="200" height="80" />
@@ -61,7 +61,7 @@
 									</table>
 									<p:separator />
 									<p:commandButton value="Atualizar" icon="ui-icon-person"
-										actionListener="#{MenuControl.gerenciarSessao}"
+										actionListener="#{MenuControlador.gerenciarSessao}"
 										action="#{UsuarioControl.verificarUsuarioLogado}" ajax="false" />
 									<p:commandButton value="Sair" icon="ui-icon-power"
 										onclick="document.location.href='/sinosi/sair.jsp'"

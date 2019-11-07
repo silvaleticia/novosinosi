@@ -31,7 +31,7 @@
 				rendered="#{securityScope.userInRole['ADMIN,GERENTE,ATENDIMENTO']}">
 
 				<p:menuitem icon="fa fa-user" value="Usuários"
-					actionListener="#{MenuControl.gerenciarSessao}"
+					actionListener="#{MenuControlador.gerenciarSessao}"
 					action="usuarioList?faces-redirect=true" ajax="false" />
 			</p:submenu>
 
