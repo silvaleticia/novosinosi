@@ -15,7 +15,7 @@
 			<a:fieldset id="afsAcidente" legend="Acidente" style="width:680px;">
 
 				<a:newLine />
-				<p:panelGrid columns="2" style="width:680px;">
+				<p:panelGrid columns="2" style="width:680px;" >
 						<b>Endereco:</b>
 						<p:outputLabel
 							value="#{VisualizarDenunciaControl.denuncia.localAcidente.endereco}" />
