@@ -15,7 +15,6 @@ public class GerenciaControl {
     @Autowired
     private GerenciaDao gerenciaDao;
 
-
     private Gerencia gerencia = new Gerencia();
 
     public void confirmar() {

@@ -56,14 +56,14 @@ public class ViaCEPDTO {
     }
 
     public Municipio getMunicipio() {
-        return municipio;
-    }
+		return municipio;
+	}
 
-    public void setMunicipio(Municipio municipio) {
-        this.municipio = municipio;
-    }
+	public void setMunicipio(Municipio municipio) {
+		this.municipio = municipio;
+	}
 
-    public String getUf() {
+	public String getUf() {
         return uf;
     }
 
